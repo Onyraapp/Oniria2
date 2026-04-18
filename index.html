@@ -366,52 +366,40 @@ async function submitDream(){
     return;
   }
 
-  let today = new Date().toDateString();
-  let lastDay = localStorage.getItem('day');
-  let used = parseInt(localStorage.getItem('used') || '0');
-
-  if(lastDay !== today){
-    used = 0;
-    localStorage.setItem('used', '0');
-    localStorage.setItem('day', today);
-  }
-
-  if(used >= 1){
-    alert("Ya usaste tu sueño gratis hoy");
-    return;
-  }
-
-  localStorage.setItem('used', String(used + 1));
+  localStorage.setItem('used', '0'); // temporal para testear
 
   const result = buildInterpretation(text);
 
   currentDream = {
-    text: text,
+    text,
     title: result.title,
     quote: result.quote,
     interpretation: result.interpretation,
-    date: new Date().toLocaleString(),
     image: ""
   };
 
   document.getElementById('resultTitle').innerText = result.title;
   document.getElementById('resultQuote').innerText = "“" + result.quote + "”";
   document.getElementById('resultText').innerText = result.interpretation;
-  document.getElementById('dreamImage').src = "";
-  document.getElementById('imageLoading').style.display = "block";
+
+  const img = document.getElementById('dreamImage');
+  const loading = document.getElementById('imageLoading');
+
+  img.src = "";
+  loading.style.display = "block";
 
   go('result');
 
   try {
     const imageUrl = await generateDreamImage(text);
+    img.src = imageUrl;
     currentDream.image = imageUrl;
-    document.getElementById('dreamImage').src = imageUrl;
-  } catch (err) {
-    console.error(err);
-    document.getElementById('resultText').innerText += " No se pudo generar la imagen en este intento.";
-  } finally {
-    document.getElementById('imageLoading').style.display = "none";
+  } catch (e) {
+    console.error(e);
+    document.getElementById('resultText').innerText += " (Error generando imagen)";
   }
+
+  loading.style.display = "none";
 }
     async function generateDreamImage(text){
   const response = await fetch("https://onyra2-worker.almacenmujica.workers.dev", {
