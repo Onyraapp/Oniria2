@@ -673,24 +673,45 @@
       go("history");
     }
 
-    function shareDream(){
-      if(!currentDream){
-        alert("Todavía no hay sueño para compartir");
+ async function shareDream(){
+  if(!currentDream){
+    alert("Todavía no hay sueño para compartir");
+    return;
+  }
+
+  const text = `Soñé esto: ${currentDream.text}\n\n${currentDream.interpretation}`;
+
+  try {
+    if (currentDream.image && navigator.share) {
+      const response = await fetch(currentDream.image);
+      const blob = await response.blob();
+      const file = new File([blob], "sueno-onyra.png", { type: blob.type || "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "Mi sueño en ONYRA",
+          text,
+          files: [file]
+        });
         return;
       }
-
-      const text = `Soñé esto: ${currentDream.text}\n\n${currentDream.interpretation}`;
-
-      if (navigator.share) {
-        navigator.share({
-          title: "Mi sueño en ONYRA",
-          text: text
-        });
-      } else {
-        navigator.clipboard.writeText(text);
-        alert("Texto copiado para compartir");
-      }
     }
+
+    if (navigator.share) {
+      await navigator.share({
+        title: "Mi sueño en ONYRA",
+        text
+      });
+      return;
+    }
+
+    await navigator.clipboard.writeText(text);
+    alert("Texto copiado para compartir");
+  } catch (e) {
+    console.error("share error:", e);
+    alert("No se pudo compartir en este intento");
+  }
+}
 
     updateFreeStatus();
   </script>
