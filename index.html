@@ -9,7 +9,6 @@
       --bg:#0b0b12;
       --bg2:#141625;
       --panel:#191c2c;
-      --panel2:#1f2336;
       --line:#2c314a;
       --text:#f5f7ff;
       --muted:#a8afc7;
@@ -20,7 +19,7 @@
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:Arial, sans-serif;
+      font-family:Arial,sans-serif;
       background:
         radial-gradient(120% 60% at 50% 0%, rgba(124,92,255,.20), transparent 50%),
         linear-gradient(180deg, var(--bg2), var(--bg));
@@ -32,19 +31,11 @@
       max-width:430px;
       min-height:100vh;
       margin:0 auto;
-      position:relative;
-      background:transparent;
-    }
-
-    .screen{
-      display:none;
-      min-height:100vh;
       padding:22px 18px 24px;
     }
 
-    .screen.active{
-      display:block;
-    }
+    .screen{display:none;min-height:100vh}
+    .screen.active{display:block}
 
     .topbar{
       display:flex;
@@ -70,16 +61,16 @@
       background:rgba(255,255,255,.03);
     }
 
-    .hero{
-      margin-top:18px;
-      padding:24px 20px;
+    .hero, .card, .history-item{
       border:1px solid var(--line);
-      border-radius:24px;
-      background:
-        radial-gradient(120% 80% at 50% 0%, rgba(124,92,255,.15), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      box-shadow:0 16px 40px rgba(0,0,0,.28);
+      border-radius:20px;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:0 16px 40px rgba(0,0,0,.22);
     }
+
+    .hero{padding:24px 20px}
+    .card{padding:16px;margin-bottom:14px}
+    .history-item{padding:14px;margin-bottom:12px}
 
     h1{
       margin:0 0 10px;
@@ -87,39 +78,26 @@
       line-height:1.08;
       letter-spacing:-.02em;
     }
-
     h2{
       margin:0 0 12px;
       font-size:24px;
       line-height:1.2;
     }
-
     h3{
       margin:0 0 8px;
       font-size:18px;
     }
 
-    p{
-      margin:0;
-      line-height:1.7;
-    }
-
-    .muted{
-      color:var(--muted);
-    }
-
-    .accent{
-      color:var(--accent2);
-    }
-
-    .spacer{height:18px}
-
-    .card{
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:16px;
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      margin-bottom:14px;
+    p{margin:0;line-height:1.7}
+    .muted{color:var(--muted)}
+    .accent{color:var(--accent2)}
+    .small{font-size:13px;color:var(--muted);margin-top:8px}
+    .section-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:#7f86a5;
+      margin-bottom:10px;
     }
 
     .btn-main,
@@ -127,7 +105,6 @@
       width:100%;
       padding:14px 16px;
       border-radius:14px;
-      border:none;
       cursor:pointer;
       font-size:15px;
       font-weight:bold;
@@ -135,6 +112,7 @@
     }
 
     .btn-main{
+      border:none;
       background:linear-gradient(135deg, var(--accent), #6175ff);
       color:#fff;
       box-shadow:0 12px 28px rgba(124,92,255,.28);
@@ -151,10 +129,7 @@
       gap:10px;
       margin-top:10px;
     }
-
-    .row > *{
-      flex:1;
-    }
+    .row > *{flex:1}
 
     textarea{
       width:100%;
@@ -171,23 +146,7 @@
       outline:none;
     }
 
-    textarea::placeholder{
-      color:#7f86a5;
-    }
-
-    .small{
-      font-size:13px;
-      color:var(--muted);
-      margin-top:8px;
-    }
-
-    .section-label{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:#7f86a5;
-      margin-bottom:10px;
-    }
+    textarea::placeholder{color:#7f86a5}
 
     .result-title{
       font-size:26px;
@@ -201,14 +160,6 @@
       border-left:3px solid var(--accent);
       padding-left:12px;
       margin-bottom:16px;
-    }
-
-    .history-item{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-      background:rgba(255,255,255,.03);
-      margin-bottom:12px;
     }
 
     .history-date{
@@ -244,13 +195,11 @@
 
       <div class="hero">
         <div class="tag">Diario onírico</div>
-        <div class="spacer"></div>
+        <div style="height:18px"></div>
         <h1>¿Qué soñaste <span class="accent">anoche?</span></h1>
         <p class="muted">
           Registrá tu sueño, obtené una interpretación simbólica y empezá a construir tu propio mapa emocional.
         </p>
-
-        <div class="spacer"></div>
 
         <button class="btn-main" onclick="go('compose')">Contar mi sueño</button>
 
@@ -271,10 +220,10 @@
       <div class="card">
         <h2>Contá tu sueño</h2>
         <p class="muted">
-          Escribilo como si se lo contaras a alguien: lugares, personas, sensaciones, colores y cualquier detalle raro.
+          Escribilo como si se lo contaras a alguien: lugares, personas, sensaciones, colores y detalles raros.
         </p>
 
-        <textarea id="dreamInput" placeholder="Ejemplo: soñé que caminaba por un pasillo oscuro en mi casa de la infancia. Había una luz al fondo, pero cuanto más avanzaba, más lejos parecía..."></textarea>
+        <textarea id="dreamInput" placeholder="Ejemplo: soñé que caminaba por un pasillo oscuro en mi casa de la infancia y había una luz al fondo..."></textarea>
         <div class="small">Cuanto más detalle, mejor se siente el resultado.</div>
 
         <button class="btn-main" onclick="submitDream()">Interpretar</button>
@@ -328,7 +277,7 @@
     let currentDream = null;
 
     function go(s){
-      document.querySelectorAll('.screen').forEach(el => {
+      document.querySelectorAll('.screen').forEach(function(el){
         el.classList.remove('active');
       });
 
@@ -352,7 +301,7 @@
 
       if(lastDay !== today){
         used = 0;
-        localStorage.setItem('used', 0);
+        localStorage.setItem('used', '0');
         localStorage.setItem('day', today);
       }
 
@@ -381,7 +330,7 @@
 
       if(lastDay !== today){
         used = 0;
-        localStorage.setItem('used', 0);
+        localStorage.setItem('used', '0');
         localStorage.setItem('day', today);
       }
 
@@ -390,11 +339,12 @@
         return;
       }
 
-      localStorage.setItem('used', used + 1);
+      localStorage.setItem('used', String(used + 1));
 
       const result = buildInterpretation(text);
+
       currentDream = {
-        text,
+        text: text,
         title: result.title,
         quote: result.quote,
         interpretation: result.interpretation,
@@ -411,7 +361,7 @@
     function buildInterpretation(text){
       const t = text.toLowerCase();
 
-      if(t.includes('casa') && t.includes('osc')) {
+      if(t.includes('casa') && (t.includes('oscuro') || t.includes('oscura') || t.includes('sombra'))){
         return {
           title: "La casa en sombras",
           quote: "Tu mente vuelve a un lugar conocido, pero ya no lo siente igual.",
@@ -451,14 +401,46 @@
     }
 
     function saveCurrentDream(){
-  if(!currentDream){
-    alert("No hay sueño para guardar");
-    return;
-  }
+      if(!currentDream){
+        alert("No hay sueño para guardar");
+        return;
+      }
 
-  let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
-  dreams.unshift(currentDream);
-  localStorage.setItem('dreams', JSON.stringify(dreams));
+      let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
+      dreams.unshift(currentDream);
+      localStorage.setItem('dreams', JSON.stringify(dreams));
 
-  go('history');
-}
+      go('history');
+    }
+
+    function renderHistory(){
+      const container = document.getElementById('historyList');
+      const dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
+
+      if(!container){
+        alert('No existe historyList en el HTML');
+        return;
+      }
+
+      container.innerHTML = "";
+
+      if(!dreams.length){
+        container.innerHTML = '<div class="empty">Todavía no guardaste sueños.</div>';
+        return;
+      }
+
+      dreams.forEach(function(d){
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML =
+          '<div class="history-date">' + d.date + '</div>' +
+          '<h3>' + (d.title || 'Sueño guardado') + '</h3>' +
+          '<div class="history-text">' + d.text + '</div>';
+        container.appendChild(div);
+      });
+    }
+
+    updateFreeStatus();
+  </script>
+</body>
+</html>
