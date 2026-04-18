@@ -269,32 +269,52 @@ async function generateAIImage(texto) {
       return await response.blob();
     }
 
-    async function shareDream() {
-      try {
-        const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
-        const imageUrl = lastImageUrl || currentDream.image;
+  async function shareDream() {
+  try {
+    const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
+    const imageUrl = lastImageUrl || currentDream.image;
 
-        if (!imageUrl) {
-          
-          return;
-        }
+    if (!imageUrl) {
+      alert("Primero generá una imagen.");
+      return;
+    }
 
-        setStatus("Preparando para compartir...");
+    setStatus("Preparando para compartir...");
 
-        const blob = await urlToBlob(imageUrl);
-        const file = new File([blob], "onyra-sueno.svg", {
-          type: blob.type || "image/svg+xml"
-        });
+    const blob = await urlToBlob(imageUrl);
+    const file = new File([blob], "onyra-sueno.png", {
+      type: blob.type || "image/png"
+    });
 
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: "Mi sueño en ONYRA",
-            text: texto,
-            files: [file]
-          });
-          setStatus("Imagen compartida.");
-          return;
-        }
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: "Mi sueño en ONYRA",
+        text: texto,
+        files: [file]
+      });
+      setStatus("Imagen compartida.");
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.href = imageUrl;
+    link.download = "onyra-sueno.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setStatus("Tu navegador no permite compartir directo. Se descargó la imagen.");
+  } catch (error) {
+    console.error("Error en shareDream:", error);
+    setStatus("No se pudo compartir la imagen.");
+    alert("No se pudo compartir la imagen.");
+  }
+}
+
+async function urlToBlob(url) {
+  const response = await fetch(url);
+  return await response.blob();
+}
 
         const link = document.createElement("a");
         link.href = imageUrl;
