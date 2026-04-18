@@ -247,6 +247,29 @@
 
     generateBtn.addEventListener("click", submitDream);
     shareBtn.addEventListener("click", shareDream);
+    async function generateAIImage(texto) {
+  const response = await fetch("PEGÁ_ACÁ_TU_URL_DEL_WORKER", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      prompt: texto
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error("La API no respondió bien");
+  }
+
+  const data = await response.json();
+
+  if (!data.imageUrl) {
+    throw new Error("La respuesta no trajo imageUrl");
+  }
+
+  return data.imageUrl;
+}
   </script>
 </body>
 </html>
