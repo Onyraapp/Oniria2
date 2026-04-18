@@ -362,46 +362,48 @@
   return "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop";
 }
     function submitDream(){
-      const text = document.getElementById('dreamInput').value.trim();
+  const text = document.getElementById('dreamInput').value.trim();
 
-      if(!text){
-        alert("Escribí un sueño");
-        return;
-      }
+  if(!text){
+    alert("Escribí un sueño");
+    return;
+  }
 
-      let today = new Date().toDateString();
-      let lastDay = localStorage.getItem('day');
-      let used = parseInt(localStorage.getItem('used') || '0');
+  let today = new Date().toDateString();
+  let lastDay = localStorage.getItem('day');
+  let used = parseInt(localStorage.getItem('used') || '0');
 
-      if(lastDay !== today){
-        used = 0;
-        localStorage.setItem('used', '0');
-        localStorage.setItem('day', today);
-      }
+  if(lastDay !== today){
+    used = 0;
+    localStorage.setItem('used', '0');
+    localStorage.setItem('day', today);
+  }
 
-      if(used >= 1){
-        alert("Ya usaste tu sueño gratis hoy");
-        return;
-      }
+  if(used >= 1){
+    alert("Ya usaste tu sueño gratis hoy");
+    return;
+  }
 
-      localStorage.setItem('used', String(used + 1));
+  localStorage.setItem('used', String(used + 1));
 
-      const result = buildInterpretation(text);
+  const result = buildInterpretation(text);
 
-      currentDream = {
-        text: text,
-        title: result.title,
-        quote: result.quote,
-        interpretation: result.interpretation,
-        date: new Date().toLocaleString()
-      };
+  currentDream = {
+    text: text,
+    title: result.title,
+    quote: result.quote,
+    interpretation: result.interpretation,
+    date: new Date().toLocaleString(),
+    image: getDreamImage(text)
+  };
 
-      document.getElementById('resultTitle').innerText = result.title;
-      document.getElementById('resultQuote').innerText = "“" + result.quote + "”";
-      document.getElementById('resultText').innerText = result.interpretation;
-      document.getElementById('dreamImage').src = getDreamImage(text);
-      go('result');
-    }
+  document.getElementById('resultTitle').innerText = result.title;
+  document.getElementById('resultQuote').innerText = "“" + result.quote + "”";
+  document.getElementById('resultText').innerText = result.interpretation;
+  document.getElementById('dreamImage').src = currentDream.image;
+
+  go('result');
+}
 
    function buildInterpretation(text){
   const t = text.toLowerCase();
