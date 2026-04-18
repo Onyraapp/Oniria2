@@ -178,7 +178,29 @@
           alert("Escribí tu sueño primero.");
           return;
         }
+   async function generateAIImage(texto) {
+  const response = await fetch("ACA_VA_TU_URL_DEL_WORKER", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      prompt: texto
+    })
+  });
 
+  if (!response.ok) {
+    throw new Error("La API devolvió error " + response.status);
+  }
+
+  const data = await response.json();
+
+  if (!data.imageUrl) {
+    throw new Error("La respuesta no trae imageUrl");
+  }
+
+  return data.imageUrl;
+}
         setStatus("Generando imagen...");
 
         const imageUrl = await generateAIImage(texto);
