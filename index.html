@@ -142,6 +142,11 @@ async function generateDreamImage(text){
 
   return data.imageUrl;
 }
+  function resetDemo(){
+  localStorage.removeItem('used');
+  localStorage.removeItem('day');
+  alert("Reset listo");
+}
 async function submitDream(){
   const text = document.getElementById('dreamInput').value;
 
