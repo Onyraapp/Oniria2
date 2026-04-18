@@ -608,7 +608,8 @@
       document.getElementById('resultTitle').innerText = result.title;
       document.getElementById('resultQuote').innerText = "“" + result.quote + "”";
       document.getElementById('resultText').innerText = result.interpretation;
-
+      document.getElementById("dreamImage").src = imageUrl;
+     document.getElementById("dreamImage").style.display = "block";
       const img = document.getElementById("dreamImage");
       const loading = document.getElementById("imageLoading");
       const loadingNote = document.getElementById("imageLoadingNote");
