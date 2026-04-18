@@ -17,7 +17,6 @@ body {
   display:none;
   min-height:100vh;
   padding:24px;
-  box-sizing:border-box;
 }
 
 .screen.active {
@@ -46,7 +45,7 @@ textarea {
 
 <body>
 
-<!-- HOME (abre directo) -->
+<!-- HOME -->
 <div class="screen active" id="s-home">
   <h1>ONYRA</h1>
   <p>¿Qué soñaste anoche?</p>
@@ -59,7 +58,7 @@ textarea {
 <div class="screen" id="s-compose">
   <h2>Contá tu sueño</h2>
 
-  <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea>
+  <textarea id="dreamInput" placeholder="Contá tu sueño como si se lo contaras a alguien..."></textarea>
 
   <button onclick="submitDream()">Interpretar</button>
   <button onclick="go('home')">Volver</button>
@@ -67,7 +66,7 @@ textarea {
 
 <!-- RESULT -->
 <div class="screen" id="s-result">
-  <h2>Resultado</h2>
+  <h2 id="resultTitle"></h2>
   <p id="resultText"></p>
 
   <button onclick="go('home')">Volver</button>
@@ -83,6 +82,7 @@ textarea {
 
 <script>
 
+// navegación
 function go(s){
   document.querySelectorAll('.screen').forEach(el=>{
     el.classList.remove('active');
@@ -100,6 +100,7 @@ function go(s){
   if(s === 'history') renderHistory();
 }
 
+// lógica principal
 function submitDream(){
   const text = document.getElementById('dreamInput').value;
 
@@ -108,7 +109,16 @@ function submitDream(){
     return;
   }
 
+  // control diario
+  let today = new Date().toDateString();
+  let lastDay = localStorage.getItem('day');
   let used = localStorage.getItem('used') || 0;
+
+  if(lastDay !== today){
+    used = 0;
+    localStorage.setItem('used', 0);
+    localStorage.setItem('day', today);
+  }
 
   if(parseInt(used) >= 1){
     alert("Ya usaste tu sueño gratis hoy");
@@ -117,22 +127,18 @@ function submitDream(){
 
   localStorage.setItem('used', parseInt(used) + 1);
 
+  // resultado
+  document.getElementById('resultTitle').innerText = "Un sueño en movimiento";
+
   document.getElementById('resultText').innerText =
-    "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay elementos que indican tensión, curiosidad o algo que tu mente está intentando entender más profundamente.";
+    "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay algo en tu mente que insiste en ser entendido y que se manifiesta a través de imágenes simbólicas.";
 
   saveDream(text);
 
   go('result');
 }
 
-  document.getElementById('resultText').innerText =
-   "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay elementos que indican tensión, curiosidad o algo que tu mente está intentando entender más profundamente."
-
-  saveDream(text);
-
-  go('result');
-}
-
+// guardar
 function saveDream(text){
   let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
 
@@ -144,6 +150,7 @@ function saveDream(text){
   localStorage.setItem('dreams', JSON.stringify(dreams));
 }
 
+// historial
 function renderHistory(){
   const container = document.getElementById('historyList');
   const dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
