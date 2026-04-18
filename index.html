@@ -178,7 +178,19 @@ async function submitDream(){
 
   const img = document.getElementById("dreamImage");
   const loading = document.getElementById("imageLoading");
+  const loading = document.getElementById("imageLoading");
+if (loading) loading.style.display = "block";
 
+try {
+  const imageUrl = await generateDreamImage(text);
+  img.src = imageUrl;
+  currentDream.image = imageUrl;
+  saveCurrentDream();
+} catch(e) {
+  console.error(e);
+} finally {
+  if (loading) loading.style.display = "none";
+}
   img.src = "";
   if (loading) loading.style.display = "block";
 
