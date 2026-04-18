@@ -140,7 +140,7 @@
 
         setStatus("Generando imagen...");
 
-        const imageUrl = generateDreamImage(texto);
+        const imageUrl = await generateAIImage(texto);
 
         currentDream = {
           text: texto,
