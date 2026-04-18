@@ -364,7 +364,7 @@
       document.getElementById('resultTitle').innerText = result.title;
       document.getElementById('resultQuote').innerText = "“" + result.quote + "”";
       document.getElementById('resultText').innerText = result.interpretation;
-
+      document.getElementById('dreamImage').src = getDreamImage(text);
       go('result');
     }
 
