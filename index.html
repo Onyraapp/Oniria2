@@ -164,9 +164,10 @@ async function submitDream(){
   try {
     const img = await generateDreamImage(text);
     document.getElementById('dreamImage').src = img;
-  } catch(e){
-    document.getElementById('resultText').innerText += " (Error generando imagen)";
-  }
+ } catch(e) {
+  console.error("error imagen:", e);
+  document.getElementById('resultText').innerText += " (Error generando imagen: " + e.message + ")";
+}
 
   document.getElementById('imageLoading').style.display = "none";
 }
