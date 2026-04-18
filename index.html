@@ -601,11 +601,7 @@ function updateUsageUI(){
 document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
 document.getElementById('s-splash').classList.add('active');
 setTimeout(function() {
-  if (localStorage.getItem('onyra_onboarded')) {
-    go('home');
-  } else {
-    go('onboard');
-  }
+  go('home');
 }, 2500);
 
 window.addEventListener('load', function(){
