@@ -136,12 +136,11 @@ async function generateDreamImage(text){
   }
 
   if(!data.imageUrl){
-    throw new Error("La respuesta no trajo imageUrl");
+    throw new Error("No llegó imagen");
   }
 
   return data.imageUrl;
 }
-
 async function submitDream(){
   const text = document.getElementById('dreamInput').value;
 
