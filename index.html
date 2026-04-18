@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ONYRA</title>
   <style>
     * { box-sizing: border-box; }
@@ -129,35 +129,81 @@
         .replace(/'/g, "&apos;");
     }
 
-   async function submitDream() {
-  try {
-    const texto = dreamText.value.trim();
+    function wrapSvgText(text) {
+      const words = text.split(/\s+/);
+      const lines = [];
+      let line = "";
 
-    if (!texto) {
-      alert("Escribí tu sueño primero.");
-      return;
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line ? line + " " + words[i] : words[i];
+        if (testLine.length > 38) {
+          if (line) lines.push(line);
+          line = words[i];
+        } else {
+          line = testLine;
+        }
+      }
+
+      if (line) lines.push(line);
+
+      let result = "";
+      for (let j = 0; j < lines.length; j++) {
+        const dy = j === 0 ? 0 : 48;
+        result += '<tspan x="100" dy="' + dy + '">' + lines[j] + '</tspan>';
+      }
+      return result;
     }
 
-    setStatus("Generando imagen IA...");
+    function generateDreamImage(texto) {
+      const seguro = escapeXml(texto);
 
-    const imageUrl = await generateAIImage(texto);
+      const svg =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350">' +
+          '<rect width="1080" height="1350" fill="#1f1b4d"/>' +
+          '<rect x="60" y="60" width="960" height="1230" rx="36" fill="#2f2a6f"/>' +
+          '<text x="540" y="170" text-anchor="middle" font-size="64" font-family="Arial" fill="white" font-weight="bold">ONYRA</text>' +
+          '<text x="540" y="225" text-anchor="middle" font-size="28" font-family="Arial" fill="white">Tu sueño convertido en imagen</text>' +
+          '<text x="100" y="360" font-size="36" font-family="Arial" fill="white">' + wrapSvgText(seguro) + '</text>' +
+          '<text x="540" y="1180" text-anchor="middle" font-size="24" font-family="Arial" fill="white">Compartido desde ONYRA</text>' +
+        '</svg>';
 
-    currentDream = {
-      text: texto,
-      image: imageUrl
-    };
-    lastImageUrl = imageUrl;
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
 
-    dreamImage.src = imageUrl;
-    dreamImage.style.display = "block";
+    async function submitDream() {
+      try {
+        const texto = dreamText.value.trim();
 
-    setStatus("Imagen generada.");
-  } catch (error) {
-    console.error("Error en submitDream:", error);
-    setStatus("Error al generar imagen.");
-    alert("No se pudo generar la imagen.");
-  }
-}
+        if (!texto) {
+          alert("Escribí tu sueño primero.");
+          return;
+        }
+
+        setStatus("Generando imagen...");
+
+        const imageUrl = generateDreamImage(texto);
+
+        currentDream = {
+          text: texto,
+          image: imageUrl
+        };
+        lastImageUrl = imageUrl;
+
+        dreamImage.src = imageUrl;
+        dreamImage.style.display = "block";
+
+        setStatus("Imagen generada.");
+      } catch (error) {
+        console.error("Error en submitDream:", error);
+        setStatus("Error al generar imagen.");
+        alert("No se pudo generar la imagen.");
+      }
+    }
+
+    async function urlToBlob(url) {
+      const response = await fetch(url);
+      return await response.blob();
+    }
 
     async function shareDream() {
       try {
@@ -172,7 +218,9 @@
         setStatus("Preparando para compartir...");
 
         const blob = await urlToBlob(imageUrl);
-        const file = new File([blob], "onyra-sueno.svg", { type: blob.type || "image/svg+xml" });
+        const file = new File([blob], "onyra-sueno.svg", {
+          type: blob.type || "image/svg+xml"
+        });
 
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
@@ -199,70 +247,10 @@
       }
     }
 
-      const seguro = escapeXml(texto);
-
-      const svg =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350">' +
-          '<rect width="1080" height="1350" fill="#1f1b4d"/>' +
-          '<rect x="60" y="60" width="960" height="1230" rx="36" fill="#2f2a6f"/>' +
-          '<text x="540" y="170" text-anchor="middle" font-size="64" font-family="Arial" fill="white" font-weight="bold">ONYRA</text>' +
-          '<text x="540" y="225" text-anchor="middle" font-size="28" font-family="Arial" fill="white">Tu sueño convertido en imagen</text>' +
-          '<text x="100" y="360" font-size="36" font-family="Arial" fill="white">' + wrapSvgText(seguro, 100, 360, 880, 48) + '</text>' +
-          '<text x="540" y="1180" text-anchor="middle" font-size="24" font-family="Arial" fill="white">Compartido desde ONYRA</text>' +
-        '</svg>';
-
-      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    }
-
-    function wrapSvgText(text, x, y, maxWidth, lineHeight) {
-      const words = text.split(/\s+/);
-      const lines = [];
-      let line = "";
-
-      for (let i = 0; i < words.length; i++) {
-        const testLine = line ? line + " " + words[i] : words[i];
-        if (testLine.length > 38) {
-          lines.push(line);
-          line = words[i];
-        } else {
-          line = testLine;
-        }
-      }
-
-      if (line) lines.push(line);
-
-      let result = "";
-      for (let j = 0; j < lines.length; j++) {
-        const dy = j === 0 ? 0 : lineHeight;
-        result += '<tspan x="' + x + '" dy="' + dy + '">' + lines[j] + '</tspan>';
-      }
-      return result;
-    }
-
-    async function urlToBlob(url) {
-      const response = await fetch(url);
-      return await response.blob();
-    }
-
     generateBtn.addEventListener("click", submitDream);
     shareBtn.addEventListener("click", shareDream);
-    async function generateAIImage(texto) {
-  const response = await fetch("TU_URL_DEL_WORKER", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      prompt: texto
-    })
-  });
 
-  const data = await response.json();
-
-  return data.imageUrl;
-}
-  
-}
+    console.log("ONYRA cargó bien");
   </script>
 </body>
 </html>
