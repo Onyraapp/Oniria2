@@ -155,29 +155,48 @@ async function generateDreamImage(text){
   alert("Reset listo");
 }
 async function submitDream(){
-  const text = document.getElementById('dreamInput').value;
+  const text = document.getElementById('dreamInput').value.trim();
+
+  if(!text){
+    alert("Escribí un sueño");
+    return;
+  }
 
   const result = buildInterpretation(text);
+
+  currentDream = {
+    text,
+    title: result.title,
+    quote: result.quote,
+    interpretation: result.interpretation,
+    image: ""
+  };
 
   document.getElementById('resultTitle').innerText = result.title;
   document.getElementById('resultText').innerText = result.interpretation;
 
-  document.getElementById('imageLoading').style.display = "block";
-  document.getElementById('dreamImage').src = "";
+  const img = document.getElementById("dreamImage");
+  const loading = document.getElementById("imageLoading");
+
+  img.src = "";
+  if (loading) loading.style.display = "block";
 
   go('result');
-const img = document.getElementById("dreamImage");
-const loading = document.getElementById("imageLoading");
- try {
-  const imageUrl = await generateDreamImage(text);
-  img.src = imageUrl;
-  currentDream.image = imageUrl;
-} catch(e) {
-  console.error("error imagen:", e);
-  document.getElementById('resultText').innerText += " (La imagen IA no pudo generarse en este momento. Se mantiene la interpretación.)";
-}
 
-  document.getElementById('imageLoading').style.display = "none";
+  try {
+    const imageUrl = await generateDreamImage(text);
+
+    img.src = imageUrl;
+    currentDream.image = imageUrl;
+
+    saveCurrentDream();
+
+  } catch(e) {
+    console.error("error imagen:", e);
+    document.getElementById('resultText').innerText += " (La imagen IA no pudo generarse en este momento. Se mantiene la interpretación.)";
+  } finally {
+    if (loading) loading.style.display = "none";
+  }
 }
 function showHistory(){
   const container = document.getElementById("historyList");
