@@ -90,6 +90,7 @@ img {
     <div id="imageLoading" style="display:none; color:#aaa;">
       Generando imagen...
       <button onclick="shareDream()">Compartir mi sueño</button>
+      
     </div>
 
     <h3 id="resultTitle"></h3>
@@ -243,6 +244,21 @@ function showHistory(){
   });
 
   go("history");
+}
+    function shareDream(){
+  if(!currentDream.image) return;
+
+  const text = `Soñé esto: ${currentDream.text}\n\n${currentDream.interpretation}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "Mi sueño en ONYRA",
+      text
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert("Texto copiado para compartir");
+  }
 }
 </script>
 
