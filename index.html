@@ -358,70 +358,85 @@
       go('result');
     }
 
-    function buildInterpretation(text){
-      const t = text.toLowerCase();
+   function buildInterpretation(text){
+  const t = text.toLowerCase();
 
-      if(t.includes('casa') && (t.includes('oscuro') || t.includes('oscura') || t.includes('sombra'))){
-        return {
-          title: "La casa en sombras",
-          quote: "Tu mente vuelve a un lugar conocido, pero ya no lo siente igual.",
-          interpretation: "Este sueño parece vinculado a recuerdos, zonas emocionales antiguas o aspectos internos que todavía conservan peso. La oscuridad dentro de un espacio familiar suele reflejar algo conocido que hoy genera inquietud o incertidumbre."
-        };
-      }
+  if(
+    t.includes('persegu') ||
+    t.includes('corria de') ||
+    t.includes('huia') ||
+    t.includes('me seguian')
+  ){
+    return {
+      title: "La persecución silenciosa",
+      quote: "Hay algo que evitás, pero sigue detrás tuyo.",
+      interpretation: "Soñar que algo te persigue suele reflejar una tensión que no estás enfrentando directamente. Puede ser una decisión, un miedo o una situación que tu mente insiste en procesar."
+    };
+  }
 
-      if(t.includes('caer') || t.includes('caía') || t.includes('caida')){
-        return {
-          title: "La caída interminable",
-          quote: "Algo en vos siente que perdió estabilidad o control.",
-          interpretation: "Soñar con caer suele aparecer en momentos de presión, inseguridad o vértigo emocional. No necesariamente habla de un peligro real, sino de una sensación interna de no poder sostener algo como antes."
-        };
-      }
+  if(
+    t.includes('volar') ||
+    t.includes('volando') ||
+    t.includes('volé')
+  ){
+    return {
+      title: "El impulso de escapar",
+      quote: "Querés ir más allá de tus límites actuales.",
+      interpretation: "Soñar que volás suele estar ligado a deseos de libertad, crecimiento o escape. Puede indicar una necesidad de salir de una situación que te limita."
+    };
+  }
 
-      if(t.includes('agua') || t.includes('mar')){
-        return {
-          title: "Debajo del agua",
-          quote: "Las emociones profundas buscan una forma de mostrarse.",
-          interpretation: "El agua suele representar el mundo emocional. Cuando aparece en sueños, puede señalar sensibilidad, confusión o una necesidad de ordenar sentimientos que todavía no encontraron una salida clara."
-        };
-      }
+  if(
+    t.includes('casa') &&
+    (t.includes('oscuro') || t.includes('oscura') || t.includes('sombra'))
+  ){
+    return {
+      title: "La casa en sombras",
+      quote: "Tu mente vuelve a un lugar conocido, pero ya no lo siente igual.",
+      interpretation: "Este sueño parece vinculado a recuerdos, zonas emocionales antiguas o aspectos internos que todavía conservan peso. La oscuridad dentro de un espacio familiar suele reflejar algo conocido que hoy genera inquietud o incertidumbre."
+    };
+  }
 
-      if(t.includes('pasillo') || t.includes('puerta')){
-        return {
-          title: "El pasaje oculto",
-          quote: "Tu sueño gira alrededor de una búsqueda que todavía no termina.",
-          interpretation: "Los pasillos, puertas y recorridos largos suelen aparecer cuando la mente está atravesando una transición. Sugieren búsqueda, duda o la sensación de que algo importante todavía no se termina de revelar."
-        };
-      }
-if(t.includes('persegu')){
+  if(
+    t.includes('caer') ||
+    t.includes('caía') ||
+    t.includes('caida')
+  ){
+    return {
+      title: "La caída interminable",
+      quote: "Algo en vos siente que perdió estabilidad o control.",
+      interpretation: "Soñar con caer suele aparecer en momentos de presión, inseguridad o vértigo emocional. No necesariamente habla de un peligro real, sino de una sensación interna de no poder sostener algo como antes."
+    };
+  }
+
+  if(
+    t.includes('agua') ||
+    t.includes('mar')
+  ){
+    return {
+      title: "Debajo del agua",
+      quote: "Las emociones profundas buscan una forma de mostrarse.",
+      interpretation: "El agua suele representar el mundo emocional. Cuando aparece en sueños, puede señalar sensibilidad, confusión o una necesidad de ordenar sentimientos que todavía no encontraron una salida clara."
+    };
+  }
+
+  if(
+    t.includes('pasillo') ||
+    t.includes('puerta')
+  ){
+    return {
+      title: "El pasaje oculto",
+      quote: "Tu sueño gira alrededor de una búsqueda que todavía no termina.",
+      interpretation: "Los pasillos, puertas y recorridos largos suelen aparecer cuando la mente está atravesando una transición. Sugieren búsqueda, duda o la sensación de que algo importante todavía no se termina de revelar."
+    };
+  }
+
   return {
-    title: "La persecución silenciosa",
-    quote: "Hay algo que evitás, pero sigue detrás tuyo.",
-    interpretation: "Soñar que algo te persigue suele reflejar una tensión que no estás enfrentando directamente. Puede ser una decisión, un miedo o una situación que tu mente insiste en procesar."
+    title: "Un sueño en movimiento",
+    quote: "Hay algo en tu mente que insiste en ser entendido.",
+    interpretation: "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay algo en tu mente que busca expresarse a través de imágenes simbólicas, tensión emocional o escenas que dejan una sensación difícil de ignorar."
   };
 }
-
-if(t.includes('volar')){
-  return {
-    title: "El impulso de escapar",
-    quote: "Querés ir más allá de tus límites actuales.",
-    interpretation: "Soñar que volás suele estar ligado a deseos de libertad, crecimiento o escape. Puede indicar una necesidad de salir de una situación que te limita."
-  };
-}
-
-if(t.includes('perder') || t.includes('perdí')){
-  return {
-    title: "La sensación de pérdida",
-    quote: "Algo importante parece estar escapándose.",
-    interpretation: "Perder algo en un sueño suele reflejar inseguridad o miedo a perder control sobre una situación, una relación o una parte de tu vida."
-  };
-}
-      return {
-        title: "Un sueño en movimiento",
-        quote: "Hay algo en tu mente que insiste en ser entendido.",
-        interpretation: "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay algo en tu mente que busca expresarse a través de imágenes simbólicas, tensión emocional o escenas que dejan una sensación difícil de ignorar."
-      };
-    }
-
     function saveCurrentDream(){
       if(!currentDream){
         alert("No hay sueño para guardar");
