@@ -163,9 +163,9 @@ async function submitDream(){
   try {
     const img = await generateDreamImage(text);
     document.getElementById('dreamImage').src = img;
- } catch(e) {
+} catch(e) {
   console.error("error imagen:", e);
-  document.getElementById('resultText').innerText += " (Error generando imagen: " + e.message + ")";
+  document.getElementById('resultText').innerText += " (La imagen IA no pudo generarse en este momento. Se mantiene la interpretación.)";
 }
 
   document.getElementById('imageLoading').style.display = "none";
