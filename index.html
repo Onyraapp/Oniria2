@@ -129,35 +129,35 @@
         .replace(/'/g, "&apos;");
     }
 
-    async function submitDream() {
-      try {
-        const texto = dreamText.value.trim();
+   async function submitDream() {
+  try {
+    const texto = dreamText.value.trim();
 
-        if (!texto) {
-          alert("Escribí tu sueño primero.");
-          return;
-        }
-
-        setStatus("Generando imagen...");
-
-        const imageUrl = await generateAIImage(texto);
-
-        currentDream = {
-          text: texto,
-          image: imageUrl
-        };
-        lastImageUrl = imageUrl;
-
-        dreamImage.src = imageUrl;
-        dreamImage.style.display = "block";
-
-        setStatus("Imagen generada.");
-      } catch (error) {
-        console.error("Error en submitDream:", error);
-        setStatus("Error al generar imagen.");
-        alert("No se pudo generar la imagen.");
-      }
+    if (!texto) {
+      alert("Escribí tu sueño primero.");
+      return;
     }
+
+    setStatus("Generando imagen IA...");
+
+    const imageUrl = await generateAIImage(texto);
+
+    currentDream = {
+      text: texto,
+      image: imageUrl
+    };
+    lastImageUrl = imageUrl;
+
+    dreamImage.src = imageUrl;
+    dreamImage.style.display = "block";
+
+    setStatus("Imagen generada.");
+  } catch (error) {
+    console.error("Error en submitDream:", error);
+    setStatus("Error al generar imagen.");
+    alert("No se pudo generar la imagen.");
+  }
+}
 
     async function shareDream() {
       try {
