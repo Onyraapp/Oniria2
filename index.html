@@ -118,50 +118,64 @@
       debugEl.textContent = texto;
     }
 
-    async function generateAIImage(texto) {
-      const payload = { dream: texto };
+  async function generateAIImage(texto) {
+  const payload = { dream: texto };
 
-      setDebug(
-        "Worker: " + WORKER_URL + "\n\n" +
-        "Payload enviado:\n" +
-        JSON.stringify(payload, null, 2)
-      );
+  setDebug(
+    "Worker: " + WORKER_URL + "\n\n" +
+    "Payload enviado:\n" +
+    JSON.stringify(payload, null, 2)
+  );
 
-      const response = await fetch(WORKER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 45000);
 
-      const rawText = await response.text();
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
 
-      setDebug(
-        "Status HTTP: " + response.status + "\n\n" +
-        "Respuesta cruda:\n" + rawText
-      );
+    const rawText = await response.text();
 
-      let data;
-      try {
-        data = JSON.parse(rawText);
-      } catch (e) {
-        throw new Error("La respuesta no es JSON válido");
-      }
+    setDebug(
+      "Status HTTP: " + response.status + "\n\n" +
+      "Respuesta cruda:\n" + rawText
+    );
 
-      if (!response.ok) {
-        throw new Error(
-          data?.error ||
-          data?.details?.error?.message ||
-          ("HTTP " + response.status)
-        );
-      }
-
-      if (!data.imageUrl) {
-        throw new Error("La respuesta no trajo imageUrl");
-      }
-
-      return data.imageUrl;
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      throw new Error("La respuesta no es JSON válido");
     }
 
+    if (!response.ok) {
+      throw new Error(
+        data?.error ||
+        data?.details?.error?.message ||
+        ("HTTP " + response.status)
+      );
+    }
+
+    if (!data.imageUrl) {
+      throw new Error("La respuesta no trajo imageUrl");
+    }
+
+    return data.imageUrl;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw new Error("El worker tardó demasiado en responder");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
     async function submitDream() {
       try {
         const texto = dreamText.value.trim();
