@@ -451,43 +451,14 @@
     }
 
     function saveCurrentDream(){
-      if(!currentDream){
-        alert("No hay sueño para guardar");
-        return;
-      }
-
-      let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
-      dreams.unshift(currentDream);
-      localStorage.setItem('dreams', JSON.stringify(dreams));
-
-      alert("Sueño guardado");
-    }
-
-    function renderHistory(){
-  const container = document.getElementById('historyList');
-  const dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
-
-  console.log('sueños guardados:', dreams);
-
-  if(!container){
-    alert('No existe historyList en el HTML');
+  if(!currentDream){
+    alert("No hay sueño para guardar");
     return;
   }
 
-  container.innerHTML = "";
+  let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
+  dreams.unshift(currentDream);
+  localStorage.setItem('dreams', JSON.stringify(dreams));
 
-  if(!dreams.length){
-    container.innerHTML = '<div class="empty">Todavía no guardaste sueños.</div>';
-    return;
-  }
-
-  dreams.forEach(function(d){
-    const div = document.createElement('div');
-    div.className = 'history-item';
-    div.innerHTML =
-      '<div class="history-date">' + d.date + '</div>' +
-      '<h3>' + (d.title || 'Sueño guardado') + '</h3>' +
-      '<div class="history-text">' + d.text + '</div>';
-    container.appendChild(div);
-  });
+  go('history');
 }
