@@ -714,7 +714,46 @@
     alert("No se pudo compartir en este intento");
   }
 }
+async function shareDream() {
+  try {
+    const text = document.getElementById("dreamText")?.value || "Mirá el sueño que generé con ONYRA";
+    const imageUrl = lastImageUrl || currentDream?.image;
 
+    if (!imageUrl) {
+      alert("Todavía no hay una imagen generada para compartir.");
+      return;
+    }
+
+    const blob = await urlToBlob(imageUrl);
+    const file = new File([blob], "onyra-sueno.png", { type: "image/png" });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: "Mi sueño en ONYRA",
+        text: text,
+        files: [file]
+      });
+      return;
+    }
+
+    // fallback descarga
+    const a = document.createElement("a");
+    a.href = imageUrl;
+    a.download = "onyra-sueno.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    alert("Tu navegador no permite compartir directo. Se descargó la imagen.");
+  } catch (error) {
+    console.error("Error al compartir:", error);
+  }
+}
+
+async function urlToBlob(url) {
+  const res = await fetch(url);
+  return await res.blob();
+}
     updateFreeStatus();
   </script>
 </body>
