@@ -6,7 +6,6 @@
   <title>ONYRA</title>
   <style>
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -14,27 +13,20 @@
       color: white;
       padding: 24px;
     }
-
     .app {
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto;
       background: #1a1c24;
       border-radius: 16px;
       padding: 24px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
-
-    h1 {
-      margin: 0 0 8px;
-      text-align: center;
-    }
-
+    h1 { margin: 0 0 8px; text-align: center; }
     .subtitle {
       text-align: center;
       color: #c8c8d0;
       margin-bottom: 20px;
     }
-
     textarea {
       width: 100%;
       min-height: 160px;
@@ -46,7 +38,6 @@
       font-size: 16px;
       resize: vertical;
     }
-
     .buttons {
       display: flex;
       gap: 12px;
@@ -54,7 +45,6 @@
       margin-top: 16px;
       margin-bottom: 16px;
     }
-
     button {
       border: none;
       border-radius: 12px;
@@ -63,29 +53,32 @@
       font-weight: bold;
       cursor: pointer;
     }
-
-    #generateBtn {
-      background: #7c3aed;
-      color: white;
-    }
-
-    #shareBtn {
-      background: #10b981;
-      color: white;
-    }
-
+    #generateBtn { background: #7c3aed; color: white; }
+    #shareBtn { background: #10b981; color: white; }
     #status {
       min-height: 24px;
       color: #d8d8df;
       margin-bottom: 14px;
+      font-weight: bold;
     }
-
     #dreamImage {
       display: none;
       width: 100%;
       border-radius: 14px;
       margin-top: 10px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    #debug {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #0c0d12;
+      border: 1px solid #2a3040;
+      color: #b9c3d6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 13px;
+      line-height: 1.45;
     }
   </style>
 </head>
@@ -101,13 +94,16 @@
       <button id="shareBtn" type="button">Compartir mi sueño</button>
     </div>
 
-    <div id="status"></div>
+    <div id="status">Versión debug ONYRA cargada</div>
 
-    <img id="dreamImage" alt="Imagen generada del sueño">
+    <img id="dreamImage" alt="Imagen generada del sueño" />
+
+    <div id="debug">Esperando prueba...</div>
   </div>
 
   <script>
     const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+    const APP_VERSION = "ONYRA-DEBUG-18";
 
     let lastImageUrl = "";
     let currentDream = {};
@@ -116,28 +112,57 @@
     const generateBtn = document.getElementById("generateBtn");
     const shareBtn = document.getElementById("shareBtn");
     const statusEl = document.getElementById("status");
+    const debugEl = document.getElementById("debug");
     const dreamImage = document.getElementById("dreamImage");
 
     function setStatus(texto) {
       statusEl.textContent = texto;
     }
 
+    function setDebug(texto) {
+      debugEl.textContent = texto;
+    }
+
     async function generateAIImage(texto) {
+      const payload = { dream: texto };
+
+      setDebug(
+        "Versión: " + APP_VERSION + "\n" +
+        "Worker: " + WORKER_URL + "\n" +
+        "Enviando payload:\n" +
+        JSON.stringify(payload, null, 2)
+      );
+
       const response = await fetch(WORKER_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          dream: texto
-        })
+        body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
-      console.log("Respuesta worker:", data);
+      const rawText = await response.text();
+
+      setDebug(
+        "Versión: " + APP_VERSION + "\n" +
+        "Status HTTP: " + response.status + "\n\n" +
+        "Respuesta cruda:\n" + rawText
+      );
+
+      let data;
+      try {
+        data = JSON.parse(rawText);
+      } catch (e) {
+        throw new Error("La respuesta no es JSON válido");
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || data.details?.error?.message || "La API devolvió error " + response.status);
+        const detail =
+          data?.error ||
+          data?.details?.error?.message ||
+          data?.details?.error ||
+          ("HTTP " + response.status);
+        throw new Error(detail);
       }
 
       if (!data.imageUrl) {
@@ -158,33 +183,33 @@
 
         setStatus("Generando imagen IA...");
         generateBtn.disabled = true;
+        dreamImage.style.display = "none";
+        dreamImage.removeAttribute("src");
 
         const imageUrl = await generateAIImage(texto);
 
-        currentDream = {
-          text: texto,
-          image: imageUrl
-        };
+        currentDream = { text: texto, image: imageUrl };
         lastImageUrl = imageUrl;
 
         dreamImage.onload = function () {
           setStatus("Imagen generada.");
           generateBtn.disabled = false;
+          setDebug(debugEl.textContent + "\n\nLa imagen cargó correctamente en pantalla.");
         };
 
         dreamImage.onerror = function () {
           setStatus("La imagen llegó pero no se pudo mostrar.");
           generateBtn.disabled = false;
-          alert("La imagen llegó pero no se pudo mostrar.");
+          setDebug(debugEl.textContent + "\n\nError: el navegador no pudo renderizar la imagen.");
         };
 
         dreamImage.src = imageUrl;
         dreamImage.style.display = "block";
       } catch (error) {
         console.error("Error en submitDream:", error);
-        setStatus("Error al generar imagen: " + error.message);
+        setStatus("Error al generar imagen.");
         generateBtn.disabled = false;
-        alert("Error al generar imagen: " + error.message);
+        setDebug(debugEl.textContent + "\n\nError final:\n" + error.message);
       }
     }
 
@@ -231,14 +256,18 @@
       } catch (error) {
         console.error("Error en shareDream:", error);
         setStatus("No se pudo compartir la imagen.");
-        alert("No se pudo compartir la imagen.");
+        setDebug(debugEl.textContent + "\n\nError compartir:\n" + error.message);
       }
     }
 
     generateBtn.addEventListener("click", submitDream);
     shareBtn.addEventListener("click", shareDream);
 
-    console.log("ONYRA cargó bien");
+    setDebug(
+      "Versión: " + APP_VERSION + "\n" +
+      "Página cargada correctamente.\n" +
+      "Si no ves este texto, GitHub Pages está mostrando una versión vieja."
+    );
   </script>
 </body>
 </html>
