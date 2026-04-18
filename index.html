@@ -166,11 +166,7 @@ function finishOnboarding(){
 
 /* SPLASH FLOW */
 setTimeout(()=>{
-  if(localStorage.getItem('onyra_onboarded')){
-    go('home');
-  } else {
-    go('onboard');
-  }
+  go('home');
 },2000);
 
 /* DREAM */
