@@ -199,6 +199,11 @@ async function submitDream(){
     if (loading) loading.style.display = "none";
   }
 }
+  function shareDream(){
+  if(!currentDream.image) return;
+
+  navigator.clipboard.writeText(
+    "M
 function showHistory(){
   const container = document.getElementById("historyList");
   container.innerHTML = "";
