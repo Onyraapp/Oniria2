@@ -315,7 +315,17 @@
       updateFreeStatus();
       alert('Límite diario reseteado.');
     }
+    function getDreamImage(text){
+  const imgs = [
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200",
+    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200",
+    "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1200",
+    "https://images.unsplash.com/photo-1511300636408-a63a89df3482?q=80&w=1200",
+    "https://images.unsplash.com/photo-1499346030926-9a72daac6c63?q=80&w=1200"
+  ];
 
+  return imgs[text.length % imgs.length];
+}
     function submitDream(){
       const text = document.getElementById('dreamInput').value.trim();
 
