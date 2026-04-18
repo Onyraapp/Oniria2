@@ -464,29 +464,30 @@
     }
 
     function renderHistory(){
-      const container = document.getElementById('historyList');
-      const dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
+  const container = document.getElementById('historyList');
+  const dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
 
-      container.innerHTML = "";
+  console.log('sueños guardados:', dreams);
 
-      if(!dreams.length){
-        container.innerHTML = '<div class="empty">Todavía no guardaste sueños.</div>';
-        return;
-      }
+  if(!container){
+    alert('No existe historyList en el HTML');
+    return;
+  }
 
-      dreams.forEach(d => {
-        const div = document.createElement('div');
-        div.className = 'history-item';
-        div.innerHTML = `
-          <div class="history-date">${d.date}</div>
-          <h3>${d.title}</h3>
-          <div class="history-text">${d.text}</div>
-        `;
-        container.appendChild(div);
-      });
-    }
+  container.innerHTML = "";
 
-    updateFreeStatus();
-  </script>
-</body>
-</html>
+  if(!dreams.length){
+    container.innerHTML = '<div class="empty">Todavía no guardaste sueños.</div>';
+    return;
+  }
+
+  dreams.forEach(function(d){
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML =
+      '<div class="history-date">' + d.date + '</div>' +
+      '<h3>' + (d.title || 'Sueño guardado') + '</h3>' +
+      '<div class="history-text">' + d.text + '</div>';
+    container.appendChild(div);
+  });
+}
