@@ -633,7 +633,7 @@
         document.getElementById('resultText').innerText += " (La imagen IA no pudo generarse en este momento. Se mantiene la interpretación.)";
       } finally {
         if (loading) loading.style.display = "none";
-      }
+      } if (loadingNote) loadingNote.style.display = "none";
     }
 
     function saveCurrentDream(){
