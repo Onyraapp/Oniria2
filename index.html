@@ -387,13 +387,40 @@
   }
 
   if(
-    t.includes('casa') &&
-    (t.includes('oscuro') || t.includes('oscura') || t.includes('sombra'))
+    t.includes('muerte') ||
+    t.includes('morir') ||
+    t.includes('muerto')
   ){
     return {
-      title: "La casa en sombras",
-      quote: "Tu mente vuelve a un lugar conocido, pero ya no lo siente igual.",
-      interpretation: "Este sueño parece vinculado a recuerdos, zonas emocionales antiguas o aspectos internos que todavía conservan peso. La oscuridad dentro de un espacio familiar suele reflejar algo conocido que hoy genera inquietud o incertidumbre."
+      title: "El final necesario",
+      quote: "Algo en vos está cambiando profundamente.",
+      interpretation: "Soñar con la muerte rara vez es literal. Suele representar el cierre de una etapa, una transformación interna o el final de una forma de ver o vivir algo."
+    };
+  }
+
+  if(
+    t.includes('dientes') ||
+    t.includes('muelas') ||
+    t.includes('se me caian los dientes')
+  ){
+    return {
+      title: "La fragilidad expuesta",
+      quote: "Hay inseguridades que buscan salir a la superficie.",
+      interpretation: "Soñar con dientes suele relacionarse con vulnerabilidad, imagen personal, miedo a perder control o dificultad para sostener una posición frente a otros."
+    };
+  }
+
+  if(
+    t.includes('tren') ||
+    t.includes('avion') ||
+    t.includes('colectivo') ||
+    t.includes('llegaba tarde') ||
+    t.includes('perdía el vuelo')
+  ){
+    return {
+      title: "El miedo a no llegar",
+      quote: "Sentís que algo importante puede escaparse.",
+      interpretation: "Los sueños con viajes, transportes o demoras suelen reflejar ansiedad por oportunidades, tiempos vitales o decisiones que parecen correr más rápido que vos."
     };
   }
 
@@ -411,7 +438,9 @@
 
   if(
     t.includes('agua') ||
-    t.includes('mar')
+    t.includes('mar') ||
+    t.includes('rio') ||
+    t.includes('río')
   ){
     return {
       title: "Debajo del agua",
@@ -421,13 +450,102 @@
   }
 
   if(
+    t.includes('fuego') ||
+    t.includes('incendio') ||
+    t.includes('quemaba')
+  ){
+    return {
+      title: "La transformación ardiente",
+      quote: "Algo intenso en vos pide cambio.",
+      interpretation: "El fuego suele simbolizar transformación, impulso, deseo o crisis. Puede señalar una emoción fuerte que está creciendo o una etapa que necesita consumirse para dar lugar a otra."
+    };
+  }
+
+  if(
+    t.includes('casa') &&
+    (t.includes('oscuro') || t.includes('oscura') || t.includes('sombra'))
+  ){
+    return {
+      title: "La casa en sombras",
+      quote: "Tu mente vuelve a un lugar conocido, pero ya no lo siente igual.",
+      interpretation: "Este sueño parece vinculado a recuerdos, zonas emocionales antiguas o aspectos internos que todavía conservan peso. La oscuridad dentro de un espacio familiar suele reflejar algo conocido que hoy genera inquietud o incertidumbre."
+    };
+  }
+
+  if(
+    t.includes('infancia') ||
+    t.includes('escuela') ||
+    t.includes('colegio') ||
+    t.includes('mi casa de chico')
+  ){
+    return {
+      title: "El regreso al origen",
+      quote: "Algo del pasado sigue teniendo eco en el presente.",
+      interpretation: "Soñar con espacios o escenas de la infancia suele señalar recuerdos emocionales activos, viejos patrones o partes de vos que todavía buscan ser entendidas desde otro lugar."
+    };
+  }
+
+  if(
+    t.includes('examen') ||
+    t.includes('prueba') ||
+    t.includes('no estudie') ||
+    t.includes('no estudié')
+  ){
+    return {
+      title: "La prueba interior",
+      quote: "Te sentís evaluado, incluso cuando nadie te mira.",
+      interpretation: "Los sueños con exámenes o pruebas suelen reflejar autoexigencia, miedo a no estar a la altura o presión por responder correctamente frente a una situación importante."
+    };
+  }
+
+  if(
+    t.includes('desnudo') ||
+    t.includes('sin ropa') ||
+    t.includes('desnuda')
+  ){
+    return {
+      title: "La exposición total",
+      quote: "Hay una parte de vos que se siente demasiado visible.",
+      interpretation: "Soñar con estar desnudo suele vincularse con vergüenza, vulnerabilidad o miedo a ser visto tal como uno es. También puede reflejar autenticidad forzada o sensación de desprotección."
+    };
+  }
+
+  if(
+    t.includes('ladron') ||
+    t.includes('robo') ||
+    t.includes('me robaban') ||
+    t.includes('me robó')
+  ){
+    return {
+      title: "Lo que sentís que te quitan",
+      quote: "Hay algo valioso que temés perder.",
+      interpretation: "Los sueños con robos suelen reflejar temor a perder control, energía, tiempo, seguridad o algo importante para tu identidad. También pueden señalar sensación de invasión emocional."
+    };
+  }
+
+  if(
     t.includes('pasillo') ||
-    t.includes('puerta')
+    t.includes('puerta') ||
+    t.includes('escalera')
   ){
     return {
       title: "El pasaje oculto",
       quote: "Tu sueño gira alrededor de una búsqueda que todavía no termina.",
       interpretation: "Los pasillos, puertas y recorridos largos suelen aparecer cuando la mente está atravesando una transición. Sugieren búsqueda, duda o la sensación de que algo importante todavía no se termina de revelar."
+    };
+  }
+
+  if(
+    t.includes('perder') ||
+    t.includes('perdí') ||
+    t.includes('no encontraba') ||
+    t.includes('no encontre') ||
+    t.includes('no encontré')
+  ){
+    return {
+      title: "La sensación de pérdida",
+      quote: "Algo importante parece estar escapándose.",
+      interpretation: "Perder algo en un sueño suele reflejar inseguridad o miedo a perder control sobre una situación, una relación o una parte de tu vida. También puede señalar desorientación interna."
     };
   }
 
