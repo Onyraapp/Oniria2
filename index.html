@@ -178,7 +178,34 @@ async function submitDream(){
 
   document.getElementById('imageLoading').style.display = "none";
 }
+function showHistory(){
+  const container = document.getElementById("historyList");
+  container.innerHTML = "";
 
+  const dreams = JSON.parse(localStorage.getItem("dreams") || "[]");
+
+  if(dreams.length === 0){
+    container.innerHTML = "<p>No hay sueños guardados</p>";
+    go("history");
+    return;
+  }
+
+  dreams.forEach(d => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.style.marginBottom = "15px";
+
+    div.innerHTML = `
+      ${d.image ? `<img src="${d.image}" style="width:100%; border-radius:10px; margin-bottom:10px;" />` : ""}
+      <h3>${d.title}</h3>
+      <p>${d.interpretation}</p>
+    `;
+
+    container.appendChild(div);
+  });
+
+  go("history");
+}
 </script>
 
 </body>
