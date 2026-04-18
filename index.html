@@ -154,22 +154,41 @@
       return result;
     }
 
-    function generateDreamImage(texto) {
-      const seguro = escapeXml(texto);
+   async function generateAIImage(texto) {
+  const response = await fetch("ACA_VA_TU_URL_DEL_WORKER", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      prompt: texto
+    })
+  });
 
-      const svg =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350">' +
-          '<rect width="1080" height="1350" fill="#1f1b4d"/>' +
-          '<rect x="60" y="60" width="960" height="1230" rx="36" fill="#2f2a6f"/>' +
-          '<text x="540" y="170" text-anchor="middle" font-size="64" font-family="Arial" fill="white" font-weight="bold">ONYRA</text>' +
-          '<text x="540" y="225" text-anchor="middle" font-size="28" font-family="Arial" fill="white">Tu sueño convertido en imagen</text>' +
-          '<text x="100" y="360" font-size="36" font-family="Arial" fill="white">' + wrapSvgText(seguro) + '</text>' +
-          '<text x="540" y="1180" text-anchor="middle" font-size="24" font-family="Arial" fill="white">Compartido desde ONYRA</text>' +
-        '</svg>';
+  console.log("STATUS:", response.status);
 
-      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    }
+  const rawText = await response.text();
+  console.log("RESPUESTA CRUDA:", rawText);
 
+  let data;
+  try {
+    data = JSON.parse(rawText);
+  } catch (e) {
+    throw new Error("La respuesta no es JSON válido");
+  }
+
+  console.log("JSON PARSEADO:", data);
+
+  if (!response.ok) {
+    throw new Error("La API devolvió error " + response.status);
+  }
+
+  if (!data.imageUrl) {
+    throw new Error("La respuesta no trae imageUrl");
+  }
+
+  return data.imageUrl;
+}
     async function submitDream() {
       try {
         const texto = dreamText.value.trim();
