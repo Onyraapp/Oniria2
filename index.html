@@ -107,6 +107,8 @@
   </div>
 
   <script>
+    const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+
     let lastImageUrl = "";
     let currentDream = {};
 
@@ -120,203 +122,107 @@
       statusEl.textContent = texto;
     }
 
-    function escapeXml(str) {
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
-    }
+    async function generateAIImage(texto) {
+      const response = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          dream: texto
+        })
+      });
 
-    function wrapSvgText(text) {
-      const words = text.split(/\s+/);
-      const lines = [];
-      let line = "";
+      const data = await response.json();
+      console.log("Respuesta worker:", data);
 
-      for (let i = 0; i < words.length; i++) {
-        const testLine = line ? line + " " + words[i] : words[i];
-        if (testLine.length > 38) {
-          if (line) lines.push(line);
-          line = words[i];
-        } else {
-          line = testLine;
-        }
+      if (!response.ok) {
+        throw new Error(data.error || data.details?.error?.message || "La API devolvió error " + response.status);
       }
 
-      if (line) lines.push(line);
-
-      let result = "";
-      for (let j = 0; j < lines.length; j++) {
-        const dy = j === 0 ? 0 : 48;
-        result += '<tspan x="100" dy="' + dy + '">' + lines[j] + '</tspan>';
+      if (!data.imageUrl) {
+        throw new Error("La respuesta no trajo imageUrl");
       }
-      return result;
+
+      return data.imageUrl;
     }
 
-async function generateAIImage(texto) {
-  const response = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      dream: texto
-    })
-  });
-
-  const data = await response.json();
-  console.log("Respuesta worker:", data);
-
-  if (!response.ok) {
-    throw new Error(data.error || "La API devolvió error " + response.status);
-  }
-
-  if (!data.imageUrl) {
-    throw new Error("La respuesta no trajo imageUrl");
-  }
-
-  return data.imageUrl;
-}
     async function submitDream() {
-  try {
-    const texto = dreamText.value.trim();
+      try {
+        const texto = dreamText.value.trim();
 
-    if (!texto) {
-      alert("Escribí tu sueño primero.");
-      return;
+        if (!texto) {
+          alert("Escribí tu sueño primero.");
+          return;
+        }
+
+        setStatus("Generando imagen IA...");
+        generateBtn.disabled = true;
+
+        const imageUrl = await generateAIImage(texto);
+
+        currentDream = {
+          text: texto,
+          image: imageUrl
+        };
+        lastImageUrl = imageUrl;
+
+        dreamImage.onload = function () {
+          setStatus("Imagen generada.");
+          generateBtn.disabled = false;
+        };
+
+        dreamImage.onerror = function () {
+          setStatus("La imagen llegó pero no se pudo mostrar.");
+          generateBtn.disabled = false;
+          alert("La imagen llegó pero no se pudo mostrar.");
+        };
+
+        dreamImage.src = imageUrl;
+        dreamImage.style.display = "block";
+      } catch (error) {
+        console.error("Error en submitDream:", error);
+        setStatus("Error al generar imagen: " + error.message);
+        generateBtn.disabled = false;
+        alert("Error al generar imagen: " + error.message);
+      }
     }
 
-    setStatus("Generando imagen IA...");
-
-    const imageUrl = await generateAIImage(texto);
-
-    currentDream = {
-      text: texto,
-      image: imageUrl
-    };
-    lastImageUrl = imageUrl;
-
-    dreamImage.onload = function () {
-      setStatus("Imagen generada.");
-    };
-
-    dreamImage.onerror = function () {
-      setStatus("La imagen llegó pero no se pudo mostrar.");
-      alert("La imagen llegó pero no se pudo mostrar.");
-    };
-
-    dreamImage.src = imageUrl;
-    dreamImage.style.display = "block";
-  } catch (error) {
-    console.error("Error en submitDream:", error);
-    setStatus("Error al generar imagen: " + error.message);
-    alert("Error al generar imagen: " + error.message);
-  }
-}
-      async function generateAIImage(texto) {
-  const response = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      dream: texto
-    })
-  });
-
-  const data = await response.json();
-  console.log("Respuesta worker:", data);
-
-  if (!response.ok) {
-    throw new Error(data.error || "La API devolvió error " + response.status);
-  }
-
-  if (!data.imageUrl) {
-    throw new Error("La respuesta no trajo imageUrl");
-  }
-
-  return data.imageUrl;
-}
-    }
-async function generateAIImage(texto) {
-  const response = await fetch("ACA_VA_TU_URL_DEL_WORKER", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      prompt: texto
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error("La API devolvió error " + response.status);
-  }
-
-  const data = await response.json();
-
-  if (!data.imageUrl) {
-    throw new Error("La respuesta no trae imageUrl");
-  }
-
-  return data.imageUrl;
-}
     async function urlToBlob(url) {
       const response = await fetch(url);
       return await response.blob();
     }
 
-  async function shareDream() {
-  try {
-    const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
-    const imageUrl = lastImageUrl || currentDream.image;
+    async function shareDream() {
+      try {
+        const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
+        const imageUrl = lastImageUrl || currentDream.image;
 
-    if (!imageUrl) {
-      alert("Primero generá una imagen.");
-      return;
-    }
+        if (!imageUrl) {
+          alert("Primero generá una imagen.");
+          return;
+        }
 
-    setStatus("Preparando para compartir...");
+        setStatus("Preparando para compartir...");
 
-    const blob = await urlToBlob(imageUrl);
-    const file = new File([blob], "onyra-sueno.png", {
-      type: blob.type || "image/png"
-    });
+        const blob = await urlToBlob(imageUrl);
+        const file = new File([blob], "onyra-sueno.png", {
+          type: blob.type || "image/png"
+        });
 
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        title: "Mi sueño en ONYRA",
-        text: texto,
-        files: [file]
-      });
-      setStatus("Imagen compartida.");
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = "onyra-sueno.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setStatus("Tu navegador no permite compartir directo. Se descargó la imagen.");
-  } catch (error) {
-    console.error("Error en shareDream:", error);
-    setStatus("No se pudo compartir la imagen.");
-    alert("No se pudo compartir la imagen.");
-  }
-}
-
-async function urlToBlob(url) {
-  const response = await fetch(url);
-  return await response.blob();
-}
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "Mi sueño en ONYRA",
+            text: texto,
+            files: [file]
+          });
+          setStatus("Imagen compartida.");
+          return;
+        }
 
         const link = document.createElement("a");
         link.href = imageUrl;
-        link.download = "onyra-sueno.svg";
+        link.download = "onyra-sueno.png";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
