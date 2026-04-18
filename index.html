@@ -189,33 +189,41 @@
   return imageUrl;
 }
     async function submitDream() {
-      try {
-        const texto = dreamText.value.trim();
+  try {
+    const texto = dreamText.value.trim();
 
-        if (!texto) {
-          alert("Escribí tu sueño primero.");
-          return;
-        }
-   
-        setStatus("Generando imagen...");
+    if (!texto) {
+      alert("Escribí tu sueño primero.");
+      return;
+    }
 
-        const imageUrl = await generateAIImage(texto);
+    setStatus("Generando imagen IA...");
 
-        currentDream = {
-          text: texto,
-          image: imageUrl
-        };
-        lastImageUrl = imageUrl;
+    const imageUrl = await generateAIImage(texto);
 
-        dreamImage.src = imageUrl;
-        dreamImage.style.display = "block";
+    currentDream = {
+      text: texto,
+      image: imageUrl
+    };
+    lastImageUrl = imageUrl;
 
-        setStatus("Imagen generada.");
-      } catch (error) {
-        console.error("Error en submitDream:", error);
-        setStatus("Error al generar imagen.");
-        alert("No se pudo generar la imagen.");
-      }
+    dreamImage.onload = function () {
+      setStatus("Imagen generada.");
+    };
+
+    dreamImage.onerror = function () {
+      setStatus("La imagen llegó pero no se pudo mostrar.");
+      alert("La imagen llegó pero no se pudo mostrar.");
+    };
+
+    dreamImage.src = imageUrl;
+    dreamImage.style.display = "block";
+  } catch (error) {
+    console.error("Error en submitDream:", error);
+    setStatus("Error al generar imagen: " + error.message);
+    alert("Error al generar imagen: " + error.message);
+  }
+}
       async function generateAIImage(texto) {
   const response = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
     method: "POST",
