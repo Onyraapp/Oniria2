@@ -337,37 +337,26 @@
       updateFreeStatus();
       alert('Límite diario reseteado.');
     }
-   function getDreamImage(text){
-  const t = text.toLowerCase();
+   async function generateDreamImage(text){
+  const response = await fetch("https://TU-BACKEND.workers.dev/generate-image", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ dream: text })
+  });
 
-  if(t.includes('persegu') || t.includes('huia') || t.includes('corria')){
-    return "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop";
+  if(!response.ok){
+    throw new Error("No se pudo generar la imagen");
   }
 
-  if(t.includes('volar') || t.includes('volando')){
-    return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop";
+  const data = await response.json();
+
+  if(!data.imageUrl){
+    throw new Error("Respuesta sin imageUrl");
   }
 
-  if(t.includes('agua') || t.includes('mar')){
-    return "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1200&auto=format&fit=crop";
-  }
-
-  if(t.includes('oscuro') || t.includes('sombra') || t.includes('noche')){
-    return "https://images.unsplash.com/photo-1511300636408-a63a89df3482?q=80&w=1200&auto=format&fit=crop";
-  }
-
-  if(t.includes('fuego') || t.includes('incendio')){
-    return "https://images.unsplash.com/photo-1499346030926-9a72daac6c63?q=80&w=1200&auto=format&fit=crop";
-  }
-
-  // 👇 fallback random (IMPORTANTE)
-  const fallback = [
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200",
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200",
-    "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1200"
-  ];
-
-  return fallback[Math.floor(Math.random() * fallback.length)];
+  return data.imageUrl;
 }
     function submitDream(){
   const text = document.getElementById('dreamInput').value.trim();
