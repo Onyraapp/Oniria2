@@ -231,11 +231,32 @@
     </div>
     <img id="dreamImage" style="width:100%; border-radius:16px; margin-bottom:15px;" />
     <!-- RESULT -->
-    <div class="screen" id="s-result">
-      <div class="topbar">
-        <button class="btn-secondary" onclick="go('home')" style="margin-top:0;padding:10px 12px;">← Inicio</button>
-        <div class="brand">Resultado</div>
-      </div>
+   <div class="screen" id="s-result">
+  <div class="topbar">
+    <button class="btn-secondary" onclick="go('home')" style="margin-top:0;padding:10px 12px;">← Inicio</button>
+    <div class="brand">Resultado</div>
+  </div>
+
+  <div class="card">
+    <img id="dreamImage" style="width:100%; border-radius:16px; margin-bottom:15px;" />
+
+    <div class="section-label">Título</div>
+    <div class="result-title" id="resultTitle">Un sueño en movimiento</div>
+
+    <div class="section-label">Resumen</div>
+    <div class="quote" id="resultQuote">“Tu sueño parece querer decirte algo.”</div>
+
+    <div class="section-label">Interpretación</div>
+    <p id="resultText">
+      Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar.
+    </p>
+  </div>
+
+  <div class="row">
+    <button class="btn-secondary" onclick="saveCurrentDream()">Guardar</button>
+    <button class="btn-main" onclick="go('home')">Volver</button>
+  </div>
+</div>
 
       <div class="card">
         <div class="section-label">Título</div>
