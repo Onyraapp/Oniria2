@@ -358,7 +358,7 @@
 
   return data.imageUrl;
 }
-    function submitDream(){
+async function submitDream(){
   const text = document.getElementById('dreamInput').value.trim();
 
   if(!text){
@@ -391,17 +391,28 @@
     quote: result.quote,
     interpretation: result.interpretation,
     date: new Date().toLocaleString(),
-    image: getDreamImage(text)
+    image: ""
   };
 
   document.getElementById('resultTitle').innerText = result.title;
   document.getElementById('resultQuote').innerText = "“" + result.quote + "”";
   document.getElementById('resultText').innerText = result.interpretation;
-  document.getElementById('dreamImage').src = currentDream.image;
+  document.getElementById('dreamImage').src = "";
+  document.getElementById('imageLoading').style.display = "block";
 
   go('result');
-}
 
+  try {
+    const imageUrl = await generateDreamImage(text);
+    currentDream.image = imageUrl;
+    document.getElementById('dreamImage').src = imageUrl;
+  } catch (err) {
+    console.error(err);
+    document.getElementById('resultText').innerText += " No se pudo generar la imagen en este intento.";
+  } finally {
+    document.getElementById('imageLoading').style.display = "none";
+  }
+}
    function buildInterpretation(text){
   const t = text.toLowerCase();
 
