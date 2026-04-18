@@ -213,10 +213,23 @@ try {
   }
 }
   function shareDream(){
-  if(!currentDream.image) return;
+  if(!currentDream || !currentDream.image){
+    alert("Todavía no hay imagen para compartir");
+    return;
+  }
 
-  navigator.clipboard.writeText(
-    "M
+  const text = `Soñé esto: ${currentDream.text}\n\n${currentDream.interpretation}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "Mi sueño en ONYRA",
+      text: text
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert("Texto copiado para compartir");
+  }
+}
 function showHistory(){
   const container = document.getElementById("historyList");
   container.innerHTML = "";
