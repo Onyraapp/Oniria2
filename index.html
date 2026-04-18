@@ -166,7 +166,8 @@ async function submitDream(){
   document.getElementById('dreamImage').src = "";
 
   go('result');
-
+const img = document.getElementById("dreamImage");
+const loading = document.getElementById("imageLoading");
  try {
   const imageUrl = await generateDreamImage(text);
   img.src = imageUrl;
