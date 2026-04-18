@@ -154,40 +154,35 @@
       return result;
     }
 
-   async function generateAIImage(texto) {
-  const response = await fetch("ACA_VA_TU_URL_DEL_WORKER", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      prompt: texto
-    })
+ async function generateAIImage(texto) {
+  const url = "ACA_VA_TU_URL_DEL_WORKER" + "?prompt=" + encodeURIComponent(texto);
+
+  const response = await fetch(url, {
+    method: "GET"
   });
 
-  console.log("STATUS:", response.status);
-
   const rawText = await response.text();
+  console.log("STATUS:", response.status);
   console.log("RESPUESTA CRUDA:", rawText);
 
-  let data;
+  let data = {};
   try {
     data = JSON.parse(rawText);
   } catch (e) {
     throw new Error("La respuesta no es JSON válido");
   }
 
-  console.log("JSON PARSEADO:", data);
-
   if (!response.ok) {
     throw new Error("La API devolvió error " + response.status);
   }
 
-  if (!data.imageUrl) {
-    throw new Error("La respuesta no trae imageUrl");
+  const imageUrl = data.imageUrl || data.image || data.url;
+
+  if (!imageUrl) {
+    throw new Error("La respuesta no trae imageUrl/image/url");
   }
 
-  return data.imageUrl;
+  return imageUrl;
 }
     async function submitDream() {
       try {
