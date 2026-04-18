@@ -53,8 +53,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-    #generateBtn { background: #7c3aed; color: white; }
-    #shareBtn { background: #10b981; color: white; }
+    .generate { background: #7c3aed; color: white; }
+    .share { background: #10b981; color: white; }
     #status {
       min-height: 24px;
       color: #d8d8df;
@@ -90,27 +90,22 @@
     <textarea id="dreamText" placeholder="Contá tu sueño..."></textarea>
 
     <div class="buttons">
-      <button id="generateBtn" type="button">Generar imagen</button>
-      <button id="shareBtn" type="button">Compartir mi sueño</button>
+      <button class="generate" type="button" onclick="submitDream()">Generar imagen</button>
+      <button class="share" type="button" onclick="shareDream()">Compartir mi sueño</button>
     </div>
 
-    <div id="status">Versión debug ONYRA cargada</div>
-
+    <div id="status">Versión click-fix cargada</div>
     <img id="dreamImage" alt="Imagen generada del sueño" />
-
     <div id="debug">Esperando prueba...</div>
   </div>
 
   <script>
     const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
-    const APP_VERSION = "ONYRA-DEBUG-18";
 
     let lastImageUrl = "";
     let currentDream = {};
 
     const dreamText = document.getElementById("dreamText");
-    const generateBtn = document.getElementById("generateBtn");
-    const shareBtn = document.getElementById("shareBtn");
     const statusEl = document.getElementById("status");
     const debugEl = document.getElementById("debug");
     const dreamImage = document.getElementById("dreamImage");
@@ -127,24 +122,20 @@
       const payload = { dream: texto };
 
       setDebug(
-        "Versión: " + APP_VERSION + "\n" +
-        "Worker: " + WORKER_URL + "\n" +
-        "Enviando payload:\n" +
+        "Worker: " + WORKER_URL + "\n\n" +
+        "Payload enviado:\n" +
         JSON.stringify(payload, null, 2)
       );
 
       const response = await fetch(WORKER_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
       const rawText = await response.text();
 
       setDebug(
-        "Versión: " + APP_VERSION + "\n" +
         "Status HTTP: " + response.status + "\n\n" +
         "Respuesta cruda:\n" + rawText
       );
@@ -157,12 +148,11 @@
       }
 
       if (!response.ok) {
-        const detail =
+        throw new Error(
           data?.error ||
           data?.details?.error?.message ||
-          data?.details?.error ||
-          ("HTTP " + response.status);
-        throw new Error(detail);
+          ("HTTP " + response.status)
+        );
       }
 
       if (!data.imageUrl) {
@@ -182,7 +172,6 @@
         }
 
         setStatus("Generando imagen IA...");
-        generateBtn.disabled = true;
         dreamImage.style.display = "none";
         dreamImage.removeAttribute("src");
 
@@ -193,14 +182,12 @@
 
         dreamImage.onload = function () {
           setStatus("Imagen generada.");
-          generateBtn.disabled = false;
-          setDebug(debugEl.textContent + "\n\nLa imagen cargó correctamente en pantalla.");
+          setDebug(debugEl.textContent + "\n\nLa imagen cargó correctamente.");
         };
 
         dreamImage.onerror = function () {
           setStatus("La imagen llegó pero no se pudo mostrar.");
-          generateBtn.disabled = false;
-          setDebug(debugEl.textContent + "\n\nError: el navegador no pudo renderizar la imagen.");
+          setDebug(debugEl.textContent + "\n\nError: el navegador no pudo mostrar la imagen.");
         };
 
         dreamImage.src = imageUrl;
@@ -208,8 +195,8 @@
       } catch (error) {
         console.error("Error en submitDream:", error);
         setStatus("Error al generar imagen.");
-        generateBtn.disabled = false;
         setDebug(debugEl.textContent + "\n\nError final:\n" + error.message);
+        alert("Error al generar imagen: " + error.message);
       }
     }
 
@@ -218,62 +205,49 @@
       return await response.blob();
     }
 
-  async function shareDream() {
-  try {
-    const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
-    const imageUrl = lastImageUrl || currentDream.image;
+    async function shareDream() {
+      try {
+        const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
+        const imageUrl = lastImageUrl || currentDream.image;
 
-    if (!imageUrl) {
-      alert("Primero generá una imagen.");
-      return;
+        if (!imageUrl) {
+          alert("Primero generá una imagen.");
+          return;
+        }
+
+        setStatus("Preparando para compartir...");
+
+        const blob = await urlToBlob(imageUrl);
+        const file = new File([blob], "onyra-sueno.png", {
+          type: blob.type || "image/png"
+        });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "Mi sueño en ONYRA",
+            text: texto,
+            files: [file]
+          });
+          setStatus("Imagen compartida.");
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.href = imageUrl;
+        link.download = "onyra-sueno.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setStatus("Tu navegador no permite compartir directo. Se descargó la imagen.");
+      } catch (error) {
+        console.error("Error en shareDream:", error);
+        setStatus("No se pudo compartir la imagen.");
+        setDebug(debugEl.textContent + "\n\nError compartir:\n" + error.message);
+      }
     }
 
-    setStatus("Preparando para compartir...");
-
-    const blob = await urlToBlob(imageUrl);
-    const file = new File([blob], "onyra-sueno.png", {
-      type: blob.type || "image/png"
-    });
-
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        title: "Mi sueño en ONYRA",
-        text: texto,
-        files: [file]
-      });
-      setStatus("Imagen compartida.");
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = "onyra-sueno.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setStatus("Tu navegador no permite compartir directo. Se descargó la imagen.");
-  } catch (error) {
-    console.error("Error en shareDream:", error);
-    setStatus("No se pudo compartir la imagen.");
-    alert("No se pudo compartir la imagen.");
-  }
-}
-
-async function urlToBlob(url) {
-  const response = await fetch(url);
-  return await response.blob();
-}
-    }
-
-    generateBtn.addEventListener("click", submitDream);
-    shareBtn.addEventListener("click", shareDream);
-
-    setDebug(
-      "Versión: " + APP_VERSION + "\n" +
-      "Página cargada correctamente.\n" +
-      "Si no ves este texto, GitHub Pages está mostrando una versión vieja."
-    );
+    setDebug("Página cargada correctamente. Probá generar.");
   </script>
 </body>
 </html>
