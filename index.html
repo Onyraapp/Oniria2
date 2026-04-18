@@ -178,7 +178,28 @@
           alert("Escribí tu sueño primero.");
           return;
         }
-   async function generateAIImage(texto) {
+   
+        setStatus("Generando imagen...");
+
+        const imageUrl = await generateAIImage(texto);
+
+        currentDream = {
+          text: texto,
+          image: imageUrl
+        };
+        lastImageUrl = imageUrl;
+
+        dreamImage.src = imageUrl;
+        dreamImage.style.display = "block";
+
+        setStatus("Imagen generada.");
+      } catch (error) {
+        console.error("Error en submitDream:", error);
+        setStatus("Error al generar imagen.");
+        alert("No se pudo generar la imagen.");
+      }
+    }
+async function generateAIImage(texto) {
   const response = await fetch("ACA_VA_TU_URL_DEL_WORKER", {
     method: "POST",
     headers: {
@@ -201,27 +222,6 @@
 
   return data.imageUrl;
 }
-        setStatus("Generando imagen...");
-
-        const imageUrl = await generateAIImage(texto);
-
-        currentDream = {
-          text: texto,
-          image: imageUrl
-        };
-        lastImageUrl = imageUrl;
-
-        dreamImage.src = imageUrl;
-        dreamImage.style.display = "block";
-
-        setStatus("Imagen generada.");
-      } catch (error) {
-        console.error("Error en submitDream:", error);
-        setStatus("Error al generar imagen.");
-        alert("No se pudo generar la imagen.");
-      }
-    }
-
     async function urlToBlob(url) {
       const response = await fetch(url);
       return await response.blob();
