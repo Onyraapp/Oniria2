@@ -108,6 +108,23 @@ function submitDream(){
     return;
   }
 
+  let used = localStorage.getItem('used') || 0;
+
+  if(parseInt(used) >= 1){
+    alert("Ya usaste tu sueño gratis hoy");
+    return;
+  }
+
+  localStorage.setItem('used', parseInt(used) + 1);
+
+  document.getElementById('resultText').innerText =
+    "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay elementos que indican tensión, curiosidad o algo que tu mente está intentando entender más profundamente.";
+
+  saveDream(text);
+
+  go('result');
+}
+
   document.getElementById('resultText').innerText =
    "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay elementos que indican tensión, curiosidad o algo que tu mente está intentando entender más profundamente."
 
