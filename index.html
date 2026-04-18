@@ -1,665 +1,160 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ONYRA</title>
-  <style>
-    :root{
-      --bg:#0b0b12;
-      --bg2:#141625;
-      --panel:#191c2c;
-      --line:#2c314a;
-      --text:#f5f7ff;
-      --muted:#a8afc7;
-      --accent:#7C5CFF;
-      --accent2:#a78bfa;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONYRA</title>
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Arial,sans-serif;
-      background:
-        radial-gradient(120% 60% at 50% 0%, rgba(124,92,255,.20), transparent 50%),
-        linear-gradient(180deg, var(--bg2), var(--bg));
-      color:var(--text);
-    }
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#0b0b12;
+  color:white;
+}
 
-    .app{
-      width:100%;
-      max-width:430px;
-      min-height:100vh;
-      margin:0 auto;
-      padding:22px 18px 24px;
-    }
+.screen { display:none; padding:20px; }
+.screen.active { display:block; }
 
-    .screen{display:none;min-height:100vh}
-    .screen.active{display:block}
+button {
+  padding:12px;
+  margin-top:10px;
+  width:100%;
+  background:#7C5CFF;
+  border:none;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+}
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:18px;
-    }
+textarea {
+  width:100%;
+  height:150px;
+  margin-top:10px;
+  border-radius:10px;
+  padding:10px;
+}
 
-    .brand{
-      font-size:13px;
-      letter-spacing:.20em;
-      color:var(--muted);
-      font-weight:bold;
-    }
+.card {
+  background:#1a1a2e;
+  padding:15px;
+  border-radius:12px;
+}
 
-    .tag{
-      display:inline-block;
-      padding:7px 12px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      font-size:12px;
-      background:rgba(255,255,255,.03);
-    }
+img {
+  width:100%;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+</style>
 
-    .hero, .card, .history-item{
-      border:1px solid var(--line);
-      border-radius:20px;
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      box-shadow:0 16px 40px rgba(0,0,0,.22);
-    }
-
-    .hero{padding:24px 20px}
-    .card{padding:16px;margin-bottom:14px}
-    .history-item{padding:14px;margin-bottom:12px}
-
-    h1{
-      margin:0 0 10px;
-      font-size:34px;
-      line-height:1.08;
-      letter-spacing:-.02em;
-    }
-    h2{
-      margin:0 0 12px;
-      font-size:24px;
-      line-height:1.2;
-    }
-    h3{
-      margin:0 0 8px;
-      font-size:18px;
-    }
-
-    p{margin:0;line-height:1.7}
-    .muted{color:var(--muted)}
-    .accent{color:var(--accent2)}
-    .small{font-size:13px;color:var(--muted);margin-top:8px}
-    .section-label{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:#7f86a5;
-      margin-bottom:10px;
-    }
-
-    .btn-main,
-    .btn-secondary{
-      width:100%;
-      padding:14px 16px;
-      border-radius:14px;
-      cursor:pointer;
-      font-size:15px;
-      font-weight:bold;
-      margin-top:10px;
-    }
-
-    .btn-main{
-      border:none;
-      background:linear-gradient(135deg, var(--accent), #6175ff);
-      color:#fff;
-      box-shadow:0 12px 28px rgba(124,92,255,.28);
-    }
-
-    .btn-secondary{
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      border:1px solid var(--line);
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      margin-top:10px;
-    }
-    .row > *{flex:1}
-
-    textarea{
-      width:100%;
-      min-height:170px;
-      border-radius:16px;
-      padding:16px;
-      margin-top:12px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      color:var(--text);
-      font-size:15px;
-      line-height:1.7;
-      resize:none;
-      outline:none;
-    }
-
-    textarea::placeholder{color:#7f86a5}
-
-    .result-title{
-      font-size:26px;
-      line-height:1.2;
-      margin-bottom:10px;
-    }
-
-    .quote{
-      font-size:20px;
-      line-height:1.5;
-      border-left:3px solid var(--accent);
-      padding-left:12px;
-      margin-bottom:16px;
-    }
-
-    .history-date{
-      font-size:12px;
-      color:#7f86a5;
-      margin-bottom:8px;
-    }
-
-    .history-text{
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.65;
-    }
-
-    .empty{
-      text-align:center;
-      color:var(--muted);
-      padding:40px 18px;
-      border:1px dashed var(--line);
-      border-radius:18px;
-    }
-  </style>
 </head>
+
 <body>
-  <div class="app">
 
-    <!-- HOME -->
-    <div class="screen active" id="s-home">
-      <div class="topbar">
-        <div class="brand">ONYRA</div>
-        <div class="tag" id="freeStatus">1 gratis hoy</div>
-      </div>
+<!-- HOME -->
 
-      <div class="hero">
-        <div class="tag">Diario onírico</div>
-        <div style="height:18px"></div>
-        <h1>¿Qué soñaste <span class="accent">anoche?</span></h1>
-        <p class="muted">
-          Registrá tu sueño, obtené una interpretación simbólica y empezá a construir tu propio mapa emocional.
-        </p>
-
-        <button class="btn-main" onclick="go('compose')">Contar mi sueño</button>
-
-        <div class="row">
-          <button class="btn-secondary" onclick="go('history')">Historial</button>
-          <button class="btn-secondary" onclick="resetDailyLimit()">Reset demo</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- COMPOSE -->
-    <div class="screen" id="s-compose">
-      <div class="topbar">
-        <button class="btn-secondary" onclick="go('home')" style="margin-top:0;padding:10px 12px;">← Volver</button>
-        <div class="brand">Nuevo sueño</div>
-      </div>
-
-      <div class="card">
-        <img id="dreamImage" style="width:100%; border-radius:16px; margin-bottom:15px;" />
-
-<div id="imageLoading" style="display:none; color:#aaa; font-size:14px;">
-  Generando imagen del sueño...
+<div class="screen active" id="s-home">
+  <h1>ONYRA</h1>
+  <p>¿Qué soñaste anoche?</p>
+  <button onclick="go('compose')">Contar mi sueño</button>
 </div>
-        <h2>Contá tu sueño</h2>
-        <p class="muted">
-          Escribilo como si se lo contaras a alguien: lugares, personas, sensaciones, colores y detalles raros.
-        </p>
 
-        <textarea id="dreamInput" placeholder="Ejemplo: soñé que caminaba por un pasillo oscuro en mi casa de la infancia y había una luz al fondo..."></textarea>
-        <div class="small">Cuanto más detalle, mejor se siente el resultado.</div>
+<!-- COMPOSE -->
 
-        <button class="btn-main" onclick="submitDream()">Interpretar</button>
-      </div>
-    </div>
-    <!-- RESULT -->
-   <div class="screen" id="s-result">
-  <div class="topbar">
-    <button class="btn-secondary" onclick="go('home')" style="margin-top:0;padding:10px 12px;">← Inicio</button>
-    <div class="brand">Resultado</div>
-  </div>
+<div class="screen" id="s-compose">
+  <h2>Contá tu sueño</h2>
+  <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea>
+  <button onclick="submitDream()">Interpretar</button>
+  <button onclick="go('home')">Volver</button>
+</div>
 
+<!-- RESULT -->
+
+<div class="screen" id="s-result">
   <div class="card">
-    <img id="dreamImage" style="width:100%; border-radius:16px; margin-bottom:15px;" />
 
-    <div class="section-label">Título</div>
-    <div class="result-title" id="resultTitle">Un sueño en movimiento</div>
-<div id="imageLoading" style="display:none; color:#a8afc7; font-size:13px; margin-bottom:12px;">
-  Generando imagen del sueño...
-</div>
-    <div class="section-label">Resumen</div>
-    <div class="quote" id="resultQuote">“Tu sueño parece querer decirte algo.”</div>
+```
+<img id="dreamImage" />
 
-    <div class="section-label">Interpretación</div>
-    <p id="resultText">
-      Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar.
-    </p>
+<div id="imageLoading">Generando imagen...</div>
+
+<h3 id="resultTitle"></h3>
+<p id="resultText"></p>
+```
+
   </div>
 
-  <div class="row">
-    <button class="btn-secondary" onclick="saveCurrentDream()">Guardar</button>
-    <button class="btn-main" onclick="go('home')">Volver</button>
-  </div>
+<button onclick="go('home')">Volver</button>
+
 </div>
 
-      <div class="card">
-        <div class="section-label">Título</div>
-        <div class="result-title" id="resultTitle">Un sueño en movimiento</div>
+<script>
 
-        <div class="section-label">Resumen</div>
-        <div class="quote" id="resultQuote">“Tu sueño parece querer decirte algo.”</div>
-
-        <div class="section-label">Interpretación</div>
-        <p id="resultText">
-          Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar.
-        </p>
-      </div>
-
-      <div class="row">
-        <button class="btn-secondary" onclick="saveCurrentDream()">Guardar</button>
-        <button class="btn-main" onclick="go('home')">Volver</button>
-      </div>
-    </div>
-
-    <!-- HISTORY -->
-    <div class="screen" id="s-history">
-      <div class="topbar">
-        <button class="btn-secondary" onclick="go('home')" style="margin-top:0;padding:10px 12px;">← Inicio</button>
-        <div class="brand">Historial</div>
-      </div>
-
-      <div class="card">
-        <h2>Tus sueños guardados</h2>
-        <p class="muted">Volvé a leer tus registros cuando quieras.</p>
-      </div>
-
-      <div id="historyList"></div>
-    </div>
-
-  </div>
-
-  <script>
-    let currentDream = null;
-
-    function go(s){
-      document.querySelectorAll('.screen').forEach(function(el){
-        el.classList.remove('active');
-      });
-
-      const target = document.getElementById('s-' + s);
-
-      if(!target){
-        document.body.innerHTML = "Error: pantalla no encontrada " + s;
-        return;
-      }
-
-      target.classList.add('active');
-
-      if(s === 'history') renderHistory();
-      if(s === 'home') updateFreeStatus();
-    }
-
-    function updateFreeStatus(){
-      let today = new Date().toDateString();
-      let lastDay = localStorage.getItem('day');
-      let used = parseInt(localStorage.getItem('used') || '0');
-
-      if(lastDay !== today){
-        used = 0;
-        localStorage.setItem('used', '0');
-        localStorage.setItem('day', today);
-      }
-
-      const el = document.getElementById('freeStatus');
-      el.textContent = used >= 1 ? 'sin gratis hoy' : '1 gratis hoy';
-    }
-
-    function resetDailyLimit(){
-      localStorage.removeItem('used');
-      localStorage.removeItem('day');
-      updateFreeStatus();
-      alert('Límite diario reseteado.');
-    }
-   async function generateDreamImage(text){
-  const response = await fetch("https://TU-BACKEND.workers.dev/generate-image", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ dream: text })
-  });
-
-  if(!response.ok){
-    throw new Error("No se pudo generar la imagen");
-  }
-
-  const data = await response.json();
-
-  if(!data.imageUrl){
-    throw new Error("Respuesta sin imageUrl");
-  }
-
-  return data.imageUrl;
+function go(s){
+  document.querySelectorAll('.screen').forEach(e => e.classList.remove('active'));
+  document.getElementById('s-' + s).classList.add('active');
 }
-async function submitDream(){
-  const text = document.getElementById('dreamInput').value.trim();
 
-  if(!text){
-    alert("Escribí un sueño");
-    return;
-  }
-
-  localStorage.setItem('used', '0'); // temporal para testear
-
-  const result = buildInterpretation(text);
-
-  currentDream = {
-    text,
-    title: result.title,
-    quote: result.quote,
-    interpretation: result.interpretation,
-    image: ""
-  };
-
-  document.getElementById('resultTitle').innerText = result.title;
-  document.getElementById('resultQuote').innerText = "“" + result.quote + "”";
-  document.getElementById('resultText').innerText = result.interpretation;
-
-  const img = document.getElementById('dreamImage');
-  const loading = document.getElementById('imageLoading');
-
-  img.src = "";
-  loading.style.display = "block";
-
-  go('result');
-
-  try {
-    const imageUrl = await generateDreamImage(text);
-    img.src = imageUrl;
-    currentDream.image = imageUrl;
-  } catch (e) {
-    console.error(e);
-    document.getElementById('resultText').innerText += " (Error generando imagen)";
-  }
-
-  loading.style.display = "none";
-}
-    async function generateDreamImage(text){
-  const response = await fetch("https://onyra2-worker.almacenmujica.workers.dev", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ dream: text })
-  });
-
-  const data = await response.json();
-
-  if(!data.imageUrl){
-    throw new Error("No image");
-  }
-
-  return data.imageUrl;
-}
-   function buildInterpretation(text){
+function buildInterpretation(text){
   const t = text.toLowerCase();
 
-  if(
-    t.includes('persegu') ||
-    t.includes('corria de') ||
-    t.includes('huia') ||
-    t.includes('me seguian')
-  ){
+  if(t.includes('persegu')){
     return {
       title: "La persecución silenciosa",
-      quote: "Hay algo que evitás, pero sigue detrás tuyo.",
-      interpretation: "Soñar que algo te persigue suele reflejar una tensión que no estás enfrentando directamente. Puede ser una decisión, un miedo o una situación que tu mente insiste en procesar."
+      interpretation: "Hay algo que estás evitando enfrentar."
     };
   }
 
-  if(
-    t.includes('volar') ||
-    t.includes('volando') ||
-    t.includes('volé')
-  ){
+  if(t.includes('volar')){
     return {
       title: "El impulso de escapar",
-      quote: "Querés ir más allá de tus límites actuales.",
-      interpretation: "Soñar que volás suele estar ligado a deseos de libertad, crecimiento o escape. Puede indicar una necesidad de salir de una situación que te limita."
-    };
-  }
-
-  if(
-    t.includes('muerte') ||
-    t.includes('morir') ||
-    t.includes('muerto')
-  ){
-    return {
-      title: "El final necesario",
-      quote: "Algo en vos está cambiando profundamente.",
-      interpretation: "Soñar con la muerte rara vez es literal. Suele representar el cierre de una etapa, una transformación interna o el final de una forma de ver o vivir algo."
-    };
-  }
-
-  if(
-    t.includes('dientes') ||
-    t.includes('muelas') ||
-    t.includes('se me caian los dientes')
-  ){
-    return {
-      title: "La fragilidad expuesta",
-      quote: "Hay inseguridades que buscan salir a la superficie.",
-      interpretation: "Soñar con dientes suele relacionarse con vulnerabilidad, imagen personal, miedo a perder control o dificultad para sostener una posición frente a otros."
-    };
-  }
-
-  if(
-    t.includes('tren') ||
-    t.includes('avion') ||
-    t.includes('colectivo') ||
-    t.includes('llegaba tarde') ||
-    t.includes('perdía el vuelo')
-  ){
-    return {
-      title: "El miedo a no llegar",
-      quote: "Sentís que algo importante puede escaparse.",
-      interpretation: "Los sueños con viajes, transportes o demoras suelen reflejar ansiedad por oportunidades, tiempos vitales o decisiones que parecen correr más rápido que vos."
-    };
-  }
-
-  if(
-    t.includes('caer') ||
-    t.includes('caía') ||
-    t.includes('caida')
-  ){
-    return {
-      title: "La caída interminable",
-      quote: "Algo en vos siente que perdió estabilidad o control.",
-      interpretation: "Soñar con caer suele aparecer en momentos de presión, inseguridad o vértigo emocional. No necesariamente habla de un peligro real, sino de una sensación interna de no poder sostener algo como antes."
-    };
-  }
-
-  if(
-    t.includes('agua') ||
-    t.includes('mar') ||
-    t.includes('rio') ||
-    t.includes('río')
-  ){
-    return {
-      title: "Debajo del agua",
-      quote: "Las emociones profundas buscan una forma de mostrarse.",
-      interpretation: "El agua suele representar el mundo emocional. Cuando aparece en sueños, puede señalar sensibilidad, confusión o una necesidad de ordenar sentimientos que todavía no encontraron una salida clara."
-    };
-  }
-
-  if(
-    t.includes('fuego') ||
-    t.includes('incendio') ||
-    t.includes('quemaba')
-  ){
-    return {
-      title: "La transformación ardiente",
-      quote: "Algo intenso en vos pide cambio.",
-      interpretation: "El fuego suele simbolizar transformación, impulso, deseo o crisis. Puede señalar una emoción fuerte que está creciendo o una etapa que necesita consumirse para dar lugar a otra."
-    };
-  }
-
-  if(
-    t.includes('casa') &&
-    (t.includes('oscuro') || t.includes('oscura') || t.includes('sombra'))
-  ){
-    return {
-      title: "La casa en sombras",
-      quote: "Tu mente vuelve a un lugar conocido, pero ya no lo siente igual.",
-      interpretation: "Este sueño parece vinculado a recuerdos, zonas emocionales antiguas o aspectos internos que todavía conservan peso. La oscuridad dentro de un espacio familiar suele reflejar algo conocido que hoy genera inquietud o incertidumbre."
-    };
-  }
-
-  if(
-    t.includes('infancia') ||
-    t.includes('escuela') ||
-    t.includes('colegio') ||
-    t.includes('mi casa de chico')
-  ){
-    return {
-      title: "El regreso al origen",
-      quote: "Algo del pasado sigue teniendo eco en el presente.",
-      interpretation: "Soñar con espacios o escenas de la infancia suele señalar recuerdos emocionales activos, viejos patrones o partes de vos que todavía buscan ser entendidas desde otro lugar."
-    };
-  }
-
-  if(
-    t.includes('examen') ||
-    t.includes('prueba') ||
-    t.includes('no estudie') ||
-    t.includes('no estudié')
-  ){
-    return {
-      title: "La prueba interior",
-      quote: "Te sentís evaluado, incluso cuando nadie te mira.",
-      interpretation: "Los sueños con exámenes o pruebas suelen reflejar autoexigencia, miedo a no estar a la altura o presión por responder correctamente frente a una situación importante."
-    };
-  }
-
-  if(
-    t.includes('desnudo') ||
-    t.includes('sin ropa') ||
-    t.includes('desnuda')
-  ){
-    return {
-      title: "La exposición total",
-      quote: "Hay una parte de vos que se siente demasiado visible.",
-      interpretation: "Soñar con estar desnudo suele vincularse con vergüenza, vulnerabilidad o miedo a ser visto tal como uno es. También puede reflejar autenticidad forzada o sensación de desprotección."
-    };
-  }
-
-  if(
-    t.includes('ladron') ||
-    t.includes('robo') ||
-    t.includes('me robaban') ||
-    t.includes('me robó')
-  ){
-    return {
-      title: "Lo que sentís que te quitan",
-      quote: "Hay algo valioso que temés perder.",
-      interpretation: "Los sueños con robos suelen reflejar temor a perder control, energía, tiempo, seguridad o algo importante para tu identidad. También pueden señalar sensación de invasión emocional."
-    };
-  }
-
-  if(
-    t.includes('pasillo') ||
-    t.includes('puerta') ||
-    t.includes('escalera')
-  ){
-    return {
-      title: "El pasaje oculto",
-      quote: "Tu sueño gira alrededor de una búsqueda que todavía no termina.",
-      interpretation: "Los pasillos, puertas y recorridos largos suelen aparecer cuando la mente está atravesando una transición. Sugieren búsqueda, duda o la sensación de que algo importante todavía no se termina de revelar."
-    };
-  }
-
-  if(
-    t.includes('perder') ||
-    t.includes('perdí') ||
-    t.includes('no encontraba') ||
-    t.includes('no encontre') ||
-    t.includes('no encontré')
-  ){
-    return {
-      title: "La sensación de pérdida",
-      quote: "Algo importante parece estar escapándose.",
-      interpretation: "Perder algo en un sueño suele reflejar inseguridad o miedo a perder control sobre una situación, una relación o una parte de tu vida. También puede señalar desorientación interna."
+      interpretation: "Buscás libertad o salir de una situación."
     };
   }
 
   return {
     title: "Un sueño en movimiento",
-    quote: "Hay algo en tu mente que insiste en ser entendido.",
-    interpretation: "Tu sueño parece reflejar emociones internas que todavía no terminaste de procesar. Hay algo en tu mente que busca expresarse a través de imágenes simbólicas, tensión emocional o escenas que dejan una sensación difícil de ignorar."
+    interpretation: "Tu mente está procesando emociones internas."
   };
 }
-    function saveCurrentDream(){
-  if(!currentDream){
-    alert("No hay sueño para guardar");
-    return;
+
+async function generateDreamImage(text){
+  const res = await fetch("https://onyra2-worker.almacenmujica.workers.dev", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ dream: text })
+  });
+
+  const data = await res.json();
+  return data.imageUrl;
+}
+
+async function submitDream(){
+  const text = document.getElementById('dreamInput').value;
+
+  const result = buildInterpretation(text);
+
+  document.getElementById('resultTitle').innerText = result.title;
+  document.getElementById('resultText').innerText = result.interpretation;
+
+  document.getElementById('imageLoading').style.display = "block";
+  document.getElementById('dreamImage').src = "";
+
+  go('result');
+
+  try {
+    const img = await generateDreamImage(text);
+    document.getElementById('dreamImage').src = img;
+  } catch(e){
+    document.getElementById('resultText').innerText += " (Error generando imagen)";
   }
 
-  let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
-  dreams.unshift(currentDream);
-  localStorage.setItem('dreams', JSON.stringify(dreams));
-
-  go('history');
+  document.getElementById('imageLoading').style.display = "none";
 }
-    function renderHistory(){
-      const container = document.getElementById('historyList');
-      const dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
 
-      if(!container){
-        alert('No existe historyList en el HTML');
-        return;
-      }
+</script>
 
-      container.innerHTML = "";
-
-      if(!dreams.length){
-        container.innerHTML = '<div class="empty">Todavía no guardaste sueños.</div>';
-        return;
-      }
-
-      dreams.forEach(function(d){
-        const div = document.createElement('div');
-        div.className = 'history-item';
-        div.innerHTML =
-          '<div class="history-date">' + d.date + '</div>' +
-          '<h3>' + (d.title || 'Sueño guardado') + '</h3>' +
-          '<div class="history-text">' + d.text + '</div>';
-        container.appendChild(div);
-      });
-    }
-
-    updateFreeStatus();
-  </script>
 </body>
 </html>
