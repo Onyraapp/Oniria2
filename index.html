@@ -160,9 +160,10 @@ async function submitDream(){
 
   go('result');
 
-  try {
-    const img = await generateDreamImage(text);
-    document.getElementById('dreamImage').src = img;
+ try {
+  const imageUrl = await generateDreamImage(text);
+  img.src = imageUrl;
+  currentDream.image = imageUrl;
 } catch(e) {
   console.error("error imagen:", e);
   document.getElementById('resultText').innerText += " (La imagen IA no pudo generarse en este momento. Se mantiene la interpretación.)";
