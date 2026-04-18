@@ -1,128 +1,91 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ONYRA</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0f0f14;
+      background: #111218;
       color: white;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 30px 15px;
+      padding: 24px;
     }
 
     .app {
-      width: 100%;
-      max-width: 760px;
-      background: #171720;
-      border-radius: 18px;
+      max-width: 720px;
+      margin: 0 auto;
+      background: #1a1c24;
+      border-radius: 16px;
       padding: 24px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
 
     h1 {
       margin: 0 0 8px;
-      font-size: 32px;
       text-align: center;
     }
 
     .subtitle {
       text-align: center;
       color: #c8c8d0;
-      margin-bottom: 22px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
+      margin-bottom: 20px;
     }
 
     textarea {
       width: 100%;
       min-height: 160px;
-      resize: vertical;
-      border: 1px solid #33384a;
-      border-radius: 14px;
       padding: 14px;
-      font-size: 16px;
-      background: #101018;
+      border-radius: 12px;
+      border: 1px solid #3a3f52;
+      background: #0f1118;
       color: white;
-      outline: none;
-    }
-
-    textarea:focus {
-      border-color: #7c3aed;
+      font-size: 16px;
+      resize: vertical;
     }
 
     .buttons {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-top: 18px;
-      margin-bottom: 18px;
+      margin-top: 16px;
+      margin-bottom: 16px;
     }
 
     button {
       border: none;
       border-radius: 12px;
-      padding: 13px 18px;
+      padding: 12px 18px;
       font-size: 15px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .primary {
+    #generateBtn {
       background: #7c3aed;
       color: white;
     }
 
-    .secondary {
+    #shareBtn {
       background: #10b981;
       color: white;
     }
 
-    .status {
+    #status {
       min-height: 24px;
-      color: #d7d7df;
-      margin-bottom: 16px;
-    }
-
-    .image-wrap {
-      margin-top: 8px;
-      text-align: center;
+      color: #d8d8df;
+      margin-bottom: 14px;
     }
 
     #dreamImage {
       display: none;
       width: 100%;
-      max-width: 100%;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
-
-    .hint {
-      margin-top: 14px;
-      color: #a9a9b5;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .footer {
-      margin-top: 20px;
-      text-align: center;
-      color: #8d8d98;
-      font-size: 13px;
+      border-radius: 14px;
+      margin-top: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     }
   </style>
 </head>
@@ -131,76 +94,62 @@
     <h1>ONYRA</h1>
     <div class="subtitle">Descubrí qué dicen tus sueños</div>
 
-    <label for="dreamText">Contá tu sueño</label>
-    <textarea id="dreamText" placeholder="Ejemplo: soñé que caminaba por un bosque oscuro y encontraba una puerta iluminada..."></textarea>
+    <textarea id="dreamText" placeholder="Contá tu sueño..."></textarea>
 
     <div class="buttons">
-      <button class="primary" onclick="submitDream()">Generar imagen</button>
-      <button class="secondary" onclick="shareDream()">Compartir mi sueño</button>
+      <button id="generateBtn" type="button">Generar imagen</button>
+      <button id="shareBtn" type="button">Compartir mi sueño</button>
     </div>
 
-    <div id="status" class="status"></div>
+    <div id="status"></div>
 
-    <div class="image-wrap">
-      <img id="dreamImage" alt="Imagen del sueño generada por ONYRA" />
-    </div>
-
-    <div class="hint">
-      Esta versión está pensada para que funcione limpia y estable.<br>
-      Primero generá la imagen. Después usá compartir.
-    </div>
-
-    <div class="footer">
-      ONYRA
-    </div>
+    <img id="dreamImage" alt="Imagen generada del sueño">
   </div>
 
   <script>
     let lastImageUrl = "";
     let currentDream = {};
 
-    function setStatus(message) {
-      document.getElementById("status").textContent = message;
+    const dreamText = document.getElementById("dreamText");
+    const generateBtn = document.getElementById("generateBtn");
+    const shareBtn = document.getElementById("shareBtn");
+    const statusEl = document.getElementById("status");
+    const dreamImage = document.getElementById("dreamImage");
+
+    function setStatus(texto) {
+      statusEl.textContent = texto;
     }
 
-    function escapeHtml(text) {
-      return text
+    function escapeXml(str) {
+      return str
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(/'/g, "&apos;");
     }
 
     async function submitDream() {
       try {
-        const textArea = document.getElementById("dreamText");
-        const imageEl = document.getElementById("dreamImage");
-        const dreamText = textArea.value.trim();
+        const texto = dreamText.value.trim();
 
-        if (!dreamText) {
+        if (!texto) {
           alert("Escribí tu sueño primero.");
           return;
         }
 
         setStatus("Generando imagen...");
 
-        // =========
-        // VERSIÓN ESTABLE
-        // =========
-        // Esto genera una imagen demo linda y funcional.
-        // Así validamos botones, pantalla y compartir sin que falle todo.
-        const imageUrl = await generateDreamCard(dreamText);
+        const imageUrl = generateDreamImage(texto);
 
         currentDream = {
-          text: dreamText,
+          text: texto,
           image: imageUrl
         };
-
         lastImageUrl = imageUrl;
 
-        imageEl.src = imageUrl;
-        imageEl.style.display = "block";
+        dreamImage.src = imageUrl;
+        dreamImage.style.display = "block";
 
         setStatus("Imagen generada.");
       } catch (error) {
@@ -212,7 +161,7 @@
 
     async function shareDream() {
       try {
-        const text = document.getElementById("dreamText").value.trim() || "Mirá mi sueño en ONYRA";
+        const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
         const imageUrl = lastImageUrl || currentDream.image;
 
         if (!imageUrl) {
@@ -223,29 +172,26 @@
         setStatus("Preparando para compartir...");
 
         const blob = await urlToBlob(imageUrl);
-        const file = new File([blob], "onyra-sueno.png", {
-          type: blob.type || "image/png"
-        });
+        const file = new File([blob], "onyra-sueno.svg", { type: blob.type || "image/svg+xml" });
 
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             title: "Mi sueño en ONYRA",
-            text: text,
+            text: texto,
             files: [file]
           });
           setStatus("Imagen compartida.");
           return;
         }
 
-        // Fallback: descarga
         const link = document.createElement("a");
         link.href = imageUrl;
-        link.download = "onyra-sueno.png";
+        link.download = "onyra-sueno.svg";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        setStatus("Tu navegador no permite compartir directamente. Se descargó la imagen.");
+        setStatus("Tu navegador no permite compartir directo. Se descargó la imagen.");
       } catch (error) {
         console.error("Error en shareDream:", error);
         setStatus("No se pudo compartir la imagen.");
@@ -253,70 +199,54 @@
       }
     }
 
+    function generateDreamImage(texto) {
+      const seguro = escapeXml(texto);
+
+      const svg =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350">' +
+          '<rect width="1080" height="1350" fill="#1f1b4d"/>' +
+          '<rect x="60" y="60" width="960" height="1230" rx="36" fill="#2f2a6f"/>' +
+          '<text x="540" y="170" text-anchor="middle" font-size="64" font-family="Arial" fill="white" font-weight="bold">ONYRA</text>' +
+          '<text x="540" y="225" text-anchor="middle" font-size="28" font-family="Arial" fill="white">Tu sueño convertido en imagen</text>' +
+          '<text x="100" y="360" font-size="36" font-family="Arial" fill="white">' + wrapSvgText(seguro, 100, 360, 880, 48) + '</text>' +
+          '<text x="540" y="1180" text-anchor="middle" font-size="24" font-family="Arial" fill="white">Compartido desde ONYRA</text>' +
+        '</svg>';
+
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
+    function wrapSvgText(text, x, y, maxWidth, lineHeight) {
+      const words = text.split(/\s+/);
+      const lines = [];
+      let line = "";
+
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line ? line + " " + words[i] : words[i];
+        if (testLine.length > 38) {
+          lines.push(line);
+          line = words[i];
+        } else {
+          line = testLine;
+        }
+      }
+
+      if (line) lines.push(line);
+
+      let result = "";
+      for (let j = 0; j < lines.length; j++) {
+        const dy = j === 0 ? 0 : lineHeight;
+        result += '<tspan x="' + x + '" dy="' + dy + '">' + lines[j] + '</tspan>';
+      }
+      return result;
+    }
+
     async function urlToBlob(url) {
       const response = await fetch(url);
       return await response.blob();
     }
 
-    async function generateDreamCard(dreamText) {
-      const safeText = escapeHtml(dreamText);
-
-      const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350">
-          <defs>
-            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#0f172a"/>
-              <stop offset="55%" stop-color="#312e81"/>
-              <stop offset="100%" stop-color="#7c3aed"/>
-            </linearGradient>
-            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="10" stdDeviation="14" flood-opacity="0.3"/>
-            </filter>
-          </defs>
-
-          <rect width="1080" height="1350" fill="url(#bg)"/>
-
-          <circle cx="850" cy="220" r="120" fill="rgba(255,255,255,0.10)"/>
-          <circle cx="220" cy="1080" r="180" fill="rgba(255,255,255,0.06)"/>
-
-          <rect x="70" y="90" rx="36" ry="36" width="940" height="1170" fill="rgba(0,0,0,0.18)" stroke="rgba(255,255,255,0.12)" filter="url(#shadow)"/>
-
-          <text x="540" y="190" text-anchor="middle" fill="white" font-size="64" font-family="Arial" font-weight="700">ONYRA</text>
-          <text x="540" y="250" text-anchor="middle" fill="rgba(255,255,255,0.82)" font-size="28" font-family="Arial">
-            Tu sueño convertido en imagen
-          </text>
-
-          <foreignObject x="130" y="340" width="820" height="620">
-            <div xmlns="http://www.w3.org/1999/xhtml"
-                 style="
-                   font-family: Arial, sans-serif;
-                   color: white;
-                   font-size: 38px;
-                   line-height: 1.45;
-                   text-align: center;
-                   display: flex;
-                   justify-content: center;
-                   align-items: center;
-                   width: 100%;
-                   height: 100%;
-                   padding: 10px;
-                 ">
-              ${safeText}
-            </div>
-          </foreignObject>
-
-          <text x="540" y="1120" text-anchor="middle" fill="rgba(255,255,255,0.90)" font-size="26" font-family="Arial">
-            Compartido desde ONYRA
-          </text>
-
-          <text x="540" y="1165" text-anchor="middle" fill="rgba(255,255,255,0.62)" font-size="22" font-family="Arial">
-            Descubrí qué dicen tus sueños
-          </text>
-        </svg>
-      `;
-
-      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    }
+    generateBtn.addEventListener("click", submitDream);
+    shareBtn.addEventListener("click", shareDream);
   </script>
 </body>
 </html>
