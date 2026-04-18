@@ -155,10 +155,14 @@
     }
 
  async function generateAIImage(texto) {
-  const url = "ACA_VA_TU_URL_DEL_WORKER" + "?prompt=" + encodeURIComponent(texto);
-
-  const response = await fetch(url, {
-    method: "GET"
+  const response = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      prompt: texto
+    })
   });
 
   const rawText = await response.text();
