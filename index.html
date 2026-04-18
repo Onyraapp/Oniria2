@@ -603,18 +603,17 @@
   };
 }
     function saveCurrentDream(){
-      if(!currentDream){
-        alert("No hay sueño para guardar");
-        return;
-      }
+  if(!currentDream){
+    alert("No hay sueño para guardar");
+    return;
+  }
 
-      let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
-      dreams.unshift(currentDream);
-      localStorage.setItem('dreams', JSON.stringify(dreams));
+  let dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
+  dreams.unshift(currentDream);
+  localStorage.setItem('dreams', JSON.stringify(dreams));
 
-      go('history');
-    }
-
+  go('history');
+}
     function renderHistory(){
       const container = document.getElementById('historyList');
       const dreams = JSON.parse(localStorage.getItem('dreams') || '[]');
