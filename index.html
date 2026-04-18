@@ -626,7 +626,7 @@
 
         if (img) img.src = imageUrl;
         currentDream.image = imageUrl;
-
+        lastImageUrl = imageUrl;
         saveCurrentDream();
 
       } catch(e) {
