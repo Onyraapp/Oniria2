@@ -628,11 +628,26 @@ function finishOnboard() {
 
 
 function go(s){
-  document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
-  document.getElementById('s-'+s).classList.add('active');
-  if(s==='home') updateUsageUI();
-  if(s==='history') renderHistory();
-  if(s==='insights') renderInsights();
+  try {
+    document.querySelectorAll('.screen').forEach(function(el){
+      el.classList.remove('active');
+    });
+
+    var target = document.getElementById('s-' + s);
+    if (!target) {
+      console.error('Pantalla no encontrada:', s);
+      document.body.innerHTML = '<div style=\"padding:20px;color:white;background:black;font-family:sans-serif;\">Error: pantalla no encontrada: ' + s + '</div>';
+      return;
+    }
+
+    target.classList.add('active');
+
+    if(s==='history') renderHistory();
+    if(s==='insights') renderInsights();
+  } catch (err) {
+    console.error(err);
+    document.body.innerHTML = '<div style=\"padding:20px;color:white;background:black;font-family:sans-serif;\">Error JS: ' + err.message + '</div>';
+  }
 }
 function pickChip(el){document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');}); el.classList.add('on'); selEmo=el.textContent;}
 function pickStyle(el){document.querySelectorAll('.sty').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); selStyle=el.textContent;}
