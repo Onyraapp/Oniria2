@@ -392,7 +392,29 @@
           interpretation: "Los pasillos, puertas y recorridos largos suelen aparecer cuando la mente está atravesando una transición. Sugieren búsqueda, duda o la sensación de que algo importante todavía no se termina de revelar."
         };
       }
+if(t.includes('persegu')){
+  return {
+    title: "La persecución silenciosa",
+    quote: "Hay algo que evitás, pero sigue detrás tuyo.",
+    interpretation: "Soñar que algo te persigue suele reflejar una tensión que no estás enfrentando directamente. Puede ser una decisión, un miedo o una situación que tu mente insiste en procesar."
+  };
+}
 
+if(t.includes('volar')){
+  return {
+    title: "El impulso de escapar",
+    quote: "Querés ir más allá de tus límites actuales.",
+    interpretation: "Soñar que volás suele estar ligado a deseos de libertad, crecimiento o escape. Puede indicar una necesidad de salir de una situación que te limita."
+  };
+}
+
+if(t.includes('perder') || t.includes('perdí')){
+  return {
+    title: "La sensación de pérdida",
+    quote: "Algo importante parece estar escapándose.",
+    interpretation: "Perder algo en un sueño suele reflejar inseguridad o miedo a perder control sobre una situación, una relación o una parte de tu vida."
+  };
+}
       return {
         title: "Un sueño en movimiento",
         quote: "Hay algo en tu mente que insiste en ser entendido.",
