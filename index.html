@@ -7,35 +7,40 @@
 
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #0f1020;
   color: white;
   text-align: center;
   padding: 20px;
 }
+
 textarea, select {
   width: 90%;
   max-width: 400px;
-  margin: 5px;
+  margin: 6px 0;
   padding: 10px;
   border-radius: 10px;
   border: none;
 }
+
 button {
   margin: 6px;
-  padding: 10px;
+  padding: 10px 14px;
   border-radius: 10px;
   border: none;
   background: #6c5ce7;
   color: white;
 }
+
 img {
   margin-top: 15px;
   max-width: 100%;
   border-radius: 10px;
+  display: none;
 }
 </style>
 </head>
+
 <body>
 
 <h1>🌙 ONYRA</h1>
@@ -48,13 +53,17 @@ img {
   <option value="surreal">Surreal</option>
 </select><br>
 
-<button onclick="generar()">Generar</button>
+<button onclick="generar()">Generar imagen</button>
+<button onclick="testWorker()">Test conexión</button>
 
 <p id="status"></p>
+
 <img id="img">
 
 <script>
+
 const WORKER = "https://onyra-final-ok.almacenmujica.workers.dev";
+let lastBlobUrl = "";
 
 function dataUrlToBlobUrl(dataUrl) {
   const parts = dataUrl.split(",");
@@ -78,12 +87,13 @@ async function generar() {
   const img = document.getElementById("img");
 
   if (!dream) {
-    status.innerText = "Escribí un sueño primero";
+    status.textContent = "Escribí un sueño primero.";
     return;
   }
 
   try {
-    status.innerText = "Generando...";
+    status.textContent = "Generando...";
+    img.style.display = "none";
 
     const res = await fetch(WORKER, {
       method: "POST",
@@ -99,15 +109,49 @@ async function generar() {
       throw new Error(data.error || "Error generando imagen");
     }
 
-    const blobUrl = dataUrlToBlobUrl(data.imageUrl);
-    img.src = blobUrl;
+    if (!data.imageUrl) {
+      throw new Error("No vino imageUrl");
+    }
 
-    status.innerText = "✨ Listo";
+    if (lastBlobUrl) {
+      URL.revokeObjectURL(lastBlobUrl);
+    }
+
+    lastBlobUrl = dataUrlToBlobUrl(data.imageUrl);
+
+    img.src = lastBlobUrl;
+    img.style.display = "block";
+
+    status.textContent = "✨ Imagen generada";
+
   } catch (e) {
     console.error(e);
-    status.innerText = "Error: " + e.message;
+    status.textContent = "ERROR: " + e.message;
   }
 }
+
+// -------- TEST CONEXIÓN --------
+async function testWorker() {
+  const status = document.getElementById("status");
+
+  try {
+    status.textContent = "Probando conexión...";
+
+    const res = await fetch(WORKER, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dream: "test", style: "cine" })
+    });
+
+    const text = await res.text();
+
+    status.textContent = "STATUS: " + res.status + " | RESP: " + text;
+
+  } catch (e) {
+    status.textContent = "ERROR: " + e.message;
+  }
+}
+
 </script>
 
 </body>
