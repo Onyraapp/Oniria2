@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>ONYRA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       margin: 0;
@@ -14,23 +13,10 @@
       text-align: center;
       padding: 20px;
     }
-
     .app {
       max-width: 460px;
       margin: 0 auto;
     }
-
-    h1 {
-      margin-bottom: 8px;
-    }
-
-    .sub {
-      margin-top: 0;
-      margin-bottom: 16px;
-      color: #bfc3ff;
-      font-size: 14px;
-    }
-
     textarea {
       width: 100%;
       height: 120px;
@@ -42,7 +28,6 @@
       font-size: 16px;
       margin-bottom: 10px;
     }
-
     button {
       margin: 6px;
       padding: 10px 14px;
@@ -53,137 +38,34 @@
       cursor: pointer;
       font-size: 14px;
     }
-
-    .danger {
-      background: #d64545;
-    }
-
     #status {
       margin-top: 12px;
       min-height: 22px;
     }
-
     #dreamImage {
       margin-top: 15px;
       max-width: 100%;
       border-radius: 12px;
       display: none;
     }
-
-    #interpretationCard {
-      display: none;
-      margin-top: 14px;
-      background: #1a1d3a;
-      border-radius: 12px;
-      padding: 14px;
-      text-align: left;
-    }
-
-    #interpretationTitle {
-      margin: 0 0 8px;
-      font-size: 15px;
-      color: #d9dcff;
-    }
-
-    #interpretation {
-      margin: 0;
-      color: #c7caff;
-      line-height: 1.5;
-      font-size: 15px;
-    }
-
-    #history {
-      margin-top: 24px;
-      text-align: left;
-    }
-
-    .item {
-      background: #1a1d3a;
-      padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      line-height: 1.35;
-    }
-
-    .empty {
-      opacity: 0.7;
-    }
   </style>
 </head>
-
 <body>
   <div class="app">
     <h1>🌙 ONYRA</h1>
-    <p class="sub">Contá tu sueño y mirá qué revela</p>
+    <p>Prueba simple para iPhone</p>
 
-    <textarea id="dreamInput" placeholder="Ejemplo: soñé que volaba sobre el mar de noche..."></textarea>
-
+    <textarea id="dreamInput" placeholder="Contá tu sueño..."></textarea>
     <div>
-      <button onclick="probarImagen()">Interpretar sueño</button>
-      <button onclick="regenerar()">Otra versión</button>
-      <button onclick="shareDream()">Compartir</button>
-      <button class="danger" onclick="resetHistory()">Reset historial</button>
+      <button onclick="probarImagen()">Generar imagen</button>
     </div>
 
     <p id="status"></p>
-
-    <img id="dreamImage" alt="Imagen generada del sueño">
-
-    <div id="interpretationCard">
-      <p id="interpretationTitle">Interpretación</p>
-      <p id="interpretation"></p>
-    </div>
-
-    <div id="history"></div>
-
-    <canvas id="storyCanvas" style="display:none;"></canvas>
+    <img id="dreamImage" alt="Imagen generada">
   </div>
 
   <script>
-    let lastDream = "";
-    let lastImageUrl = "";
-    let lastInterpretation = "";
     let lastBlobUrl = "";
-
-    function saveDream(dream) {
-      let history = JSON.parse(localStorage.getItem("dreams") || "[]");
-      history.unshift(dream);
-      history = history.slice(0, 10);
-      localStorage.setItem("dreams", JSON.stringify(history));
-      renderHistory();
-    }
-
-    function renderHistory() {
-      const container = document.getElementById("history");
-      const history = JSON.parse(localStorage.getItem("dreams") || "[]");
-
-      container.innerHTML = "<h3>Historial</h3>";
-
-      if (history.length === 0) {
-        container.innerHTML += "<p class='empty'>Todavía no hay sueños guardados.</p>";
-        return;
-      }
-
-      history.forEach((dream) => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.textContent = dream;
-        div.onclick = () => {
-          document.getElementById("dreamInput").value = dream;
-        };
-        container.appendChild(div);
-      });
-    }
-
-    function resetHistory() {
-      const ok = confirm("¿Seguro querés borrar todo el historial?");
-      if (!ok) return;
-
-      localStorage.removeItem("dreams");
-      renderHistory();
-      document.getElementById("status").textContent = "Historial borrado";
-    }
 
     async function generateAI(dream) {
       const res = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
@@ -197,19 +79,28 @@
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Error generando contenido");
+        throw new Error(data.error || "Error generando imagen");
       }
 
       if (!data.imageUrl) {
         throw new Error("No vino imageUrl");
       }
 
-      return data;
+      return data.imageUrl;
     }
 
-    async function dataUrlToBlobUrl(dataUrl) {
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
+    function dataUrlToBlobUrl(dataUrl) {
+      const parts = dataUrl.split(",");
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const binary = atob(parts[1]);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
+
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+
+      const blob = new Blob([bytes], { type: mime });
       return URL.createObjectURL(blob);
     }
 
@@ -217,8 +108,6 @@
       const dream = document.getElementById("dreamInput").value.trim();
       const status = document.getElementById("status");
       const img = document.getElementById("dreamImage");
-      const interpretationBox = document.getElementById("interpretation");
-      const interpretationCard = document.getElementById("interpretationCard");
 
       if (!dream) {
         status.textContent = "Escribí un sueño primero.";
@@ -226,148 +115,25 @@
       }
 
       try {
-        lastDream = dream;
-        status.textContent = "Interpretando sueño...";
+        status.textContent = "Generando imagen...";
         img.style.display = "none";
-        interpretationCard.style.display = "none";
-        interpretationBox.textContent = "";
 
-        const data = await generateAI(dream);
-
-        lastImageUrl = data.imageUrl;
-        lastInterpretation = data.interpretation || "";
+        const dataUrl = await generateAI(dream);
 
         if (lastBlobUrl) {
           URL.revokeObjectURL(lastBlobUrl);
         }
 
-        lastBlobUrl = await dataUrlToBlobUrl(lastImageUrl);
+        lastBlobUrl = dataUrlToBlobUrl(dataUrl);
 
         img.src = lastBlobUrl;
         img.style.display = "block";
-
-        if (lastInterpretation) {
-          interpretationBox.textContent = lastInterpretation;
-          interpretationCard.style.display = "block";
-        }
-
-        status.textContent = "✨ Sueño interpretado";
-        saveDream(dream);
+        status.textContent = "✨ Imagen generada";
       } catch (error) {
         console.error(error);
         status.textContent = "Error: " + error.message;
       }
     }
-
-    function regenerar() {
-      if (!lastDream) {
-        document.getElementById("status").textContent = "Primero generá una imagen.";
-        return;
-      }
-
-      document.getElementById("dreamInput").value = lastDream;
-      probarImagen();
-    }
-
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-      const words = text.split(" ");
-      let line = "";
-
-      for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + " ";
-        const testWidth = ctx.measureText(testLine).width;
-
-        if (testWidth > maxWidth && n > 0) {
-          ctx.fillText(line, x, y);
-          line = words[n] + " ";
-          y += lineHeight;
-        } else {
-          line = testLine;
-        }
-      }
-
-      ctx.fillText(line, x, y);
-    }
-
-    async function shareDream() {
-      if (!lastImageUrl) {
-        alert("Primero generá una imagen");
-        return;
-      }
-
-      const canvas = document.getElementById("storyCanvas");
-      const ctx = canvas.getContext("2d");
-
-      const image = new Image();
-      image.src = lastBlobUrl || lastImageUrl;
-
-      image.onload = function () {
-        canvas.width = 1080;
-        canvas.height = 1920;
-
-        // fondo
-        ctx.fillStyle = "#0b0b14";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // marca
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 52px Arial";
-        ctx.fillText("ONYRA", 60, 90);
-
-        // texto sueño
-        ctx.fillStyle = "#bfc3ff";
-        ctx.font = "34px Arial";
-        wrapText(ctx, "Soñé: " + lastDream, 60, 170, 960, 44);
-
-        // imagen principal centrada en formato story
-        const imgSize = 860;
-        const imgX = (canvas.width - imgSize) / 2;
-        const imgY = 320;
-
-        ctx.drawImage(image, imgX, imgY, imgSize, imgSize);
-
-        // interpretación
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 40px Arial";
-        ctx.fillText("Interpretación", 60, 1260);
-
-        ctx.fillStyle = "#d9dcff";
-        ctx.font = "32px Arial";
-        wrapText(ctx, lastInterpretation || "Sin interpretación", 60, 1330, 960, 42);
-
-        // cierre
-        ctx.fillStyle = "#8f95ff";
-        ctx.font = "28px Arial";
-        ctx.fillText("Generado con ONYRA", 60, 1820);
-
-        canvas.toBlob(async function(blob) {
-          if (!blob) return;
-
-          const file = new File([blob], "onyra-story-9x16.png", { type: "image/png" });
-
-          try {
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              await navigator.share({
-                files: [file],
-                title: "Mi sueño en ONYRA",
-                text: "Mirá lo que soñé"
-              });
-              return;
-            }
-          } catch (error) {
-            console.log("No se pudo compartir directo", error);
-          }
-
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = "onyra-story-9x16.png";
-          link.click();
-          alert("Tu navegador no permite compartir directo. Bajé la story para compartirla manualmente.");
-        }, "image/png");
-      };
-    }
-
-    renderHistory();
   </script>
 </body>
 </html>
