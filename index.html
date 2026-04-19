@@ -1,207 +1,159 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>ONYRA</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #0f1020;
       color: white;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      text-align: center;
       padding: 20px;
     }
 
-    .app {
-      width: 100%;
-      max-width: 460px;
-      background: #181a2f;
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-      text-align: center;
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      font-size: 32px;
-    }
-
-    p.subtitle {
-      margin: 0 0 20px;
-      color: #bfc3ff;
-      font-size: 14px;
-    }
-
     textarea {
-      width: 100%;
-      min-height: 120px;
-      resize: vertical;
+      width: 90%;
+      max-width: 400px;
+      height: 100px;
+      border-radius: 10px;
       border: none;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 16px;
-      outline: none;
-      background: #252844;
-      color: white;
-      margin-bottom: 14px;
+      padding: 10px;
     }
 
     button {
+      margin: 8px;
+      padding: 10px;
+      border-radius: 10px;
       border: none;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 15px;
-      cursor: pointer;
-      margin: 6px;
-    }
-
-    .primary {
       background: #6c5ce7;
       color: white;
+      cursor: pointer;
     }
 
-    .secondary {
-      background: #2d3157;
-      color: white;
-    }
-
-    #status {
-      margin-top: 14px;
-      min-height: 22px;
-      color: #d4d7ff;
-      font-size: 14px;
-    }
-
-    #dreamImage {
-      margin-top: 18px;
-      width: 100%;
-      border-radius: 14px;
+    img {
+      margin-top: 15px;
+      max-width: 100%;
+      border-radius: 10px;
       display: none;
     }
 
-    .actions {
-      margin-top: 10px;
-      display: none;
+    #history {
+      margin-top: 20px;
+      text-align: left;
+      max-width: 400px;
+      margin-inline: auto;
+    }
+
+    .item {
+      background: #1a1d3a;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <h1>🌙 ONYRA</h1>
-    <p class="subtitle">Contá tu sueño y convertílo en imagen</p>
 
-    <textarea
-      id="dreamInput"
-      placeholder="Ejemplo: Soñé que volaba sobre el mar de noche..."
-    ></textarea>
+<h1>🌙 ONYRA</h1>
 
-    <button class="primary" onclick="probarImagen()">Generar imagen</button>
+<textarea id="dreamInput" placeholder="Contá tu sueño..."></textarea><br>
 
-    <div id="status"></div>
+<button onclick="probarImagen()">Generar</button>
+<button onclick="regenerar()">Regenerar</button>
+<button onclick="shareDream()">Compartir</button>
 
-    <img id="dreamImage" alt="Imagen generada del sueño" />
+<p id="status"></p>
+<img id="dreamImage">
 
-    <div class="actions" id="actions">
-      <button class="secondary" onclick="descargarImagen()">Descargar</button>
-      <button class="secondary" onclick="compartirImagen()">Compartir</button>
-    </div>
-  </div>
+<div id="history"></div>
 
-  <script>
-    async function generateAIImage(dreamText) {
-      const res = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ dream: dreamText })
-      });
+<script>
 
-      const data = await res.json();
+let lastDream = "";
 
-      if (!res.ok) {
-        throw new Error(data.error || "Error generando imagen");
-      }
+function saveDream(dream) {
+  let history = JSON.parse(localStorage.getItem("dreams") || "[]");
+  history.unshift(dream);
+  localStorage.setItem("dreams", JSON.stringify(history));
+  renderHistory();
+}
 
-      if (!data.imageUrl) {
-        throw new Error("No llegó la imagen");
-      }
+function renderHistory() {
+  const container = document.getElementById("history");
+  const history = JSON.parse(localStorage.getItem("dreams") || "[]");
 
-      return data.imageUrl;
-    }
+  container.innerHTML = "<h3>Historial</h3>";
 
-    async function probarImagen() {
-      const dream = document.getElementById("dreamInput").value.trim();
-      const status = document.getElementById("status");
-      const img = document.getElementById("dreamImage");
-      const actions = document.getElementById("actions");
+  history.slice(0,5).forEach(d => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.textContent = d;
+    div.onclick = () => {
+      document.getElementById("dreamInput").value = d;
+    };
+    container.appendChild(div);
+  });
+}
 
-      if (!dream) {
-        status.textContent = "Escribí un sueño primero.";
-        return;
-      }
+async function generateAIImage(dream) {
+  const res = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ dream })
+  });
 
-      try {
-        status.textContent = "Generando imagen...";
-        img.style.display = "none";
-        actions.style.display = "none";
+  const data = await res.json();
+  return data.imageUrl;
+}
 
-        const imageUrl = await generateAIImage(dream);
+async function probarImagen() {
+  const dream = document.getElementById("dreamInput").value;
+  const img = document.getElementById("dreamImage");
+  const status = document.getElementById("status");
 
-        img.src = imageUrl;
-        img.style.display = "block";
-        actions.style.display = "block";
-        status.textContent = "Imagen generada ✨";
-      } catch (error) {
-        console.error(error);
-        status.textContent = "Error: " + error.message;
-      }
-    }
+  if (!dream) return;
 
-    function descargarImagen() {
-      const img = document.getElementById("dreamImage");
+  lastDream = dream;
+  status.textContent = "Interpretando sueño...";
+  img.style.display = "none";
 
-      if (!img.src) {
-        return;
-      }
+  const url = await generateAIImage(dream);
 
-      const link = document.createElement("a");
-      link.href = img.src;
-      link.download = "onyra-sueno.png";
-      link.click();
-    }
+  img.src = url;
+  img.style.display = "block";
+  status.textContent = "✨ Sueño interpretado";
 
-    async function compartirImagen() {
-      const img = document.getElementById("dreamImage");
+  saveDream(dream);
+}
 
-      if (!img.src) {
-        return;
-      }
+function regenerar() {
+  if (lastDream) probarImagen();
+}
 
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: "Mi sueño en ONYRA",
-            text: "Mirá la imagen que generé con ONYRA",
-            url: img.src
-          });
-        } catch (error) {
-          console.log("Compartir cancelado o no disponible", error);
-        }
-      } else {
-        alert("Tu navegador no soporta compartir directo.");
-      }
-    }
-  </script>
+async function shareDream() {
+  const img = document.getElementById("dreamImage");
+
+  if (!img.src) return;
+
+  if (navigator.share) {
+    await navigator.share({
+      title: "Mi sueño en ONYRA",
+      text: lastDream,
+      url: img.src
+    });
+  } else {
+    alert("Compartir no disponible");
+  }
+}
+
+renderHistory();
+
+</script>
+
 </body>
 </html>
