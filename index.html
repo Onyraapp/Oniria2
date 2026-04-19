@@ -24,7 +24,7 @@
     }
 
     button {
-      margin: 8px;
+      margin: 6px;
       padding: 10px;
       border-radius: 10px;
       border: none;
@@ -38,6 +38,11 @@
       max-width: 100%;
       border-radius: 10px;
       display: none;
+    }
+
+    #interpretation {
+      margin-top: 10px;
+      color: #bfc3ff;
     }
 
     #history {
@@ -68,7 +73,9 @@
 <button onclick="shareDream()">Compartir</button>
 
 <p id="status"></p>
+
 <img id="dreamImage">
+<p id="interpretation"></p>
 
 <div id="history"></div>
 
@@ -76,6 +83,7 @@
 
 let lastDream = "";
 
+// -------- HISTORIAL --------
 function saveDream(dream) {
   let history = JSON.parse(localStorage.getItem("dreams") || "[]");
   history.unshift(dream);
@@ -100,6 +108,7 @@ function renderHistory() {
   });
 }
 
+// -------- API --------
 async function generateAIImage(dream) {
   const res = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
     method: "POST",
@@ -108,13 +117,29 @@ async function generateAIImage(dream) {
   });
 
   const data = await res.json();
+
+  if (!data.imageUrl) throw new Error("No vino imagen");
+
   return data.imageUrl;
 }
 
+// -------- INTERPRETACIÓN SIMPLE --------
+function interpretarSueno(dream) {
+  if (dream.includes("volar")) {
+    return "Soñar que volás suele reflejar deseo de libertad o escapar de algo.";
+  }
+  if (dream.includes("persegu")) {
+    return "Soñar que te persiguen puede indicar ansiedad o algo que evitás.";
+  }
+  return "Este sueño puede reflejar emociones internas que tu mente está procesando.";
+}
+
+// -------- GENERAR --------
 async function probarImagen() {
   const dream = document.getElementById("dreamInput").value;
   const img = document.getElementById("dreamImage");
   const status = document.getElementById("status");
+  const interpretationBox = document.getElementById("interpretation");
 
   if (!dream) return;
 
@@ -122,19 +147,28 @@ async function probarImagen() {
   status.textContent = "Interpretando sueño...";
   img.style.display = "none";
 
-  const url = await generateAIImage(dream);
+  try {
+    const url = await generateAIImage(dream);
+    const interpretation = interpretarSueno(dream);
 
-  img.src = url;
-  img.style.display = "block";
-  status.textContent = "✨ Sueño interpretado";
+    img.src = url;
+    img.style.display = "block";
 
-  saveDream(dream);
+    interpretationBox.textContent = interpretation;
+    status.textContent = "✨ Sueño interpretado";
+
+    saveDream(dream);
+  } catch (e) {
+    status.textContent = "Error generando imagen";
+  }
 }
 
+// -------- REGENERAR --------
 function regenerar() {
   if (lastDream) probarImagen();
 }
 
+// -------- COMPARTIR --------
 async function shareDream() {
   const img = document.getElementById("dreamImage");
 
@@ -147,10 +181,11 @@ async function shareDream() {
       url: img.src
     });
   } else {
-    alert("Compartir no disponible");
+    alert("Compartir no disponible en este navegador");
   }
 }
 
+// -------- INIT --------
 renderHistory();
 
 </script>
