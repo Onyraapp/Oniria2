@@ -259,70 +259,95 @@
       ctx.fillText(line, x, y);
     }
 
-    async function shareDream() {
-      if (!lastImageUrl) {
-        alert("Primero generá una imagen");
-        return;
+   async function shareDream() {
+  if (!lastImageUrl || !lastDream) {
+    alert("Primero generá una imagen");
+    return;
+  }
+
+  const appUrl = "https://onyraapp.github.io/Oniria2/";
+  const text = `Soñé esto: "${lastDream}" 😳\n\nMirá qué significa en ONYRA:\n${appUrl}`;
+
+  const canvas = document.getElementById("storyCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const image = new Image();
+  image.src = lastBlobUrl || lastImageUrl;
+
+  image.onload = async function () {
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    // fondo
+    ctx.fillStyle = "#0b0b14";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // marca
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 52px Arial";
+    ctx.fillText("ONYRA", 60, 90);
+
+    // sueño
+    ctx.fillStyle = "#bfc3ff";
+    ctx.font = "34px Arial";
+    wrapText(ctx, "Soñé: " + lastDream, 60, 170, 960, 44);
+
+    // imagen
+    const imgSize = 860;
+    const imgX = (canvas.width - imgSize) / 2;
+    const imgY = 320;
+    ctx.drawImage(image, imgX, imgY, imgSize, imgSize);
+
+    // footer
+    ctx.fillStyle = "#8f95ff";
+    ctx.font = "28px Arial";
+    ctx.fillText("Generado con ONYRA", 60, 1820);
+
+    canvas.toBlob(async function(blob) {
+      if (!blob) return;
+
+      const file = new File([blob], "onyra-story.png", { type: "image/png" });
+
+      try {
+        // 👉 intento completo: imagen + texto + link
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: "Mi sueño en ONYRA",
+            text: text,
+            url: appUrl
+          });
+          return;
+        }
+      } catch (error) {
+        console.log("share completo falló", error);
       }
 
-      const canvas = document.getElementById("storyCanvas");
-      const ctx = canvas.getContext("2d");
+      try {
+        // 👉 fallback: solo texto + link
+        if (navigator.share) {
+          await navigator.share({
+            title: "Mi sueño en ONYRA",
+            text: text,
+            url: appUrl
+          });
+          return;
+        }
+      } catch (error) {
+        console.log("share texto falló", error);
+      }
 
-      const image = new Image();
-      image.src = lastBlobUrl || lastImageUrl;
+      // 👉 último fallback: descarga
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "onyra.png";
+      link.click();
 
-      image.onload = function () {
-        canvas.width = 1080;
-        canvas.height = 1920;
-
-        ctx.fillStyle = "#0b0b14";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 52px Arial";
-        ctx.fillText("ONYRA", 60, 90);
-
-        ctx.fillStyle = "#bfc3ff";
-        ctx.font = "34px Arial";
-        wrapText(ctx, "Soñé: " + lastDream, 60, 170, 960, 44);
-
-        const imgSize = 860;
-        const imgX = (canvas.width - imgSize) / 2;
-        const imgY = 320;
-
-        ctx.drawImage(image, imgX, imgY, imgSize, imgSize);
-
-        ctx.fillStyle = "#8f95ff";
-        ctx.font = "28px Arial";
-        ctx.fillText("Generado con ONYRA", 60, 1820);
-
-        canvas.toBlob(async function(blob) {
-          if (!blob) return;
-
-          const file = new File([blob], "onyra-story-9x16.png", { type: "image/png" });
-
-          try {
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              await navigator.share({
-                files: [file],
-                title: "Mi sueño en ONYRA",
-                text: "Mirá lo que soñé"
-              });
-              return;
-            }
-          } catch (error) {
-            console.log("No se pudo compartir directo", error);
-          }
-
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = "onyra-story-9x16.png";
-          link.click();
-          alert("Tu navegador no permite compartir directo. Bajé la imagen para compartirla manualmente.");
-        }, "image/png");
-      };
-    }
-
+      navigator.clipboard.writeText(text);
+      alert("Imagen descargada + texto copiado");
+    }, "image/png");
+  };
+}
     renderHistory();
   </script>
 </body>
