@@ -258,31 +258,7 @@
 
       ctx.fillText(line, x, y);
     }
-async function interpretarSueno(dream) {
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer TU_API_KEY" // ⚠️ después lo movemos al worker
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "Interpretá sueños en español, breve, emocional y misterioso."
-        },
-        {
-          role: "user",
-          content: dream
-        }
-      ]
-    })
-  });
 
-  const data = await res.json();
-  return data.choices[0].message.content;
-}
     async function shareDream() {
       if (!lastImageUrl) {
         alert("Primero generá una imagen");
