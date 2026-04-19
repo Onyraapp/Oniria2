@@ -276,67 +276,67 @@
       ctx.fillText(line, x, y);
     }
 
-    async function shareDream() {
-      if (!lastImageUrl) {
-        alert("Primero generá una imagen");
+   async function shareDream() {
+  if (!lastImageUrl) {
+    alert("Primero generá una imagen");
+    return;
+  }
+
+  const canvas = document.getElementById("storyCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const image = new Image();
+  image.src = lastImageUrl;
+
+  image.onload = async function () {
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    ctx.fillStyle = "#0b0b14";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 54px Arial";
+    ctx.fillText("Mi sueño en ONYRA", 60, 100);
+
+    ctx.fillStyle = "#bfc3ff";
+    ctx.font = "36px Arial";
+    wrapText(ctx, lastDream, 60, 180, 960, 46);
+
+    ctx.drawImage(image, 60, 380, 960, 960);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 42px Arial";
+    ctx.fillText("Interpretación", 60, 1410);
+
+    ctx.fillStyle = "#d9dcff";
+    ctx.font = "34px Arial";
+    wrapText(ctx, lastInterpretation || "Sin interpretación", 60, 1480, 960, 44);
+
+    const finalImage = canvas.toDataURL("image/png");
+    const blob = await (await fetch(finalImage)).blob();
+    const file = new File([blob], "onyra-story.png", { type: "image/png" });
+
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Mi sueño en ONYRA",
+          text: "Mirá lo que soñé"
+        });
         return;
       }
-
-      const canvas = document.getElementById("storyCanvas");
-      const ctx = canvas.getContext("2d");
-
-      const image = new Image();
-      image.src = lastImageUrl;
-
-      image.onload = async function () {
-        canvas.width = 1080;
-        canvas.height = 1920;
-
-        ctx.fillStyle = "#0b0b14";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 54px Arial";
-        ctx.fillText("Mi sueño en ONYRA", 60, 100);
-
-        ctx.fillStyle = "#bfc3ff";
-        ctx.font = "36px Arial";
-        wrapText(ctx, lastDream, 60, 180, 960, 46);
-
-        ctx.drawImage(image, 60, 380, 960, 960);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 42px Arial";
-        ctx.fillText("Interpretación", 60, 1410);
-
-        ctx.fillStyle = "#d9dcff";
-        ctx.font = "34px Arial";
-        wrapText(ctx, lastInterpretation || "Sin interpretación", 60, 1480, 960, 44);
-
-        const finalImage = canvas.toDataURL("image/png");
-
-        if (navigator.share) {
-          try {
-            const blob = await (await fetch(finalImage)).blob();
-            const file = new File([blob], "onyra-story.png", { type: "image/png" });
-
-            await navigator.share({
-              files: [file],
-              title: "Mi sueño en ONYRA",
-              text: "Mirá lo que soñé"
-            });
-            return;
-          } catch (error) {
-            console.log("No se pudo compartir directo", error);
-          }
-        }
-
-        const link = document.createElement("a");
-        link.href = finalImage;
-        link.download = "onyra-story.png";
-        link.click();
-      };
+    } catch (error) {
+      console.log("No se pudo compartir directo", error);
     }
+
+    const link = document.createElement("a");
+    link.href = finalImage;
+    link.download = "onyra-story.png";
+    link.click();
+    alert("Tu navegador no permite compartir directo. Bajé la imagen para que la compartas manualmente.");
+  };
+}
 
     renderHistory();
   </script>
