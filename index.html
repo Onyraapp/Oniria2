@@ -1,317 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>ONYRA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #111218;
+      background: #0f0f1a;
       color: white;
-      padding: 24px;
-    }
-    .app {
-      max-width: 760px;
-      margin: 0 auto;
-      background: #1a1c24;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
-    h1 { margin: 0 0 8px; text-align: center; }
-    .subtitle {
       text-align: center;
-      color: #c8c8d0;
+      padding: 20px;
+    }
+
+    h1 {
       margin-bottom: 20px;
     }
-    textarea {
-      width: 100%;
-      min-height: 160px;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #3a3f52;
-      background: #0f1118;
+
+    input {
+      width: 80%;
+      max-width: 400px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #6c5ce7;
       color: white;
       font-size: 16px;
-      resize: vertical;
-    }
-    .buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-      margin-bottom: 16px;
-    }
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 12px 18px;
-      font-size: 15px;
-      font-weight: bold;
       cursor: pointer;
     }
-    .generate { background: #7c3aed; color: white; }
-    .share { background: #10b981; color: white; }
-    #status {
-      min-height: 24px;
-      color: #d8d8df;
-      margin-bottom: 14px;
-      font-weight: bold;
+
+    button:hover {
+      background: #5a4bdc;
     }
+
     #dreamImage {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 10px;
       display: none;
-      width: 100%;
-      border-radius: 14px;
-      margin-top: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     }
-    #debug {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #0c0d12;
-      border: 1px solid #2a3040;
-      color: #b9c3d6;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 13px;
-      line-height: 1.45;
+
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      opacity: 0.8;
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <h1>ONYRA</h1>
-    <div class="subtitle">Descubrí qué dicen tus sueños</div>
 
-    <textarea id="dreamText" placeholder="Contá tu sueño..."></textarea>
+  <h1>🌙 ONYRA</h1>
 
-    <div class="buttons">
-      <button class="generate" type="button" onclick="submitDream()">Generar imagen</button>
-      <button class="share" type="button" onclick="shareDream()">Compartir mi sueño</button>
-    </div>
+  <input id="dreamInput" placeholder="Contá tu sueño..." />
 
-    <div id="status">Versión click-fix cargada</div>
-    <img id="dreamImage" alt="Imagen generada del sueño" />
-    <div id="debug">Esperando prueba...</div>
-  </div>
+  <br>
+
+  <button onclick="probarImagen()">Generar imagen</button>
+
+  <p id="status"></p>
+
+  <img id="dreamImage" />
 
   <script>
-    const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+    async function generateAIImage(dreamText) {
+      const workerUrl = "https://onyra-final-ok.almacenmujica.workers.dev"; // 🔥 TU WORKER
 
-    let lastImageUrl = "";
-    let currentDream = {};
-
-    const dreamText = document.getElementById("dreamText");
-    const statusEl = document.getElementById("status");
-    const debugEl = document.getElementById("debug");
-    const dreamImage = document.getElementById("dreamImage");
-
-    function setStatus(texto) {
-      statusEl.textContent = texto;
-    }
-
-    function setDebug(texto) {
-      debugEl.textContent = texto;
-    }
-
-  async function generateAIImage(texto) {
-  const payload = { dream: texto };
-
-  setDebug(
-    "Worker: " + WORKER_URL + "\n\n" +
-    "Payload enviado:\n" +
-    JSON.stringify(payload, null, 2)
-  );
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
-
-  try {
-    const response = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-
-    const rawText = await response.text();
-
-    setDebug(
-      "Status HTTP: " + response.status + "\n\n" +
-      "Respuesta cruda:\n" + rawText
-    );
-
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (e) {
-      throw new Error("La respuesta no es JSON válido");
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        data?.error ||
-        data?.details?.error?.message ||
-        ("HTTP " + response.status)
-      );
-    }
-
-    if (!data.imageUrl) {
-      throw new Error("La respuesta no trajo imageUrl");
-    }
-
-    return data.imageUrl;
-  } catch (error) {
-    if (error.name === "AbortError") {
-      throw new Error("El worker tardó demasiado en responder");
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-    async function submitDream() {
       try {
-        const texto = dreamText.value.trim();
-
-        if (!texto) {
-          alert("Escribí tu sueño primero.");
-          return;
-        }
-
-        setStatus("Generando imagen IA...");
-        dreamImage.style.display = "none";
-        dreamImage.removeAttribute("src");
-
-        const imageUrl = await generateAIImage(texto);
-
-        currentDream = { text: texto, image: imageUrl };
-        lastImageUrl = imageUrl;
-
-        dreamImage.onload = function () {
-          setStatus("Imagen generada.");
-          setDebug(debugEl.textContent + "\n\nLa imagen cargó correctamente.");
-        };
-
-        dreamImage.onerror = function () {
-          setStatus("La imagen llegó pero no se pudo mostrar.");
-          setDebug(debugEl.textContent + "\n\nError: el navegador no pudo mostrar la imagen.");
-        };
-
-        dreamImage.src = imageUrl;
-        dreamImage.style.display = "block";
-      } catch (error) {
-        console.error("Error en submitDream:", error);
-        setStatus("Error al generar imagen.");
-        setDebug(debugEl.textContent + "\n\nError final:\n" + error.message);
-        alert("Error al generar imagen: " + error.message);
-      }
-    }
-
-    async function urlToBlob(url) {
-      const response = await fetch(url);
-      return await response.blob();
-    }
-
-    async function shareDream() {
-      try {
-        const texto = dreamText.value.trim() || "Mirá mi sueño en ONYRA";
-        const imageUrl = lastImageUrl || currentDream.image;
-
-        if (!imageUrl) {
-          alert("Primero generá una imagen.");
-          return;
-        }
-
-        setStatus("Preparando para compartir...");
-
-        const blob = await urlToBlob(imageUrl);
-        const file = new File([blob], "onyra-sueno.png", {
-          type: blob.type || "image/png"
+        const res = await fetch(workerUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ dream: dreamText })
         });
 
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: "Mi sueño en ONYRA",
-            text: texto,
-            files: [file]
-          });
-          setStatus("Imagen compartida.");
-          return;
+        const data = await res.json();
+
+        if (!res.ok) {
+          console.error("Error worker:", data);
+          throw new Error(data?.error || "Error generando imagen");
         }
 
-        const link = document.createElement("a");
-        link.href = imageUrl;
-        link.download = "onyra-sueno.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        return data.imageUrl;
 
-        setStatus("Tu navegador no permite compartir directo. Se descargó la imagen.");
       } catch (error) {
-        console.error("Error en shareDream:", error);
-        setStatus("No se pudo compartir la imagen.");
-        setDebug(debugEl.textContent + "\n\nError compartir:\n" + error.message);
+        console.error("Fetch error:", error);
+        throw error;
       }
     }
 
-    setDebug("Página cargada correctamente. Probá generar.");
+    async function probarImagen() {
+      const img = document.getElementById("dreamImage");
+      const status = document.getElementById("status");
+      const dream = document.getElementById("dreamInput").value;
+
+      if (!dream) {
+        status.textContent = "Escribí un sueño primero";
+        return;
+      }
+
+      try {
+        status.textContent = "Generando imagen...";
+        img.style.display = "none";
+
+        const imageUrl = await generateAIImage(dream);
+
+        img.src = imageUrl;
+        img.style.display = "block";
+
+        status.textContent = "Imagen generada ✨";
+
+      } catch (e) {
+        status.textContent = "Error: " + e.message;
+      }
+    }
   </script>
-  <!DOCTYPE html>
-<html>
-<head>
-  <title>ONYRA</title>
-</head>
-<body>
 
-<button onclick="probarImagen()">Probar imagen</button>
-<p id="status"></p>
-<img id="dreamImage" style="max-width:100%; display:none;" />
-
-<script>
-async function generateAIImage(dreamText) {
-  const workerUrl = "https://TU-WORKER.workers.dev";
-
-  const res = await fetch(workerUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ dream: dreamText }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error generando imagen");
-  }
-
-  return data.imageUrl;
-}
-
-async function probarImagen() {
-  const img = document.getElementById("dreamImage");
-  const status = document.getElementById("status");
-
-  try {
-    status.textContent = "Generando imagen...";
-    const imageUrl = await generateAIImage("soñé que volaba");
-    img.src = imageUrl;
-    img.style.display = "block";
-    status.textContent = "Imagen lista";
-  } catch (e) {
-    status.textContent = "Error: " + e.message;
-  }
-}
-</script>
-
-</body>
-</html>
 </body>
 </html>
