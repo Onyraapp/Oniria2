@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>ONYRA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,11 +12,7 @@
       text-align: center;
       padding: 20px;
     }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
+    h1 { margin-bottom: 20px; }
     input {
       width: 80%;
       max-width: 400px;
@@ -26,7 +21,6 @@
       border: none;
       margin-bottom: 15px;
     }
-
     button {
       padding: 12px 20px;
       border: none;
@@ -36,18 +30,12 @@
       font-size: 16px;
       cursor: pointer;
     }
-
-    button:hover {
-      background: #5a4bdc;
-    }
-
     #dreamImage {
       margin-top: 20px;
       max-width: 100%;
       border-radius: 10px;
       display: none;
     }
-
     #status {
       margin-top: 15px;
       font-size: 14px;
@@ -55,47 +43,40 @@
     }
   </style>
 </head>
-
 <body>
 
   <h1>🌙 ONYRA</h1>
 
   <input id="dreamInput" placeholder="Contá tu sueño..." />
-
   <br>
-
   <button onclick="probarImagen()">Generar imagen</button>
-
   <p id="status"></p>
-
-  <img id="dreamImage" />
+  <img id="dreamImage" alt="Imagen del sueño" />
 
   <script>
     async function generateAIImage(dreamText) {
-      const workerUrl = "https://onyra-final-ok.almacenmujica.workers.dev"; // 🔥 TU WORKER
+      const workerUrl = "https://onyra-final-ok.almacenmujica.workers.dev";
 
-      try {
-        const res = await fetch(workerUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ dream: dreamText })
-        });
+      const res = await fetch(workerUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ dream: dreamText })
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (!res.ok) {
-          console.error("Error worker:", data);
-          throw new Error(data?.error || "Error generando imagen");
-        }
-
-        return data.imageUrl;
-
-      } catch (error) {
-        console.error("Fetch error:", error);
-        throw error;
+      if (!res.ok) {
+        console.error("Error worker:", data);
+        throw new Error(data?.error || "Error generando imagen");
       }
+
+      if (!data.imageUrl) {
+        throw new Error("No vino imageUrl");
+      }
+
+      return data.imageUrl;
     }
 
     async function probarImagen() {
@@ -116,10 +97,9 @@
 
         img.src = imageUrl;
         img.style.display = "block";
-
         status.textContent = "Imagen generada ✨";
-
       } catch (e) {
+        console.error(e);
         status.textContent = "Error: " + e.message;
       }
     }
