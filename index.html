@@ -7,30 +7,44 @@
 
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       background: #0f1020;
       color: white;
       text-align: center;
       padding: 20px;
+      margin: 0;
+    }
+
+    .app {
+      max-width: 460px;
+      margin: 0 auto;
     }
 
     textarea {
-      width: 90%;
-      max-width: 400px;
-      height: 100px;
+      width: 100%;
+      max-width: 100%;
+      height: 110px;
       border-radius: 10px;
       border: none;
-      padding: 10px;
+      padding: 12px;
+      box-sizing: border-box;
+      resize: vertical;
+      font-size: 16px;
     }
 
     button {
       margin: 6px;
-      padding: 10px;
+      padding: 10px 14px;
       border-radius: 10px;
       border: none;
       background: #6c5ce7;
       color: white;
       cursor: pointer;
+      font-size: 14px;
+    }
+
+    button.danger {
+      background: #d64545;
     }
 
     img {
@@ -40,16 +54,21 @@
       display: none;
     }
 
+    #status {
+      margin-top: 12px;
+      min-height: 22px;
+    }
+
     #interpretation {
       margin-top: 10px;
       color: #bfc3ff;
+      line-height: 1.4;
     }
 
     #history {
-      margin-top: 20px;
+      margin-top: 24px;
       text-align: left;
-      max-width: 400px;
-      margin-inline: auto;
+      max-width: 100%;
     }
 
     .item {
@@ -58,137 +77,188 @@
       margin-bottom: 8px;
       border-radius: 8px;
       cursor: pointer;
+      line-height: 1.35;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      margin-bottom: 12px;
     }
   </style>
 </head>
 
 <body>
+  <div class="app">
+    <h1>🌙 ONYRA</h1>
 
-<h1>🌙 ONYRA</h1>
+    <textarea id="dreamInput" placeholder="Contá tu sueño..."></textarea><br>
 
-<textarea id="dreamInput" placeholder="Contá tu sueño..."></textarea><br>
+    <button onclick="probarImagen()">Generar</button>
+    <button onclick="regenerar()">Otra versión</button>
+    <button onclick="shareDream()">Compartir</button>
+    <button class="danger" onclick="resetHistory()">Reset historial</button>
 
-<button onclick="probarImagen()">Generar</button>
-<button onclick="regenerar()">Regenerar</button>
-<button onclick="shareDream()">Compartir</button>
+    <p id="status"></p>
 
-<p id="status"></p>
+    <img id="dreamImage" alt="Imagen generada del sueño">
+    <p id="interpretation"></p>
 
-<img id="dreamImage">
-<p id="interpretation"></p>
+    <div id="history"></div>
+  </div>
 
-<div id="history"></div>
+  <script>
+    let lastDream = "";
 
-<script>
+    function saveDream(dream) {
+      let history = JSON.parse(localStorage.getItem("dreams") || "[]");
+      history.unshift(dream);
+      localStorage.setItem("dreams", JSON.stringify(history));
+      renderHistory();
+    }
 
-let lastDream = "";
+    function renderHistory() {
+      const container = document.getElementById("history");
+      const history = JSON.parse(localStorage.getItem("dreams") || "[]");
 
-// -------- HISTORIAL --------
-function saveDream(dream) {
-  let history = JSON.parse(localStorage.getItem("dreams") || "[]");
-  history.unshift(dream);
-  localStorage.setItem("dreams", JSON.stringify(history));
-  renderHistory();
-}
+      container.innerHTML = "<h3>Historial</h3>";
 
-function renderHistory() {
-  const container = document.getElementById("history");
-  const history = JSON.parse(localStorage.getItem("dreams") || "[]");
+      if (history.length === 0) {
+        container.innerHTML += "<p style='opacity:0.7;'>Todavía no hay sueños guardados.</p>";
+        return;
+      }
 
-  container.innerHTML = "<h3>Historial</h3>";
+      history.slice(0, 5).forEach(dream => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = dream;
+        div.onclick = () => {
+          document.getElementById("dreamInput").value = dream;
+        };
+        container.appendChild(div);
+      });
+    }
 
-  history.slice(0,5).forEach(d => {
-    const div = document.createElement("div");
-    div.className = "item";
-    div.textContent = d;
-    div.onclick = () => {
-      document.getElementById("dreamInput").value = d;
-    };
-    container.appendChild(div);
-  });
-}
+    function resetHistory() {
+      const ok = confirm("¿Seguro querés borrar todo el historial?");
+      if (!ok) return;
 
-// -------- API --------
-async function generateAIImage(dream) {
-  const res = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ dream })
-  });
+      localStorage.removeItem("dreams");
+      renderHistory();
+    }
 
-  const data = await res.json();
+    async function generateAIImage(dream) {
+      const res = await fetch("https://onyra-final-ok.almacenmujica.workers.dev", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ dream })
+      });
 
-  if (!data.imageUrl) throw new Error("No vino imagen");
+      const data = await res.json();
 
-  return data.imageUrl;
-}
+      if (!res.ok) {
+        throw new Error(data.error || "Error generando imagen");
+      }
 
-// -------- INTERPRETACIÓN SIMPLE --------
-function interpretarSueno(dream) {
-  if (dream.includes("volar")) {
-    return "Soñar que volás suele reflejar deseo de libertad o escapar de algo.";
-  }
-  if (dream.includes("persegu")) {
-    return "Soñar que te persiguen puede indicar ansiedad o algo que evitás.";
-  }
-  return "Este sueño puede reflejar emociones internas que tu mente está procesando.";
-}
+      if (!data.imageUrl) {
+        throw new Error("No vino imagen");
+      }
 
-// -------- GENERAR --------
-async function probarImagen() {
-  const dream = document.getElementById("dreamInput").value;
-  const img = document.getElementById("dreamImage");
-  const status = document.getElementById("status");
-  const interpretationBox = document.getElementById("interpretation");
+      return data.imageUrl;
+    }
 
-  if (!dream) return;
+    function interpretarSueno(dream) {
+      const text = dream.toLowerCase();
 
-  lastDream = dream;
-  status.textContent = "Interpretando sueño...";
-  img.style.display = "none";
+      if (text.includes("volar")) {
+        return "Soñar que volás suele reflejar deseo de libertad, expansión o necesidad de escapar de una situación.";
+      }
 
-  try {
-    const url = await generateAIImage(dream);
-    const interpretation = interpretarSueno(dream);
+      if (text.includes("persegu")) {
+        return "Soñar que te persiguen puede indicar ansiedad, presión o algo que estás evitando enfrentar.";
+      }
 
-    img.src = url;
-    img.style.display = "block";
+      if (text.includes("agua") || text.includes("mar")) {
+        return "El agua en los sueños suele estar vinculada al mundo emocional, la intuición y estados internos profundos.";
+      }
 
-    interpretationBox.textContent = interpretation;
-    status.textContent = "✨ Sueño interpretado";
+      if (text.includes("caer")) {
+        return "Soñar que caés puede relacionarse con inseguridad, pérdida de control o miedo al fracaso.";
+      }
 
-    saveDream(dream);
-  } catch (e) {
-    status.textContent = "Error generando imagen";
-  }
-}
+      return "Este sueño puede reflejar emociones internas y procesos mentales que tu mente sigue elaborando.";
+    }
 
-// -------- REGENERAR --------
-function regenerar() {
-  if (lastDream) probarImagen();
-}
+    async function probarImagen() {
+      const dream = document.getElementById("dreamInput").value.trim();
+      const img = document.getElementById("dreamImage");
+      const status = document.getElementById("status");
+      const interpretationBox = document.getElementById("interpretation");
 
-// -------- COMPARTIR --------
-async function shareDream() {
-  const img = document.getElementById("dreamImage");
+      if (!dream) {
+        status.textContent = "Escribí un sueño primero.";
+        return;
+      }
 
-  if (!img.src) return;
+      lastDream = dream;
+      status.textContent = "Interpretando sueño...";
+      img.style.display = "none";
+      interpretationBox.textContent = "";
 
-  if (navigator.share) {
-    await navigator.share({
-      title: "Mi sueño en ONYRA",
-      text: lastDream,
-      url: img.src
-    });
-  } else {
-    alert("Compartir no disponible en este navegador");
-  }
-}
+      try {
+        const url = await generateAIImage(dream);
+        const interpretation = interpretarSueno(dream);
 
-// -------- INIT --------
-renderHistory();
+        img.src = url;
+        img.style.display = "block";
+        interpretationBox.textContent = interpretation;
+        status.textContent = "✨ Sueño interpretado";
 
-</script>
+        saveDream(dream);
+      } catch (e) {
+        console.error(e);
+        status.textContent = "Error: " + e.message;
+      }
+    }
 
+    function regenerar() {
+      if (!lastDream) {
+        document.getElementById("status").textContent = "Primero generá una imagen.";
+        return;
+      }
+
+      document.getElementById("dreamInput").value = lastDream;
+      probarImagen();
+    }
+
+    async function shareDream() {
+      const img = document.getElementById("dreamImage");
+
+      if (!img.src) {
+        alert("Primero generá una imagen");
+        return;
+      }
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Mi sueño en ONYRA",
+            text: lastDream,
+            url: img.src
+          });
+        } catch (error) {
+          console.log("Compartir cancelado o no disponible", error);
+        }
+      } else {
+        alert("Compartir no disponible en este navegador");
+      }
+    }
+
+    renderHistory();
+  </script>
 </body>
 </html>
