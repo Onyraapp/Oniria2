@@ -21,7 +21,14 @@
     }
 
     h1 {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: #bfc3ff;
+      font-size: 14px;
     }
 
     textarea {
@@ -63,11 +70,26 @@
       display: none;
     }
 
+    #interpretationCard {
+      display: none;
+      margin-top: 14px;
+      background: #1a1d3a;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: left;
+    }
+
+    #interpretationTitle {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #d9dcff;
+    }
+
     #interpretation {
-      margin-top: 12px;
+      margin: 0;
       color: #c7caff;
-      line-height: 1.4;
-      min-height: 40px;
+      line-height: 1.5;
+      font-size: 15px;
     }
 
     #history {
@@ -93,8 +115,9 @@
 <body>
   <div class="app">
     <h1>🌙 ONYRA</h1>
+    <p class="sub">Contá tu sueño y mirá qué revela</p>
 
-    <textarea id="dreamInput" placeholder="Contá tu sueño..."></textarea>
+    <textarea id="dreamInput" placeholder="Ejemplo: soñé que volaba sobre el mar de noche..."></textarea>
 
     <div>
       <button onclick="probarImagen()">Interpretar sueño</button>
@@ -106,7 +129,11 @@
     <p id="status"></p>
 
     <img id="dreamImage" alt="Imagen generada del sueño">
-    <p id="interpretation"></p>
+
+    <div id="interpretationCard">
+      <p id="interpretationTitle">Interpretación</p>
+      <p id="interpretation"></p>
+    </div>
 
     <div id="history"></div>
 
@@ -184,6 +211,7 @@
       const status = document.getElementById("status");
       const img = document.getElementById("dreamImage");
       const interpretationBox = document.getElementById("interpretation");
+      const interpretationCard = document.getElementById("interpretationCard");
 
       if (!dream) {
         status.textContent = "Escribí un sueño primero.";
@@ -194,6 +222,7 @@
         lastDream = dream;
         status.textContent = "Interpretando sueño...";
         img.style.display = "none";
+        interpretationCard.style.display = "none";
         interpretationBox.textContent = "";
 
         const data = await generateAI(dream);
@@ -203,9 +232,13 @@
 
         img.src = lastImageUrl;
         img.style.display = "block";
-        interpretationBox.textContent = lastInterpretation;
-        status.textContent = "✨ Sueño interpretado";
 
+        if (lastInterpretation) {
+          interpretationBox.textContent = lastInterpretation;
+          interpretationCard.style.display = "block";
+        }
+
+        status.textContent = "✨ Sueño interpretado";
         saveDream(dream);
       } catch (error) {
         console.error(error);
