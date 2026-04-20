@@ -1,201 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ONYRA</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONYRA DEBUG</title>
 
 <style>
-:root{
---bg1:#09090f;
---bg2:#161625;
---card:rgba(255,255,255,0.07);
---line:rgba(255,255,255,0.12);
---text:#f5f1ea;
---muted:#b7b0c4;
---gold:#d9b26f;
---gold2:#f2d7a3;
---shadow:0 20px 60px rgba(0,0,0,0.42);
-}
-
 body{
-margin:0;
-font-family:Inter,system-ui;
-background:linear-gradient(180deg,var(--bg2),var(--bg1));
-color:var(--text);
-}
-
-.wrap{
-max-width:720px;
-margin:auto;
+background:#0a0a0f;
+color:white;
+font-family:Arial;
 padding:20px;
-}
-
-.logo{
-text-align:center;
-font-size:2.4rem;
-font-weight:900;
-letter-spacing:.2em;
-color:var(--gold2);
+max-width:600px;
+margin:auto;
 }
 
 textarea{
 width:100%;
-height:160px;
-border-radius:20px;
-border:1px solid var(--line);
-background:rgba(255,255,255,.05);
+height:120px;
+padding:10px;
+border-radius:10px;
+background:#111;
 color:white;
-padding:16px;
+border:1px solid #333;
 }
 
 button{
 width:100%;
-padding:14px;
+padding:12px;
+margin-top:10px;
 border:none;
-border-radius:14px;
-margin-top:10px;
-font-weight:800;
-cursor:pointer;
-}
-
-.main{background:linear-gradient(135deg,var(--gold),var(--gold2));}
-
-.result img{
-width:100%;
-border-radius:20px;
-margin-top:20px;
-}
-
-.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-
-.history-item{
-display:flex;
-gap:10px;
-background:rgba(255,255,255,.05);
-padding:10px;
-border-radius:14px;
-margin-top:10px;
-cursor:pointer;
-}
-
-.thumb{
-width:60px;
-height:60px;
 border-radius:10px;
-object-fit:cover;
+font-weight:bold;
+background:#d9b26f;
+cursor:pointer;
+}
+
+#result img{
+width:100%;
+margin-top:15px;
+border-radius:10px;
+}
+
+pre{
+background:#111;
+padding:10px;
+border-radius:10px;
+overflow:auto;
+font-size:12px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
+<h1>ONYRA DEBUG</h1>
 
-<div class="logo">ONYRA</div>
+<textarea id="dream" placeholder="Soñé que volaba..."></textarea>
 
-<textarea id="dream"></textarea>
+<button onclick="go()">INTERPRETAR</button>
 
-<button class="main" onclick="go()">INTERPRETAR</button>
-
-<div id="result" class="result"></div>
-
-<div class="actions">
-<button onclick="save()">Guardar</button>
-<button onclick="share()">Compartir</button>
-<button onclick="story()">Story</button>
-</div>
-
-<div id="history"></div>
-
-</div>
-
-<canvas id="c" width="1080" height="1920" style="display:none"></canvas>
+<div id="result"></div>
 
 <script>
 
-const WORKER_URL="https://onyra-final-ok.almacenmujica.workers.dev";
-
-let current={};
+const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
 
 async function go(){
-const d=document.getElementById("dream").value;
 
-const r=await fetch(WORKER_URL,{
+const dream = document.getElementById("dream").value;
+
+document.getElementById("result").innerHTML = "Cargando...";
+
+try{
+
+const res = await fetch(WORKER_URL,{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({dream:d})
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({dream})
 });
 
-const j=await r.json();
+const data = await res.json();
 
-current=j;
+// 🔥 MOSTRAR RESPUESTA COMPLETA
+if(!data.ok){
+document.getElementById("result").innerHTML = `
+<h3>ERROR</h3>
+<pre>${JSON.stringify(data, null, 2)}</pre>
+`;
+return;
+}
 
-document.getElementById("result").innerHTML=`
-<img src="${j.imageUrl}">
-<p>${j.interpretation}</p>
+// ✅ RESULTADO OK
+document.getElementById("result").innerHTML = `
+<h3>Respuesta</h3>
+<pre>${JSON.stringify(data, null, 2)}</pre>
+
+${data.imageUrl ? `<img src="${data.imageUrl}">` : ""}
+
+<p>${data.interpretation}</p>
+`;
+
+}catch(err){
+
+document.getElementById("result").innerHTML = `
+<h3>ERROR FETCH</h3>
+<pre>${err}</pre>
 `;
 
 }
 
-function save(){
-let h=JSON.parse(localStorage.getItem("h")||"[]");
-h.unshift(current);
-localStorage.setItem("h",JSON.stringify(h));
-render();
 }
-
-function render(){
-let h=JSON.parse(localStorage.getItem("h")||"[]");
-
-document.getElementById("history").innerHTML=
-h.map(x=>`
-<div class="history-item">
-<img class="thumb" src="${x.imageUrl}">
-<div>${x.dream?.slice(0,60)}</div>
-</div>
-`).join("");
-}
-
-async function share(){
-const txt=current.interpretation;
-
-if(navigator.share){
-navigator.share({text:txt});
-}
-}
-
-async function story(){
-
-const canvas=document.getElementById("c");
-const ctx=canvas.getContext("2d");
-
-ctx.fillStyle="#000";
-ctx.fillRect(0,0,1080,1920);
-
-const img=new Image();
-img.src=current.imageUrl;
-
-img.onload=()=>{
-ctx.drawImage(img,0,0,1080,800);
-
-ctx.fillStyle="white";
-ctx.font="bold 60px Arial";
-ctx.fillText("ONYRA",80,900);
-
-ctx.font="40px Arial";
-ctx.fillText(current.interpretation.slice(0,120),80,1000);
-
-const url=canvas.toDataURL();
-
-const a=document.createElement("a");
-a.href=url;
-a.download="story.png";
-a.click();
-};
-}
-
-render();
 
 </script>
 
