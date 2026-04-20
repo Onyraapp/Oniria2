@@ -15,7 +15,7 @@
     }
 
     .app {
-      max-width: 520px;
+      max-width: 760px;
       margin: 0 auto;
     }
 
@@ -48,6 +48,8 @@
       border-radius: 12px;
       cursor: pointer;
       font-size: 16px;
+      margin-right: 6px;
+      margin-left: 6px;
     }
 
     .primary {
@@ -58,7 +60,16 @@
     .secondary {
       background: #ffffff;
       color: #111;
-      margin-left: 8px;
+    }
+
+    .tertiary {
+      background: #27c27a;
+      color: white;
+    }
+
+    .quaternary {
+      background: #ffb020;
+      color: #111;
     }
 
     #status {
@@ -89,6 +100,102 @@
       opacity: 0.75;
       margin-top: 12px;
     }
+
+    .gallerySection {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .galleryHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .galleryGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: #17192d;
+      border: 1px solid #2e3258;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+
+    .card img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+
+    .cardContent {
+      padding: 12px;
+    }
+
+    .cardDream {
+      font-size: 14px;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      color: #f2f2f2;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .cardDate {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+
+    .cardActions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cardActions button {
+      margin: 0;
+      padding: 8px 10px;
+      font-size: 13px;
+      border-radius: 10px;
+    }
+
+    .emptyGallery {
+      opacity: 0.7;
+      font-size: 14px;
+      background: #17192d;
+      border: 1px dashed #39406e;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 16px;
+      }
+
+      button {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .galleryHeader {
+        align-items: stretch;
+      }
+
+      .galleryHeader button {
+        width: auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -101,9 +208,11 @@
       placeholder="Escribí tu sueño..."
     ></textarea>
 
-    <div>
+    <div class="actions">
       <button class="primary" onclick="submitDream()">Generar imagen</button>
       <button class="secondary" onclick="shareDream()">Compartir</button>
+      <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
+      <button class="quaternary" onclick="saveToGallery()">Guardar en mi galería</button>
     </div>
 
     <div id="status"></div>
@@ -112,16 +221,29 @@
       <img id="resultImage" alt="Imagen del sueño" />
       <div class="small">Tu sueño interpretado visualmente</div>
     </div>
+
+    <div class="gallerySection">
+      <div class="galleryHeader">
+        <h2 style="margin:0;">Mi galería de sueños</h2>
+        <button class="secondary" onclick="clearGallery()">Borrar galería</button>
+      </div>
+      <div id="gallery"></div>
+    </div>
   </div>
 
   <script>
     const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
-    const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+    const APP_LINK = "https://tu-dominio.com";
+    const STORAGE_KEY = "onyra_gallery_v1";
 
     const currentDream = {
       text: "",
       imageUrl: ""
     };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderGallery();
+    });
 
     async function submitDream() {
       const dreamInput = document.getElementById("dreamInput");
@@ -210,6 +332,138 @@
         console.error("Error al compartir:", err);
         alert("Error al compartir");
       }
+    }
+
+    function saveDreamImage() {
+      if (!currentDream.imageUrl) {
+        alert("Primero generá una imagen");
+        return;
+      }
+
+      const link = document.createElement("a");
+      link.href = currentDream.imageUrl;
+      link.download = "onyra-sueno.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function saveToGallery() {
+      if (!currentDream.imageUrl || !currentDream.text) {
+        alert("Primero generá una imagen");
+        return;
+      }
+
+      const gallery = getGallery();
+
+      gallery.unshift({
+        id: Date.now(),
+        text: currentDream.text,
+        imageUrl: currentDream.imageUrl,
+        createdAt: new Date().toISOString()
+      });
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(gallery));
+      renderGallery();
+
+      document.getElementById("status").innerText = "Sueño guardado en tu galería";
+    }
+
+    function getGallery() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.error("Error leyendo galería:", e);
+        return [];
+      }
+    }
+
+    function renderGallery() {
+      const galleryEl = document.getElementById("gallery");
+      const gallery = getGallery();
+
+      if (!gallery.length) {
+        galleryEl.innerHTML = `
+          <div class="emptyGallery">
+            Todavía no guardaste sueños en tu galería.
+          </div>
+        `;
+        return;
+      }
+
+      galleryEl.innerHTML = `
+        <div class="galleryGrid">
+          ${gallery.map(item => `
+            <div class="card">
+              <img src="${item.imageUrl}" alt="Sueño guardado" />
+              <div class="cardContent">
+                <div class="cardDream">${escapeHtml(item.text)}</div>
+                <div class="cardDate">${formatDate(item.createdAt)}</div>
+                <div class="cardActions">
+                  <button class="secondary" onclick="downloadGalleryItem(${item.id})">Descargar</button>
+                  <button class="quaternary" onclick="reuseDream(${item.id})">Reusar texto</button>
+                  <button class="primary" onclick="deleteGalleryItem(${item.id})">Eliminar</button>
+                </div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function deleteGalleryItem(id) {
+      const gallery = getGallery().filter(item => item.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(gallery));
+      renderGallery();
+    }
+
+    function clearGallery() {
+      const ok = confirm("¿Querés borrar toda tu galería?");
+      if (!ok) return;
+
+      localStorage.removeItem(STORAGE_KEY);
+      renderGallery();
+    }
+
+    function reuseDream(id) {
+      const item = getGallery().find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById("dreamInput").value = item.text;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function downloadGalleryItem(id) {
+      const item = getGallery().find(x => x.id === id);
+      if (!item) return;
+
+      const link = document.createElement("a");
+      link.href = item.imageUrl;
+      link.download = `onyra-sueno-${id}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function formatDate(isoString) {
+      try {
+        return new Date(isoString).toLocaleString("es-AR", {
+          dateStyle: "short",
+          timeStyle: "short"
+        });
+      } catch (e) {
+        return isoString;
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
   </script>
 </body>
