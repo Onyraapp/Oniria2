@@ -215,13 +215,21 @@
     color: rgba(255,255,255,0.94);
   }
 
-  .result-actions {
-    display: none;
-    margin-top: 16px;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  ..result-actions {
+  display: none;
+  margin-top: 16px;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.result-actions.show {
+  display: grid;
+}
+
+.result-actions .secondary-btn {
+  width: 100%;
+  min-width: 0;
+}
 
   .result-actions.show {
     display: flex;
