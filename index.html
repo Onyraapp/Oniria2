@@ -644,6 +644,42 @@ function escapeHtml(str) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+ function loadDream(index) {
+  const data = JSON.parse(localStorage.getItem("onyraDreams") || "[]");
+  const item = data[index];
+
+  if (!item) return;
+
+  currentDream = {
+    dream: item.dream,
+    interpretation: item.interpretation,
+    imageUrl: item.imageUrl
+  };
+
+  // cargar UI
+  dreamInput.value = item.dream;
+  dreamImage.src = item.imageUrl;
+  interpretation.innerText = item.interpretation;
+
+  // mostrar resultado
+  result.style.display = "block";
+
+  requestAnimationFrame(() => {
+    result.classList.add("show");
+    resultActions.classList.add("show");
+  });
+
+  saveBtn.disabled = false;
+  storyBtn.disabled = false;
+
+  // scroll suave
+  setTimeout(() => {
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
+
+  // cerrar historial automáticamente (UX clave)
+  historyBox.style.display = "none";
+}
 </script>
 </body>
 </html>
