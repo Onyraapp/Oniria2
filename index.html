@@ -498,15 +498,24 @@ function toggleHistory() {
     historyBox.innerHTML = `<div class="history-card">No hay sueños guardados</div>`;
   } else {
     historyBox.innerHTML = data.map((item, i) => `
-      <div class="history-card" onclick="loadDream(${i})" style="cursor:pointer;">
-        <div class="history-date">${new Date(item.date).toLocaleString()}</div>
-        <div class="history-dream"><strong>Sueño:</strong> ${escapeHtml(item.dream)}</div>
-        <div class="history-interpretation">${escapeHtml(item.interpretation.substring(0,120))}...</div>
+      <div class="history-card visual" onclick="loadDream(${i})" style="cursor:pointer;">
+        <div class="history-row">
+          <img src="${item.imageUrl}" class="history-thumb" alt="Sueño guardado">
+          <div class="history-content">
+            <div class="history-date">${new Date(item.date).toLocaleString()}</div>
+            <div class="history-dream"><strong>Sueño:</strong> ${escapeHtml(trimText(item.dream, 70))}</div>
+            <div class="history-interpretation">${escapeHtml(trimText(item.interpretation, 110))}</div>
+          </div>
+        </div>
       </div>
     `).join("");
   }
 
   historyBox.style.display = "block";
+
+  setTimeout(() => {
+    historyBox.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 80);
 }
 function clearAll() {
   dreamInput.value = "";
