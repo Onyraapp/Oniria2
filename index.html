@@ -187,6 +187,10 @@ function toggleHistory() {
 }
 
 async function shareDream() {
+  if (!currentDream.image || !currentDream.interpretation) {
+    alert("Primero interpretá un sueño");
+    return;
+  }
 
   const canvas = document.getElementById("storyCanvas");
   const ctx = canvas.getContext("2d");
@@ -195,8 +199,8 @@ async function shareDream() {
   img.src = currentDream.image;
 
   img.onload = function () {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // cubrir bien la imagen
     const ratio = Math.max(
       canvas.width / img.width,
       canvas.height / img.height
@@ -210,47 +214,49 @@ async function shareDream() {
 
     ctx.drawImage(img, x, y, newWidth, newHeight);
 
-    // overlay oscuro PRO
-    const gradient = ctx.createLinearGradient(0,0,0,canvas.height);
-    gradient.addColorStop(0,"rgba(0,0,0,0.2)");
-    gradient.addColorStop(0.6,"rgba(0,0,0,0.5)");
-    gradient.addColorStop(1,"rgba(0,0,0,0.85)");
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, "rgba(8,8,18,0.18)");
+    gradient.addColorStop(0.45, "rgba(8,8,18,0.32)");
+    gradient.addColorStop(0.72, "rgba(8,8,18,0.62)");
+    gradient.addColorStop(1, "rgba(8,8,18,0.92)");
     ctx.fillStyle = gradient;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // marca
-    ctx.fillStyle="rgba(255,255,255,0.9)";
-    ctx.font="bold 64px Arial";
-    ctx.fillText("ONYRA",70,130);
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.font = "bold 64px Arial";
+    ctx.fillText("ONYRA", 70, 125);
 
-    // tagline
-    ctx.font="28px Arial";
-    ctx.fillStyle="rgba(255,255,255,0.6)";
-    ctx.fillText("descubrí lo que tu mente no te dice",70,170);
+    ctx.fillStyle = "rgba(255,255,255,0.62)";
+    ctx.font = "28px Arial";
+    ctx.fillText("descubrí lo que tu mente no te dice", 70, 170);
 
-    // hook fuerte
-    const firstLine = currentDream.interpretation.split(".")[0] + ".";
-    ctx.font="bold 52px Arial";
-    ctx.fillStyle="#ffffff";
-    wrapText(ctx, firstLine,70,950,940,60);
+    const firstSentence = getFirstSentence(currentDream.interpretation);
+    const remainingText = currentDream.interpretation
+      .replace(firstSentence, "")
+      .trim();
 
-    // resto del texto
-    const rest = currentDream.interpretation.replace(firstLine,"");
-    ctx.font="36px Arial";
-    ctx.fillStyle="rgba(255,255,255,0.85)";
-    wrapText(ctx, rest,70,1100,940,50);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 56px Arial";
+    drawWrappedText(ctx, firstSentence, 70, 980, 940, 64, 4);
 
-    // footer
-    ctx.font="24px Arial";
-    ctx.fillStyle="rgba(255,255,255,0.5)";
-    ctx.fillText("onyra.app",70,1850);
+    ctx.fillStyle = "rgba(255,255,255,0.84)";
+    ctx.font = "36px Arial";
+    drawWrappedText(ctx, remainingText, 70, 1260, 940, 50, 8);
 
-    const url = canvas.toDataURL();
+    ctx.fillStyle = "rgba(255,255,255,0.54)";
+    ctx.font = "24px Arial";
+    ctx.fillText("onyra.app", 70, 1845);
+
+    const url = canvas.toDataURL("image/png");
 
     const link = document.createElement("a");
     link.download = "onyra_story.png";
     link.href = url;
     link.click();
+  };
+
+  img.onerror = function () {
+    alert("No se pudo generar la story");
   };
 }
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
