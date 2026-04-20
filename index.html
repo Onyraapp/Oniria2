@@ -187,17 +187,47 @@ function toggleHistory() {
   `).join("");
 }
 
-function shareDream() {
-  const text = `Soñé: ${currentDream.dream}\n\nInterpretación: ${currentDream.interpretation}`;
-
-  if (navigator.share) {
-    navigator.share({text});
-  } else {
-    navigator.clipboard.writeText(text);
-    alert("Texto copiado");
+async function shareDream() {
+  if (!currentDream.image) {
+    alert("Primero interpretá un sueño");
+    return;
   }
-}
 
+  const canvas = document.getElementById("storyCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = currentDream.image;
+
+  img.onload = async () => {
+
+    // Fondo imagen
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // Overlay oscuro
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Marca ONYRA
+    ctx.fillStyle = "white";
+    ctx.font = "bold 60px Arial";
+    ctx.fillText("ONYRA", 60, 120);
+
+    // Texto interpretación
+    ctx.font = "42px Arial";
+    wrapText(ctx, currentDream.interpretation, 60, 300, 960, 55);
+
+    // Exportar imagen
+    const dataUrl = canvas.toDataURL("image/png");
+
+    // Descargar
+    const link = document.createElement("a");
+    link.download = "onyra_story.png";
+    link.href = dataUrl;
+    link.click();
+  };
+}
 function clearAll() {
   document.getElementById("dreamInput").value = "";
   document.getElementById("result").innerHTML = "";
