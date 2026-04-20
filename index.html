@@ -1,111 +1,74 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>ONYRA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>ONYRA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #0b0b12, #1a1a26);
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #0b0b12, #1a1a26);
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
 
-    h1 {
-      margin-bottom: 5px;
-      letter-spacing: 1px;
-    }
+h1 { margin-bottom: 5px; }
+.subtitle { opacity: 0.75; margin-bottom: 20px; }
 
-    .subtitle {
-      opacity: 0.75;
-      margin-bottom: 20px;
-    }
+textarea {
+  width: 90%;
+  max-width: 520px;
+  height: 110px;
+  border-radius: 12px;
+  padding: 12px;
+  border: none;
+  margin-bottom: 15px;
+}
 
-    textarea {
-      width: 90%;
-      max-width: 520px;
-      height: 110px;
-      border-radius: 12px;
-      padding: 12px;
-      border: none;
-      margin-bottom: 15px;
-      font-size: 14px;
-      resize: none;
-      box-sizing: border-box;
-    }
+button {
+  padding: 12px 20px;
+  margin: 6px;
+  border-radius: 10px;
+  border: none;
+  background: #6c5ce7;
+  color: white;
+  cursor: pointer;
+}
 
-    .buttons {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
+button:disabled { opacity: 0.4; }
 
-    button {
-      padding: 12px 20px;
-      margin: 6px;
-      border: none;
-      border-radius: 10px;
-      background: #6c5ce7;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
+.secondary { background: #2d2d3a; }
 
-    button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+.card {
+  margin-top: 24px;
+  padding: 18px;
+  border-radius: 18px;
+  background: #181822;
+  max-width: 560px;
+  margin: auto;
+}
 
-    .secondary {
-      background: #2d2d3a;
-    }
+img {
+  width: 100%;
+  max-width: 380px;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-top: 10px;
+}
 
-    .card {
-      margin-top: 24px;
-      padding: 18px;
-      border-radius: 18px;
-      background: #181822;
-      max-width: 560px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.28);
-    }
+.interpretacion {
+  margin-top: 16px;
+  text-align: left;
+  line-height: 1.6;
+}
 
-    img {
-      width: 100%;
-      max-width: 380px;
-      max-height: 500px;
-      object-fit: cover;
-      border-radius: 16px;
-      margin-top: 10px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-
-    .interpretacion {
-      margin-top: 16px;
-      font-size: 15px;
-      line-height: 1.65;
-      text-align: left;
-      white-space: pre-wrap;
-    }
-
-    .loading {
-      margin-top: 20px;
-      opacity: 0.78;
-    }
-
-    .error {
-      margin-top: 14px;
-      color: #ffb3b3;
-      display: none;
-    }
-  </style>
+.loading { margin-top: 20px; }
+.error { color: #ffb3b3; display:none; }
+</style>
 </head>
 
 <body>
@@ -115,161 +78,144 @@
 
 <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea>
 
-<div class="buttons">
-  <button onclick="submitDream()">Interpretar sueño</button>
-  <button class="secondary" onclick="clearAll()">Limpiar</button>
-  <button id="shareBtn" class="secondary" onclick="shareDream()" disabled>Compartir</button>
-  <button id="storyBtn" onclick="downloadStory()" disabled>Descargar story</button>
+<div>
+<button onclick="submitDream()">Interpretar</button>
+<button class="secondary" onclick="clearAll()">Limpiar</button>
+<button id="shareBtn" onclick="shareDream()" disabled>Compartir</button>
+<button id="storyBtn" onclick="downloadStory()" disabled>Story</button>
 </div>
 
-<div id="loading" class="loading" style="display:none;">
-  Interpretando y generando imagen...
-</div>
-
+<div id="loading" class="loading" style="display:none;">Generando...</div>
 <div id="errorBox" class="error"></div>
 
 <div id="result" class="card" style="display:none;">
-  <img id="dreamImage"/>
+  <img id="dreamImage">
   <div id="interpretation" class="interpretacion"></div>
 </div>
 
 <script>
+
 const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+const LOGO_URL = "og-image.svg";
 
-let currentDream = {
-  dream: "",
-  interpretation: "",
-  image: ""
-};
+let currentDream = { dream:"", interpretation:"", image:"" };
 
-async function submitDream() {
-  const dream = document.getElementById("dreamInput").value.trim();
+async function submitDream(){
+  const dream=document.getElementById("dreamInput").value.trim();
+  if(!dream) return alert("Escribí un sueño");
 
-  if (!dream) return alert("Escribí un sueño");
+  loading.style.display="block";
+  result.style.display="none";
+  errorBox.style.display="none";
+  shareBtn.disabled=true;
+  storyBtn.disabled=true;
 
-  document.getElementById("loading").style.display = "block";
-  document.getElementById("result").style.display = "none";
-  document.getElementById("errorBox").style.display = "none";
-  document.getElementById("shareBtn").disabled = true;
-  document.getElementById("storyBtn").disabled = true;
-
-  try {
-    const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dream })
+  try{
+    const res=await fetch(WORKER_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({dream})
     });
 
-    const data = await res.json();
+    const data=await res.json();
+    if(!data.ok) throw new Error(data.error);
 
-    if (!data.ok) throw new Error(data.error);
+    currentDream={dream,interpretation:data.interpretation,image:data.imageUrl};
 
-    currentDream = {
-      dream,
-      interpretation: data.interpretation,
-      image: data.imageUrl
-    };
+    dreamImage.src=data.imageUrl;
+    interpretation.innerText=data.interpretation;
 
-    document.getElementById("dreamImage").src = data.imageUrl;
-    document.getElementById("interpretation").innerText = data.interpretation;
+    loading.style.display="none";
+    result.style.display="block";
+    shareBtn.disabled=false;
+    storyBtn.disabled=false;
 
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("result").style.display = "block";
-    document.getElementById("shareBtn").disabled = false;
-    document.getElementById("storyBtn").disabled = false;
-
-  } catch (err) {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("errorBox").style.display = "block";
-    document.getElementById("errorBox").innerText = err.message || "Error";
+  }catch(e){
+    loading.style.display="none";
+    errorBox.style.display="block";
+    errorBox.innerText=e.message;
   }
 }
 
-function shareDream() {
-  const text = `Soñé: ${currentDream.dream}
+function shareDream(){
+  const text=`Soñé: ${currentDream.dream}
 
-Interpretación:
 ${currentDream.interpretation}
 
-Viví tu sueño en ONYRA:
-${window.location.href}`;
+${location.href}`;
 
-  if (navigator.share) {
-    navigator.share({
-      title: "Mi sueño en ONYRA",
-      text,
-      url: window.location.href
-    });
-  } else {
-    navigator.clipboard.writeText(text);
-    alert("Copiado para compartir");
-  }
+  navigator.share ? navigator.share({text}) : navigator.clipboard.writeText(text);
 }
 
-function clearAll() {
-  document.getElementById("dreamInput").value = "";
-  document.getElementById("result").style.display = "none";
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("errorBox").style.display = "none";
-  document.getElementById("shareBtn").disabled = true;
-  document.getElementById("storyBtn").disabled = true;
-
-  currentDream = { dream:"", interpretation:"", image:"" };
+function clearAll(){
+  dreamInput.value="";
+  result.style.display="none";
+  shareBtn.disabled=true;
+  storyBtn.disabled=true;
+  currentDream={dream:"",interpretation:"",image:""};
 }
 
-function downloadStory() {
-  if (!currentDream.image) return alert("Primero generá un sueño");
+function downloadStory(){
 
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas=document.createElement("canvas");
+  const ctx=canvas.getContext("2d");
 
-  const img = new Image();
-  img.src = currentDream.image;
+  const img=new Image();
+  const logo=new Image();
 
-  img.onload = () => {
-    canvas.width = 1080;
-    canvas.height = 1920;
+  img.src=currentDream.image;
+  logo.src=LOGO_URL;
 
-    const bg = ctx.createLinearGradient(0,0,0,1920);
+  let ready=0;
+
+  function draw(){
+    if(ready<1) return;
+
+    canvas.width=1080;
+    canvas.height=1920;
+
+    const bg=ctx.createLinearGradient(0,0,0,1920);
     bg.addColorStop(0,"#0a0a12");
     bg.addColorStop(1,"#1a1a2b");
-    ctx.fillStyle = bg;
+    ctx.fillStyle=bg;
     ctx.fillRect(0,0,1080,1920);
 
-    ctx.fillStyle="#fff";
-    ctx.font="bold 70px Arial";
-    ctx.textAlign="center";
-    ctx.fillText("ONYRA",540,120);
+    // LOGO con glow
+    if(logo.complete){
+      ctx.shadowColor="rgba(108,92,231,0.6)";
+      ctx.shadowBlur=30;
+      drawLogoContain(ctx,logo,340,40,400,140);
+      ctx.shadowBlur=0;
+    }
 
+    // imagen
     ctx.drawImage(img,140,260,800,700);
 
+    // texto
+    ctx.fillStyle="#fff";
     ctx.font="36px Arial";
     wrapText(ctx,currentDream.interpretation,540,1100,800,50);
 
     canvas.toBlob(function(blob){
       const url=URL.createObjectURL(blob);
-
       const link=document.createElement("a");
       link.href=url;
       link.download="onyra.png";
       document.body.appendChild(link);
 
-      const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
-
-      if(isIOS){
-        window.open(url,"_blank");
-      }else{
-        link.click();
-      }
+      /iPhone|iPad/.test(navigator.userAgent) ? window.open(url) : link.click();
 
       document.body.removeChild(link);
-      setTimeout(()=>URL.revokeObjectURL(url),2000);
+    });
+  }
 
-    },"image/png");
-  };
+  img.onload=()=>{ready++;draw();}
+  logo.onload=()=>{draw();}
+
 }
 
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+  ctx.textAlign="center";
   const words=text.split(" ");
   let line="";
   for(let n=0;n<words.length;n++){
@@ -284,6 +230,14 @@ function wrapText(ctx,text,x,y,maxWidth,lineHeight){
   }
   ctx.fillText(line,x,y);
 }
+
+function drawLogoContain(ctx,img,x,y,w,h){
+  const r=img.width/img.height;
+  let dw=w,dh=w/r;
+  if(dh>h){dh=h;dw=h*r;}
+  ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
+}
+
 </script>
 
 </body>
