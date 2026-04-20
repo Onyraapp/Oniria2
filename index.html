@@ -223,7 +223,27 @@
       </div>
     </div>
 
-    <div id="resultWrap" class="result-wrap">
+   <div id="resultWrap" class="result-wrap">
+  <div class="result-card">
+    
+    <div class="image-wrap">
+      <img id="resultImage" class="result-image" alt="Imagen del sueño" />
+      <div class="image-overlay"></div>
+    </div>
+
+    <div class="result-content">
+      <h2 class="result-title">Interpretación</h2>
+      <div id="resultText" class="result-text"></div>
+
+      <div id="actions" class="actions premium-actions">
+        <button class="secondary-btn" onclick="saveDream()">Guardar</button>
+        <button class="secondary-btn" onclick="shareDream()">Compartir sueño</button>
+        <button class="secondary-btn" onclick="toggleHistory()">Historial</button>
+      </div>
+
+    </div>
+  </div>
+</div>
       <div class="card">
         <img id="resultImage" class="result-image" alt="Imagen del sueño" />
         <h2 class="result-title">Interpretación</h2>
