@@ -148,12 +148,12 @@ async function submitDream() {
     currentDream.interpretation = data.interpretation;
     currentDream.image = data.imageUrl;
 
-    document.getElementById("dreamImage").src = data.imageUrl;
-    document.getElementById("interpretation").innerText = data.interpretation;
+   document.getElementById("dreamImage").src = data.imageUrl;
+document.getElementById("interpretation").innerText = data.interpretation;
 
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("result").style.display = "block";
-
+document.getElementById("loading").style.display = "none";
+document.getElementById("result").style.display = "block";
+document.getElementById("shareBtn").disabled = false;
   } catch (err) {
     console.error(err);
     alert("Error de conexión");
