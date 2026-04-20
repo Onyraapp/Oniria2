@@ -161,7 +161,68 @@ document.getElementById("shareBtn").disabled = false;
     document.getElementById("loading").style.display = "none";
   }
 }
+function downloadStory() {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
+  const img = new Image();
+  img.src = currentDream.image;
+
+  img.onload = () => {
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    // fondo negro
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // imagen sueño
+    ctx.drawImage(img, 0, 200, 1080, 900);
+
+    // titulo
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 60px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("ONYRA", 540, 120);
+
+    // interpretación
+    ctx.font = "40px Arial";
+
+    const text = currentDream.interpretation;
+    wrapText(ctx, text, 540, 1250, 900, 50);
+
+    // link
+    ctx.font = "28px Arial";
+    ctx.fillStyle = "#aaa";
+    ctx.fillText("onyra.app", 540, 1800);
+
+    const link = document.createElement("a");
+    link.download = "onyra-sueno.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  };
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + " ";
+    const metrics = ctx.measureText(testLine);
+    const testWidth = metrics.width;
+
+    if (testWidth > maxWidth && n > 0) {
+      ctx.fillText(line, x, y);
+      line = words[n] + " ";
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+
+  ctx.fillText(line, x, y);
+}
 function shareDream() {
   const text = `Soñé: ${currentDream.dream}
 
