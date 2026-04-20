@@ -78,7 +78,7 @@
     font-size: 15px;
     line-height: 1.5;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   textarea::placeholder {
@@ -242,10 +242,48 @@
     transform: translateY(-1px);
   }
 
+  .secondary-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   .microcopy {
     margin-top: 16px;
     color: rgba(255,255,255,0.42);
     font-size: 12px;
+  }
+
+  .history-box {
+    display: none;
+    margin-top: 18px;
+    text-align: left;
+  }
+
+  .history-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .history-date {
+    font-size: 12px;
+    color: rgba(255,255,255,0.48);
+    margin-bottom: 8px;
+  }
+
+  .history-dream {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.92);
+  }
+
+  .history-interpretation {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.74);
   }
 
   @media (max-width: 520px) {
@@ -288,6 +326,14 @@
       <div id="errorBox" class="error"></div>
 
       <div class="microcopy">La interpretación es simbólica e inspiracional.</div>
+
+      <div id="resultActions" class="result-actions">
+        <button id="saveBtn" class="secondary-btn" onclick="saveDream()" disabled>Guardar</button>
+        <button id="storyBtn" class="secondary-btn" onclick="shareDream()" disabled>Compartir sueño</button>
+        <button id="historyBtn" class="secondary-btn" onclick="toggleHistory()">Historial</button>
+      </div>
+
+      <div id="historyBox" class="history-box"></div>
     </div>
 
     <div id="result" class="result-card">
@@ -300,13 +346,6 @@
         <div class="interpretation-label">Interpretación</div>
         <div id="interpretation" class="interpretacion"></div>
       </div>
-    </div>
-
-    <div id="resultActions" class="result-actions">
-      <button id="shareBtn" class="secondary-btn" onclick="shareDream()" disabled>Compartir</button>
-      <button id="storyBtn" class="secondary-btn" onclick="shareDream()" disabled>
-  Compartir sueño
-</button>
     </div>
   </div>
 
@@ -332,7 +371,7 @@ async function submitDream() {
   result.style.display = "none";
   result.classList.remove("show");
   resultActions.classList.remove("show");
-  shareBtn.disabled = true;
+  saveBtn.disabled = true;
   storyBtn.disabled = true;
   mainBtn.disabled = true;
 
@@ -364,7 +403,7 @@ async function submitDream() {
       resultActions.classList.add("show");
     });
 
-    shareBtn.disabled = false;
+    saveBtn.disabled = false;
     storyBtn.disabled = false;
     mainBtn.disabled = false;
 
@@ -378,6 +417,22 @@ async function submitDream() {
     errorBox.innerText = e.message || "Error";
     mainBtn.disabled = false;
   }
+}
+
+function saveDream() {
+  if (!currentDream.dream) return;
+
+  const stored = JSON.parse(localStorage.getItem("onyraDreams") || "[]");
+
+  stored.unshift({
+    dream: currentDream.dream,
+    interpretation: currentDream.interpretation,
+    imageUrl: currentDream.imageUrl,
+    date: new Date().toISOString()
+  });
+
+  localStorage.setItem("onyraDreams", JSON.stringify(stored));
+  alert("Sueño guardado");
 }
 
 async function shareDream() {
@@ -405,7 +460,6 @@ ${location.href}`;
       return;
     }
 
-    // fallback: descarga imagen + copia texto
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -415,21 +469,50 @@ ${location.href}`;
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1500);
 
-    await navigator.clipboard.writeText(text);
-    alert("Se descargó la imagen y el texto quedó copiado");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      alert("Se descargó la imagen y el texto quedó copiado");
+    } else {
+      alert("Se descargó la imagen");
+    }
   } catch (e) {
     console.error(e);
     alert("No se pudo compartir el sueño");
   }
 }
 
+function toggleHistory() {
+  if (historyBox.style.display === "block") {
+    historyBox.style.display = "none";
+    return;
+  }
+
+  const data = JSON.parse(localStorage.getItem("onyraDreams") || "[]");
+
+  if (!data.length) {
+    historyBox.innerHTML = `<div class="history-card">No hay sueños guardados</div>`;
+  } else {
+    historyBox.innerHTML = data.map(item => `
+      <div class="history-card">
+        <div class="history-date">${new Date(item.date).toLocaleString()}</div>
+        <div class="history-dream"><strong>Sueño:</strong> ${escapeHtml(item.dream)}</div>
+        <div class="history-interpretation">${escapeHtml(item.interpretation)}</div>
+      </div>
+    `).join("");
+  }
+
+  historyBox.style.display = "block";
+  setTimeout(() => {
+    historyBox.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 80);
+}
 
 function clearAll() {
   dreamInput.value = "";
   result.style.display = "none";
   result.classList.remove("show");
   resultActions.classList.remove("show");
-  shareBtn.disabled = true;
+  saveBtn.disabled = true;
   storyBtn.disabled = true;
   errorBox.style.display = "none";
   loading.style.display = "none";
@@ -456,80 +539,8 @@ async function buildStoryBlob() {
 
     let imageReady = false;
     let logoReady = false;
-  function drawWhenReady() {
-    if (!imageReady) return;
 
-    canvas.width = 1080;
-    canvas.height = 1920;
-
-    const bg = ctx.createLinearGradient(0, 0, 0, 1920);
-    bg.addColorStop(0, "#0a0a12");
-    bg.addColorStop(1, "#1a1a2b");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, 1080, 1920);
-
-    if (logoReady) {
-      ctx.shadowColor = "rgba(108,92,231,0.6)";
-      ctx.shadowBlur = 30;
-      drawLogo(ctx, logo);
-      ctx.shadowBlur = 0;
-    }
-
-    ctx.drawImage(img, 140, 260, 800, 700);
-
-    const g = ctx.createLinearGradient(0, 260, 0, 960);
-    g.addColorStop(0, "rgba(0,0,0,0)");
-    g.addColorStop(1, "rgba(0,0,0,0.6)");
-    ctx.fillStyle = g;
-    ctx.fillRect(140, 260, 800, 700);
-
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 60px Playfair Display";
-    ctx.textAlign = "center";
-    ctx.fillText("Tu sueño", 540, 1080);
-
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
-    ctx.font = "36px Inter";
-    wrap(ctx, currentDream.interpretation, 540, 1200, 800, 50);
-
-    ctx.fillStyle = "rgba(255,255,255,0.4)";
-    ctx.font = "26px Inter";
-    ctx.fillText("onyra.app", 540, 1820);
-
-    canvas.toBlob(blob => {
-      if (!blob) return;
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "onyra.png";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      setTimeout(() => URL.revokeObjectURL(url), 1500);
-    }, "image/png");
-  }
-
-  img.onload = () => {
-    imageReady = true;
-    drawWhenReady();
-  };
-
-  img.onerror = () => {
-    alert("No se pudo cargar la imagen");
-  };
-
-  logo.onload = () => {
-    logoReady = true;
-    drawWhenReady();
-  };
-
-  logo.onerror = () => {
-    logoReady = false;
-  };
-}
-   function tryDraw() {
+    function drawWhenReady() {
       if (!imageReady) return;
 
       canvas.width = 1080;
@@ -580,22 +591,23 @@ async function buildStoryBlob() {
 
     img.onload = () => {
       imageReady = true;
-      tryDraw();
+      drawWhenReady();
     };
 
     img.onerror = () => reject(new Error("No se pudo cargar la imagen"));
 
     logo.onload = () => {
       logoReady = true;
-      tryDraw();
+      drawWhenReady();
     };
 
     logo.onerror = () => {
       logoReady = false;
-      tryDraw();
+      drawWhenReady();
     };
   });
 }
+
 function drawLogo(ctx, img) {
   const w = 400, h = 140, x = 340, y = 40;
   const r = img.width / img.height;
@@ -621,6 +633,15 @@ function wrap(ctx, text, x, y, maxWidth, lineHeight) {
     }
   }
   ctx.fillText(line, x, y);
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 </script>
 </body>
