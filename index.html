@@ -511,7 +511,10 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ dream })
+         const mode = document.getElementById("mode").value;
+const style = document.getElementById("style").value;
+
+body: JSON.stringify({ dream, mode, style })
         });
 
         const data = await res.json();
