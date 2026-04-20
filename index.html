@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ONYRA</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,14 +20,6 @@
       margin: 0 auto;
     }
 
-    h1 {
-      margin-bottom: 8px;
-    }
-
-    p {
-      opacity: 0.9;
-    }
-
     textarea {
       width: 100%;
       min-height: 130px;
@@ -34,437 +27,261 @@
       border: 1px solid #444;
       padding: 14px;
       font-size: 16px;
-      resize: vertical;
-      box-sizing: border-box;
       margin-top: 16px;
       background: #191b33;
       color: white;
     }
 
     button {
-      margin-top: 14px;
-      padding: 12px 18px;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
       border: none;
-      border-radius: 12px;
       cursor: pointer;
-      font-size: 16px;
-      margin-right: 6px;
-      margin-left: 6px;
+      margin: 5px;
     }
 
-    .primary {
-      background: #7c5cff;
-      color: white;
-    }
-
-    .secondary {
-      background: #ffffff;
-      color: #111;
-    }
-
-    .tertiary {
-      background: #27c27a;
-      color: white;
-    }
-
-    .quaternary {
-      background: #ffb020;
-      color: #111;
-    }
-
-    #status {
-      margin-top: 16px;
-      min-height: 24px;
-      font-size: 14px;
-      opacity: 0.9;
-    }
-
-    #previewWrap {
-      margin-top: 20px;
-      display: none;
-    }
+    .primary { background:#7c5cff; color:white; }
+    .secondary { background:white; color:black; }
+    .tertiary { background:#27c27a; color:white; }
+    .quaternary { background:#ffb020; color:black; }
 
     #resultImage {
       width: 100%;
       max-width: 420px;
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      margin-top: 20px;
+      border-radius: 16px;
     }
 
-    .actions {
-      margin-top: 12px;
+    #interpretationBox {
+      margin-top: 15px;
+      display: none;
+      background:#1b1e3a;
+      padding:15px;
+      border-radius:12px;
     }
 
-    .small {
-      font-size: 13px;
-      opacity: 0.75;
-      margin-top: 12px;
-    }
-
-    .gallerySection {
+    .gallery {
       margin-top: 40px;
-      text-align: left;
-    }
-
-    .galleryHeader {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .galleryGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
     }
 
     .card {
-      background: #17192d;
-      border: 1px solid #2e3258;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      background:#1b1e3a;
+      margin-bottom:15px;
+      border-radius:12px;
+      overflow:hidden;
+      padding:10px;
     }
 
     .card img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
+      width:100%;
+      border-radius:10px;
     }
 
-    .cardContent {
-      padding: 12px;
-    }
-
-    .cardDream {
-      font-size: 14px;
-      line-height: 1.4;
-      margin-bottom: 8px;
-      color: #f2f2f2;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .cardDate {
-      font-size: 12px;
-      opacity: 0.7;
-      margin-bottom: 10px;
-    }
-
-    .cardActions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .cardActions button {
-      margin: 0;
-      padding: 8px 10px;
-      font-size: 13px;
-      border-radius: 10px;
-    }
-
-    .emptyGallery {
-      opacity: 0.7;
-      font-size: 14px;
-      background: #17192d;
-      border: 1px dashed #39406e;
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 16px;
-      }
-
-      button {
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-      }
-
-      .galleryHeader {
-        align-items: stretch;
-      }
-
-      .galleryHeader button {
-        width: auto;
-      }
+    .small {
+      font-size:13px;
+      opacity:0.7;
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <h1>ONYRA</h1>
-    <p>Descubrí qué dicen tus sueños</p>
 
-    <textarea
-      id="dreamInput"
-      placeholder="Escribí tu sueño..."
-    ></textarea>
+<div class="app">
 
-    <div class="actions">
-      <button class="primary" onclick="submitDream()">Generar imagen</button>
-      <button class="secondary" onclick="shareDream()">Compartir</button>
-      <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
-      <button class="quaternary" onclick="saveToGallery()">Guardar en mi galería</button>
-    </div>
+  <h1>ONYRA</h1>
+  <p>Descubrí qué dicen tus sueños</p>
 
-    <div id="status"></div>
+  <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea>
 
-    <div id="previewWrap">
-      <img id="resultImage" alt="Imagen del sueño" />
-      <div class="small">Tu sueño interpretado visualmente</div>
-    </div>
+  <br>
 
-    <div class="gallerySection">
-      <div class="galleryHeader">
-        <h2 style="margin:0;">Mi galería de sueños</h2>
-        <button class="secondary" onclick="clearGallery()">Borrar galería</button>
-      </div>
-      <div id="gallery"></div>
-    </div>
+  <button class="primary" onclick="submitDream()">Generar imagen</button>
+  <button class="primary" onclick="interpretDream()">Interpretar sueño</button>
+  <button class="secondary" onclick="shareDream()">Compartir</button>
+  <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
+  <button class="quaternary" onclick="saveToGallery()">Guardar en galería</button>
+
+  <p id="status"></p>
+
+  <img id="resultImage" style="display:none;" />
+
+  <div id="interpretationBox">
+    <h3>Interpretación</h3>
+    <p id="interpretationText"></p>
   </div>
 
-  <script>
-    const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
-    const APP_LINK = "https://tu-dominio.com";
-    const STORAGE_KEY = "onyra_gallery_v1";
+  <div class="gallery">
+    <h2>Mi galería</h2>
+    <div id="gallery"></div>
+  </div>
 
-    const currentDream = {
-      text: "",
-      imageUrl: ""
-    };
+</div>
 
-    document.addEventListener("DOMContentLoaded", () => {
-      renderGallery();
-    });
+<script>
 
-    async function submitDream() {
-      const dreamInput = document.getElementById("dreamInput");
-      const status = document.getElementById("status");
-      const resultImage = document.getElementById("resultImage");
-      const previewWrap = document.getElementById("previewWrap");
+const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+const STORAGE_KEY = "onyra_gallery_v1";
 
-      const dream = dreamInput.value.trim();
+let currentDream = {
+  text:"",
+  imageUrl:"",
+  interpretation:""
+};
 
-      if (!dream) {
-        alert("Escribí un sueño primero");
-        return;
-      }
+document.addEventListener("DOMContentLoaded", renderGallery);
 
-      status.innerText = "Generando imagen...";
-      previewWrap.style.display = "none";
-      resultImage.removeAttribute("src");
+// GENERAR SOLO IMAGEN
+async function submitDream() {
+  const dream = document.getElementById("dreamInput").value.trim();
+  if (!dream) return alert("Escribí algo");
 
-      try {
-        const res = await fetch(WORKER_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ dream })
-        });
+  document.getElementById("status").innerText = "Generando...";
 
-        const data = await res.json();
+  const res = await fetch(WORKER_URL, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ dream })
+  });
 
-        if (!res.ok || !data.ok || !data.imageUrl) {
-          console.error("Respuesta worker:", data);
-          throw new Error(data?.error || "No se pudo generar la imagen");
-        }
+  const data = await res.json();
 
-        resultImage.src = data.imageUrl;
-        previewWrap.style.display = "block";
+  if (!data.ok) return alert("Error");
 
-        currentDream.text = dream;
-        currentDream.imageUrl = data.imageUrl;
+  showImage(data.imageUrl);
 
-        status.innerText = "Imagen lista";
-      } catch (error) {
-        console.error("Error final:", error);
-        status.innerText = "Error generando imagen";
-      }
-    }
+  currentDream = {
+    text:dream,
+    imageUrl:data.imageUrl,
+    interpretation:""
+  };
 
-    async function shareDream() {
-      if (!currentDream.imageUrl) {
-        alert("Primero generá una imagen");
-        return;
-      }
+  document.getElementById("status").innerText = "Listo";
+}
 
-      const shareText =
-        `Soñé esto: "${currentDream.text}"\n\n` +
-        `Descubrí el tuyo en ONYRA:\n${APP_LINK}`;
+// GENERAR + INTERPRETAR
+async function interpretDream() {
+  const dream = document.getElementById("dreamInput").value.trim();
+  if (!dream) return alert("Escribí algo");
 
-      try {
-        const imageResponse = await fetch(currentDream.imageUrl);
-        const imageBlob = await imageResponse.blob();
-        const imageFile = new File([imageBlob], "onyra-sueno.png", {
-          type: "image/png"
-        });
+  document.getElementById("status").innerText = "Interpretando...";
 
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [imageFile] })) {
-          await navigator.share({
-            title: "Mi sueño en ONYRA",
-            text: shareText,
-            files: [imageFile]
-          });
-          return;
-        }
+  const res = await fetch(WORKER_URL, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ dream })
+  });
 
-        if (navigator.share) {
-          await navigator.share({
-            title: "Mi sueño en ONYRA",
-            text: shareText,
-            url: APP_LINK
-          });
-          return;
-        }
+  const data = await res.json();
 
-        await navigator.clipboard.writeText(shareText);
-        alert("Tu dispositivo no soporta compartir archivos. Copié el texto al portapapeles.");
-      } catch (err) {
-        console.error("Error al compartir:", err);
-        alert("Error al compartir");
-      }
-    }
+  if (!data.ok) return alert("Error");
 
-    function saveDreamImage() {
-      if (!currentDream.imageUrl) {
-        alert("Primero generá una imagen");
-        return;
-      }
+  showImage(data.imageUrl);
 
-      const link = document.createElement("a");
-      link.href = currentDream.imageUrl;
-      link.download = "onyra-sueno.png";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+  document.getElementById("interpretationText").innerText = data.interpretation;
+  document.getElementById("interpretationBox").style.display = "block";
 
-    function saveToGallery() {
-      if (!currentDream.imageUrl || !currentDream.text) {
-        alert("Primero generá una imagen");
-        return;
-      }
+  currentDream = {
+    text:dream,
+    imageUrl:data.imageUrl,
+    interpretation:data.interpretation
+  };
 
-      const gallery = getGallery();
+  document.getElementById("status").innerText = "Listo";
+}
 
-      gallery.unshift({
-        id: Date.now(),
-        text: currentDream.text,
-        imageUrl: currentDream.imageUrl,
-        createdAt: new Date().toISOString()
+// MOSTRAR IMAGEN
+function showImage(url){
+  const img = document.getElementById("resultImage");
+  img.src = url;
+  img.style.display = "block";
+}
+
+// GUARDAR IMAGEN
+function saveDreamImage(){
+  if (!currentDream.imageUrl) return alert("Generá primero");
+
+  const a = document.createElement("a");
+  a.href = currentDream.imageUrl;
+  a.download = "onyra.png";
+  a.click();
+}
+
+// GUARDAR EN GALERIA
+function saveToGallery(){
+  if (!currentDream.imageUrl) return alert("Generá primero");
+
+  const gallery = getGallery();
+
+  gallery.unshift({
+    id:Date.now(),
+    ...currentDream,
+    date:new Date().toLocaleString()
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(gallery));
+  renderGallery();
+}
+
+// OBTENER GALERIA
+function getGallery(){
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+}
+
+// RENDER
+function renderGallery(){
+  const container = document.getElementById("gallery");
+  const data = getGallery();
+
+  if (!data.length){
+    container.innerHTML = "<p class='small'>Sin sueños guardados</p>";
+    return;
+  }
+
+  container.innerHTML = data.map(item => `
+    <div class="card">
+      <img src="${item.imageUrl}" />
+      <p><b>${item.text}</b></p>
+      ${item.interpretation ? `<p>${item.interpretation}</p>` : ""}
+      <p class="small">${item.date}</p>
+
+      <button onclick="deleteItem(${item.id})">Eliminar</button>
+    </div>
+  `).join("");
+}
+
+// ELIMINAR
+function deleteItem(id){
+  const filtered = getGallery().filter(x => x.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  renderGallery();
+}
+
+// COMPARTIR
+async function shareDream(){
+  if (!currentDream.imageUrl) return alert("Generá primero");
+
+  const text = `Soñé: "${currentDream.text}"`;
+
+  try {
+    const blob = await (await fetch(currentDream.imageUrl)).blob();
+    const file = new File([blob], "sueno.png", {type:"image/png"});
+
+    if (navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        text,
+        files:[file]
       });
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(gallery));
-      renderGallery();
-
-      document.getElementById("status").innerText = "Sueño guardado en tu galería";
+    } else {
+      await navigator.share({ text });
     }
 
-    function getGallery() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        console.error("Error leyendo galería:", e);
-        return [];
-      }
-    }
+  } catch(e){
+    alert("No se pudo compartir");
+  }
+}
 
-    function renderGallery() {
-      const galleryEl = document.getElementById("gallery");
-      const gallery = getGallery();
+</script>
 
-      if (!gallery.length) {
-        galleryEl.innerHTML = `
-          <div class="emptyGallery">
-            Todavía no guardaste sueños en tu galería.
-          </div>
-        `;
-        return;
-      }
-
-      galleryEl.innerHTML = `
-        <div class="galleryGrid">
-          ${gallery.map(item => `
-            <div class="card">
-              <img src="${item.imageUrl}" alt="Sueño guardado" />
-              <div class="cardContent">
-                <div class="cardDream">${escapeHtml(item.text)}</div>
-                <div class="cardDate">${formatDate(item.createdAt)}</div>
-                <div class="cardActions">
-                  <button class="secondary" onclick="downloadGalleryItem(${item.id})">Descargar</button>
-                  <button class="quaternary" onclick="reuseDream(${item.id})">Reusar texto</button>
-                  <button class="primary" onclick="deleteGalleryItem(${item.id})">Eliminar</button>
-                </div>
-              </div>
-            </div>
-          `).join("")}
-        </div>
-      `;
-    }
-
-    function deleteGalleryItem(id) {
-      const gallery = getGallery().filter(item => item.id !== id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(gallery));
-      renderGallery();
-    }
-
-    function clearGallery() {
-      const ok = confirm("¿Querés borrar toda tu galería?");
-      if (!ok) return;
-
-      localStorage.removeItem(STORAGE_KEY);
-      renderGallery();
-    }
-
-    function reuseDream(id) {
-      const item = getGallery().find(x => x.id === id);
-      if (!item) return;
-
-      document.getElementById("dreamInput").value = item.text;
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function downloadGalleryItem(id) {
-      const item = getGallery().find(x => x.id === id);
-      if (!item) return;
-
-      const link = document.createElement("a");
-      link.href = item.imageUrl;
-      link.download = `onyra-sueno-${id}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function formatDate(isoString) {
-      try {
-        return new Date(isoString).toLocaleString("es-AR", {
-          dateStyle: "short",
-          timeStyle: "short"
-        });
-      } catch (e) {
-        return isoString;
-      }
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-  </script>
 </body>
 </html>
