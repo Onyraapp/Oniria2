@@ -380,20 +380,49 @@ async function submitDream() {
   }
 }
 
-function shareDream() {
-  const text = `Soñé: ${currentDream.dream}
+async function shareDream() {
+  if (!currentDream.imageUrl || !currentDream.interpretation) {
+    alert("Primero generá un sueño");
+    return;
+  }
+
+  try {
+    const blob = await buildStoryBlob();
+
+    const text = `Soñé: ${currentDream.dream}
 
 ${currentDream.interpretation}
 
 ${location.href}`;
 
-  if (navigator.share) {
-    navigator.share({ text });
-  } else {
-    navigator.clipboard.writeText(text);
-    alert("Texto copiado para compartir");
+    const file = new File([blob], "onyra-sueno.png", { type: "image/png" });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        text,
+        files: [file]
+      });
+      return;
+    }
+
+    // fallback: descarga imagen + copia texto
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "onyra-sueno.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+    await navigator.clipboard.writeText(text);
+    alert("Se descargó la imagen y el texto quedó copiado");
+  } catch (e) {
+    console.error(e);
+    alert("No se pudo compartir el sueño");
   }
 }
+
 
 function clearAll() {
   dreamInput.value = "";
@@ -414,24 +443,19 @@ function clearAll() {
   dreamInput.focus();
 }
 
-function downloadStory() {
-  if (!currentDream.imageUrl) {
-    alert("Primero generá un sueño");
-    return;
-  }
+async function buildStoryBlob() {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+    const img = new Image();
+    const logo = new Image();
 
-  const img = new Image();
-  const logo = new Image();
+    img.src = currentDream.imageUrl;
+    logo.src = LOGO_URL;
 
-  img.src = currentDream.imageUrl;
-  logo.src = LOGO_URL;
-
-  let imageReady = false;
-  let logoReady = false;
-
+    let imageReady = false;
+    let logoReady = false;
   function drawWhenReady() {
     if (!imageReady) return;
 
