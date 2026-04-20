@@ -817,7 +817,7 @@
   const header = document.querySelector(".resultHeader p");
   if (header) header.innerText = content.resultSubtitle;
 
-  setStatus(content.idleStatus);
+  setStatus(content.idleStatus, false, true);
 }
 
     function getStyleLabel(style) {
