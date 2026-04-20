@@ -1,83 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>ONYRA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>ONYRA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f0f14;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #0b0b12, #1a1a26);
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
 
-    textarea {
-      width: 90%;
-      height: 100px;
-      border-radius: 10px;
-      padding: 10px;
-      border: none;
-      margin-bottom: 10px;
-    }
+h1 {
+  margin-bottom: 5px;
+}
 
-    button {
-      padding: 10px 20px;
-      margin: 5px;
-      border: none;
-      border-radius: 8px;
-      background: #6c5ce7;
-      color: white;
-      cursor: pointer;
-    }
+.subtitle {
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
 
-    .card {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 15px;
-      background: #1c1c24;
-    }
+textarea {
+  width: 90%;
+  max-width: 500px;
+  height: 100px;
+  border-radius: 12px;
+  padding: 12px;
+  border: none;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
 
-    img {
+button {
+  padding: 12px 22px;
+  margin: 6px;
+  border: none;
+  border-radius: 10px;
+  background: #6c5ce7;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.secondary {
+  background: #2d2d3a;
+}
+
+.card {
+  margin-top: 25px;
+  padding: 18px;
+  border-radius: 18px;
+  background: #181822;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+img {
   width: 100%;
   max-width: 380px;
   max-height: 500px;
   object-fit: cover;
   border-radius: 16px;
-  margin-top: 12px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
-    }
 
-    .interpretacion {
-      margin-top: 15px;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-  </style>
+.interpretacion {
+  margin-top: 15px;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.loading {
+  margin-top: 20px;
+  opacity: 0.7;
+}
+
+</style>
 </head>
 
 <body>
 
-  <h1>ONYRA</h1>
-  <p>Descubrí qué dicen tus sueños</p>
+<h1>ONYRA</h1>
+<div class="subtitle">Descubrí qué dicen tus sueños</div>
 
-  <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea><br>
+<textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea><br>
 
-  <button onclick="submitDream()">Interpretar</button>
+<button onclick="submitDream()">Interpretar sueño</button>
+<button class="secondary" onclick="clearAll()">Limpiar</button>
 
-  <div id="loading" style="display:none;">Generando interpretación...</div>
+<div id="loading" class="loading" style="display:none;">
+  Interpretando y generando imagen...
+</div>
 
-  <div id="result" class="card" style="display:none;">
-    <img id="dreamImage" />
-    <div id="interpretation" class="interpretacion"></div>
+<div id="result" class="card" style="display:none;">
+  <img id="dreamImage"/>
+  <div id="interpretation" class="interpretacion"></div>
 
-    <button onclick="shareDream()">Compartir</button>
-  </div>
+  <button onclick="shareDream()">Compartir</button>
+</div>
 
 <script>
 const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
@@ -89,9 +116,12 @@ let currentDream = {
 };
 
 async function submitDream() {
-  const dream = document.getElementById("dreamInput").value;
+  const dream = document.getElementById("dreamInput").value.trim();
 
-  if (!dream) return alert("Escribí un sueño");
+  if (!dream) {
+    alert("Escribí un sueño primero");
+    return;
+  }
 
   document.getElementById("loading").style.display = "block";
   document.getElementById("result").style.display = "none";
@@ -105,17 +135,18 @@ async function submitDream() {
 
     const data = await res.json();
 
-    if (!data.ok) throw new Error("Error Worker");
+    if (!data.ok) {
+      console.error(data);
+      alert("Error del worker");
+      document.getElementById("loading").style.display = "none";
+      return;
+    }
 
     currentDream.dream = dream;
     currentDream.interpretation = data.interpretation;
     currentDream.image = data.imageUrl;
 
-    // pintar imagen
-    const img = document.getElementById("dreamImage");
-    img.src = data.imageUrl;
-
-    // pintar texto
+    document.getElementById("dreamImage").src = data.imageUrl;
     document.getElementById("interpretation").innerText = data.interpretation;
 
     document.getElementById("loading").style.display = "none";
@@ -123,7 +154,7 @@ async function submitDream() {
 
   } catch (err) {
     console.error(err);
-    alert("Error generando sueño");
+    alert("Error de conexión");
     document.getElementById("loading").style.display = "none";
   }
 }
@@ -147,6 +178,11 @@ ${window.location.href}`;
     navigator.clipboard.writeText(text);
     alert("Copiado para compartir");
   }
+}
+
+function clearAll() {
+  document.getElementById("dreamInput").value = "";
+  document.getElementById("result").style.display = "none";
 }
 </script>
 
