@@ -431,22 +431,40 @@
     }
 
     function renderHistory() {
-      const history = JSON.parse(localStorage.getItem("onyra_history") || "[]");
+  const history = JSON.parse(localStorage.getItem("onyra_history") || "[]");
 
-      if (!history.length) {
-        historyBox.style.display = "none";
-        historyList.innerHTML = "";
-        return;
-      }
+  if (!history.length) {
+    historyBox.style.display = "none";
+    historyList.innerHTML = "";
+    return;
+  }
 
-      historyBox.style.display = "block";
-      historyList.innerHTML = history.map(item => `
-        <div class="history-item" onclick="loadHistoryItem(${item.id})">
-          <div class="history-item-title">${escapeHtml(item.date)} · ${escapeHtml(capitalize(item.mode || "mixto"))}</div>
-          <div class="history-item-dream">${escapeHtml(trimText(item.dream, 120))}</div>
+  historyBox.style.display = "block";
+
+  historyList.innerHTML = history.map(item => `
+    <div class="history-item" onclick="loadHistoryItem(${item.id})" style="display:flex; gap:12px; align-items:center;">
+      
+      ${item.image ? `
+        <img src="${item.image}" 
+             style="width:60px; height:60px; object-fit:cover; border-radius:12px; flex-shrink:0;" />
+      ` : `
+        <div style="width:60px; height:60px; border-radius:12px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-size:12px; color:#aaa;">
+          sin img
         </div>
-      `).join("");
-    }
+      `}
+
+      <div style="flex:1;">
+        <div class="history-item-title">
+          ${escapeHtml(item.date)} · ${escapeHtml(capitalize(item.mode || "mixto"))}
+        </div>
+        <div class="history-item-dream">
+          ${escapeHtml(trimText(item.dream, 80))}
+        </div>
+      </div>
+
+    </div>
+  `).join("");
+}
 
     function loadHistoryItem(id) {
       const history = JSON.parse(localStorage.getItem("onyra_history") || "[]");
