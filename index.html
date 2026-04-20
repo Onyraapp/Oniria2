@@ -1,158 +1,379 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>ONYRA</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>ONYRA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #0f1020;
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f1020;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
 
-textarea, select {
-  width: 90%;
-  max-width: 400px;
-  margin: 6px 0;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-}
+    .app {
+      max-width: 460px;
+      margin: 0 auto;
+    }
 
-button {
-  margin: 6px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: none;
-  background: #6c5ce7;
-  color: white;
-}
+    h1 {
+      margin-bottom: 8px;
+    }
 
-img {
-  margin-top: 15px;
-  max-width: 100%;
-  border-radius: 10px;
-  display: none;
-}
-</style>
+    .sub {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: #bfc3ff;
+      font-size: 14px;
+    }
+
+    textarea, select {
+      width: 100%;
+      max-width: 100%;
+      margin: 6px 0;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    textarea {
+      height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      margin: 6px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background: #6c5ce7;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .danger {
+      background: #d64545;
+    }
+
+    #status {
+      margin-top: 12px;
+      min-height: 22px;
+    }
+
+    #img {
+      margin-top: 15px;
+      max-width: 100%;
+      border-radius: 12px;
+      display: none;
+    }
+
+    #history {
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .item {
+      background: #1a1d3a;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      line-height: 1.35;
+    }
+
+    .empty {
+      opacity: 0.7;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="app">
+    <h1>🌙 ONYRA</h1>
+    <p class="sub">Contá tu sueño y convertílo en imagen</p>
 
-<h1>🌙 ONYRA</h1>
+    <textarea id="dreamInput" placeholder="Ejemplo: soñé que volaba sobre el mar de noche..."></textarea>
 
-<textarea id="dreamInput" placeholder="Contá tu sueño..."></textarea><br>
+    <select id="style">
+      <option value="oscuro">Oscuro</option>
+      <option value="cine">Cine</option>
+      <option value="surreal">Surreal</option>
+    </select>
 
-<select id="style">
-  <option value="oscuro">Oscuro</option>
-  <option value="cine">Cine</option>
-  <option value="surreal">Surreal</option>
-</select><br>
+    <div>
+      <button onclick="generar()">Generar imagen</button>
+      <button onclick="regenerar()">Otra versión</button>
+      <button onclick="shareDream()">Compartir</button>
+      <button class="danger" onclick="resetHistory()">Reset historial</button>
+    </div>
 
-<button onclick="generar()">Generar imagen</button>
-<button onclick="testWorker()">Test conexión</button>
+    <p id="status"></p>
 
-<p id="status"></p>
+    <img id="img" alt="Imagen generada del sueño">
 
-<img id="img">
+    <div id="history"></div>
 
-<script>
+    <canvas id="storyCanvas" style="display:none;"></canvas>
+  </div>
 
-const WORKER = "https://onyra-final-ok.almacenmujica.workers.dev";
-let lastBlobUrl = "";
+  <script>
+    const WORKER = "https://onyra-final-ok.almacenmujica.workers.dev";
 
-function dataUrlToBlobUrl(dataUrl) {
-  const parts = dataUrl.split(",");
-  const mime = parts[0].match(/:(.*?);/)[1];
-  const binary = atob(parts[1]);
-  const len = binary.length;
-  const bytes = new Uint8Array(len);
+    let lastDream = "";
+    let lastStyle = "oscuro";
+    let lastImageUrl = "";
+    let lastBlobUrl = "";
 
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-
-  const blob = new Blob([bytes], { type: mime });
-  return URL.createObjectURL(blob);
-}
-
-async function generar() {
-  const dream = document.getElementById("dreamInput").value.trim();
-  const style = document.getElementById("style").value;
-  const status = document.getElementById("status");
-  const img = document.getElementById("img");
-
-  if (!dream) {
-    status.textContent = "Escribí un sueño primero.";
-    return;
-  }
-
-  try {
-    status.textContent = "Generando...";
-    img.style.display = "none";
-
-    const res = await fetch(WORKER, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ dream, style })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || "Error generando imagen");
+    function saveDream(dream) {
+      let history = JSON.parse(localStorage.getItem("dreams") || "[]");
+      history.unshift(dream);
+      history = history.slice(0, 10);
+      localStorage.setItem("dreams", JSON.stringify(history));
+      renderHistory();
     }
 
-    if (!data.imageUrl) {
-      throw new Error("No vino imageUrl");
+    function renderHistory() {
+      const container = document.getElementById("history");
+      const history = JSON.parse(localStorage.getItem("dreams") || "[]");
+
+      container.innerHTML = "<h3>Historial</h3>";
+
+      if (history.length === 0) {
+        container.innerHTML += "<p class='empty'>Todavía no hay sueños guardados.</p>";
+        return;
+      }
+
+      history.forEach((dream) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = dream;
+        div.onclick = () => {
+          document.getElementById("dreamInput").value = dream;
+        };
+        container.appendChild(div);
+      });
     }
 
-    if (lastBlobUrl) {
-      URL.revokeObjectURL(lastBlobUrl);
+    function resetHistory() {
+      const ok = confirm("¿Seguro querés borrar todo el historial?");
+      if (!ok) return;
+
+      localStorage.removeItem("dreams");
+      renderHistory();
+      document.getElementById("status").textContent = "Historial borrado";
     }
 
-    lastBlobUrl = dataUrlToBlobUrl(data.imageUrl);
+    function dataUrlToBlobUrl(dataUrl) {
+      const parts = dataUrl.split(",");
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const binary = atob(parts[1]);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
 
-    img.src = lastBlobUrl;
-    img.style.display = "block";
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
 
-    status.textContent = "✨ Imagen generada";
+      const blob = new Blob([bytes], { type: mime });
+      return URL.createObjectURL(blob);
+    }
 
-  } catch (e) {
-    console.error(e);
-    status.textContent = "ERROR: " + e.message;
-  }
-}
+    async function generateAI(dream, style) {
+      const res = await fetch(WORKER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ dream, style })
+      });
 
-// -------- TEST CONEXIÓN --------
-async function testWorker() {
-  const status = document.getElementById("status");
+      const data = await res.json();
 
-  try {
-    status.textContent = "Probando conexión...";
+      if (!res.ok) {
+        throw new Error(data.error || "Error generando imagen");
+      }
 
-    const res = await fetch(WORKER, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dream: "test", style: "cine" })
-    });
+      if (!data.imageUrl) {
+        throw new Error("No vino imageUrl");
+      }
 
-    const text = await res.text();
+      return data.imageUrl;
+    }
 
-    status.textContent = "STATUS: " + res.status + " | RESP: " + text;
+    async function generar() {
+      const dream = document.getElementById("dreamInput").value.trim();
+      const style = document.getElementById("style").value;
+      const status = document.getElementById("status");
+      const img = document.getElementById("img");
 
-  } catch (e) {
-    status.textContent = "ERROR: " + e.message;
-  }
-}
+      if (!dream) {
+        status.textContent = "Escribí un sueño primero.";
+        return;
+      }
 
-</script>
+      try {
+        lastDream = dream;
+        lastStyle = style;
+        status.textContent = "Generando imagen...";
+        img.style.display = "none";
 
+        const dataUrl = await generateAI(dream, style);
+        lastImageUrl = dataUrl;
+
+        if (lastBlobUrl) {
+          URL.revokeObjectURL(lastBlobUrl);
+        }
+
+        lastBlobUrl = dataUrlToBlobUrl(dataUrl);
+
+        img.src = lastBlobUrl;
+        img.style.display = "block";
+        status.textContent = "✨ Imagen generada";
+
+        saveDream(dream);
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Error: " + error.message;
+      }
+    }
+
+    function regenerar() {
+      if (!lastDream) {
+        document.getElementById("status").textContent = "Primero generá una imagen.";
+        return;
+      }
+
+      document.getElementById("dreamInput").value = lastDream;
+      document.getElementById("style").value = lastStyle;
+      generar();
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(" ");
+      let line = "";
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + " ";
+        const testWidth = ctx.measureText(testLine).width;
+
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line, x, y);
+          line = words[n] + " ";
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+
+      ctx.fillText(line, x, y);
+    }
+
+    async function shareDream() {
+      if (!lastImageUrl || !lastDream) {
+        alert("Primero generá una imagen");
+        return;
+      }
+
+      const appUrl = "https://onyraapp.github.io/Oniria2/";
+      const shareText = `Soñé esto: "${lastDream}" 😳
+
+Mirá mi sueño en ONYRA:
+${appUrl}`;
+
+      const canvas = document.getElementById("storyCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const image = new Image();
+      image.src = lastBlobUrl || lastImageUrl;
+
+      image.onload = function () {
+        canvas.width = 1080;
+        canvas.height = 1920;
+
+        // Fondo
+        ctx.fillStyle = "#0b0b14";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Marca
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 52px Arial";
+        ctx.fillText("ONYRA", 60, 90);
+
+        // Texto del sueño
+        ctx.fillStyle = "#bfc3ff";
+        ctx.font = "34px Arial";
+        wrapText(ctx, "Soñé: " + lastDream, 60, 170, 960, 44);
+
+        // Imagen
+        const imgSize = 860;
+        const imgX = (canvas.width - imgSize) / 2;
+        const imgY = 320;
+        ctx.drawImage(image, imgX, imgY, imgSize, imgSize);
+
+        // Footer
+        ctx.fillStyle = "#8f95ff";
+        ctx.font = "28px Arial";
+        ctx.fillText("Probalo en onyraapp.github.io", 60, 1820);
+
+        canvas.toBlob(async function(blob) {
+          if (!blob) return;
+
+          const file = new File([blob], "onyra-story.png", { type: "image/png" });
+
+          // 1) intento completo
+          try {
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                files: [file],
+                title: "Mi sueño en ONYRA",
+                text: shareText,
+                url: appUrl
+              });
+              return;
+            }
+          } catch (e) {
+            console.log("No se pudo compartir imagen + texto + link", e);
+          }
+
+          // 2) fallback texto + link
+          try {
+            if (navigator.share) {
+              await navigator.share({
+                title: "Mi sueño en ONYRA",
+                text: shareText,
+                url: appUrl
+              });
+              return;
+            }
+          } catch (e) {
+            console.log("No se pudo compartir texto + link", e);
+          }
+
+          // 3) descarga + copia
+          const downloadUrl = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = "onyra-story.png";
+          link.click();
+
+          try {
+            await navigator.clipboard.writeText(shareText);
+            alert("Se descargó la imagen y se copió el texto con link.");
+          } catch (e) {
+            alert("Se descargó la imagen. Compartí también este link: " + appUrl);
+          }
+        }, "image/png");
+      };
+    }
+
+    renderHistory();
+  </script>
 </body>
 </html>
