@@ -4,217 +4,84 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ONYRA</title>
-
   <style>
-    :root {
-      --bg: #090b15;
-      --bg-2: #0f1324;
-      --panel: rgba(18, 23, 43, 0.88);
-      --panel-2: rgba(24, 29, 54, 0.88);
-      --stroke: rgba(255,255,255,0.08);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.74);
-      --muted-2: rgba(255,255,255,0.52);
-      --primary: #7c5cff;
-      --primary-2: #9f8cff;
-      --green: #26c277;
-      --yellow: #ffb020;
-      --red: #de4f4f;
-      --shadow: 0 18px 50px rgba(0,0,0,.35);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      font-family: Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top center, rgba(124,92,255,.22), transparent 28%),
-        radial-gradient(circle at 15% 20%, rgba(38,194,119,.09), transparent 18%),
-        linear-gradient(180deg, #080a14 0%, #0c1121 48%, #0b1020 100%);
-    }
-
+    * { box-sizing: border-box; }
     body {
-      padding: 16px;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, #222 0%, #111 35%, #090909 100%);
+      color: #f4f1ea;
+      min-height: 100vh;
     }
 
     .app {
-      max-width: 1120px;
+      max-width: 760px;
       margin: 0 auto;
+      padding: 24px 18px 60px;
     }
 
     .hero {
-      position: relative;
-      overflow: hidden;
-      padding: 30px 24px;
-      border-radius: 32px;
-      border: 1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(22,26,48,.95) 0%, rgba(14,18,34,.95) 100%);
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
+      text-align: center;
+      margin-bottom: 22px;
     }
 
-    .heroGlow {
-      position: absolute;
-      right: -70px;
-      bottom: -120px;
-      width: 260px;
-      height: 260px;
-      border-radius: 999px;
-      background: radial-gradient(circle, rgba(124,92,255,.34), transparent 68%);
-      pointer-events: none;
+    .logo {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
     }
 
-    .brandPill {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.08);
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 16px;
-    }
-
-    .brandDot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 0 18px rgba(124,92,255,.6);
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      font-size: 42px;
-      line-height: 1;
-      letter-spacing: .3px;
-    }
-
-    .heroText {
-      margin: 0;
-      max-width: 720px;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .mainGrid {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 18px;
-      align-items: start;
+    .subtitle {
+      color: #cfc7bb;
+      font-size: 15px;
+      line-height: 1.5;
+      max-width: 520px;
+      margin: 0 auto;
     }
 
     .panel {
-      border: 1px solid var(--stroke);
-      background: var(--panel);
-      backdrop-filter: blur(10px);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-    }
-
-    .controlsPanel {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
       padding: 18px;
-      position: sticky;
-      top: 14px;
-    }
-
-    .sectionLabel {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
-
-    .sectionSubtext {
-      margin: 0 0 14px;
-      color: var(--muted-2);
-      font-size: 14px;
-      line-height: 1.5;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      margin-bottom: 18px;
     }
 
     textarea {
       width: 100%;
-      min-height: 200px;
+      min-height: 150px;
       resize: vertical;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(7,10,20,.7);
-      color: white;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
       padding: 16px;
       font-size: 16px;
       outline: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
     }
 
-    textarea::placeholder {
-      color: rgba(255,255,255,.38);
-    }
-
-    .stylePicker {
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
-    }
-
-    .stylePickerTitle {
-      margin: 0 0 10px;
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .styleButtons {
+    .controls {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 14px;
     }
 
-    .styleChip {
-      padding: 11px 10px;
+    select {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      color: white;
-      font-size: 13px;
-      font-weight: 700;
+      padding: 14px;
+      font-size: 15px;
     }
 
-    .styleChip.active {
-      outline: 2px solid rgba(255,255,255,.16);
-      transform: translateY(-1px);
-    }
-
-    .style-mystic {
-      background: linear-gradient(135deg, rgba(124,92,255,.45), rgba(60,20,120,.45));
-    }
-
-    .style-dark {
-      background: linear-gradient(135deg, rgba(25,25,35,.95), rgba(70,20,20,.45));
-    }
-
-    .style-editorial {
-      background: linear-gradient(135deg, rgba(220,220,230,.24), rgba(120,120,160,.18));
-    }
-
-    .buttonStack {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .buttonRow {
+    .buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
@@ -222,1214 +89,400 @@
 
     button {
       border: none;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 15px;
       cursor: pointer;
-      border-radius: 15px;
-      padding: 13px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+      transition: transform .15s ease, opacity .15s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.6; cursor: wait; }
 
     .primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: white;
+      background: #f1dfb6;
+      color: #111;
+      font-weight: 700;
     }
 
     .secondary {
-      background: rgba(255,255,255,.92);
-      color: #0f1220;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .tertiary {
-      background: var(--green);
-      color: white;
-    }
-
-    .quaternary {
-      background: var(--yellow);
-      color: #111;
-    }
-
-    .danger {
-      background: var(--red);
-      color: white;
-    }
-
-    .statusCard {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
-    }
-
-    .statusDot {
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.24);
-      flex: 0 0 auto;
-    }
-
-    .statusDot.loading {
-      background: var(--primary);
-      box-shadow: 0 0 0 rgba(124,92,255,.6);
-      animation: pulse 1.2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(124,92,255,.55); }
-      70% { box-shadow: 0 0 0 12px rgba(124,92,255,0); }
-      100% { box-shadow: 0 0 0 0 rgba(124,92,255,0); }
-    }
-
-    #status {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    .rightColumn {
-      display: grid;
-      gap: 18px;
-    }
-
-    .resultCard {
+    .result-card {
       overflow: hidden;
-      border-radius: 30px;
-      border: 1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(22,26,49,.96), rgba(12,16,30,.96));
-      box-shadow: var(--shadow);
+      padding: 0;
     }
 
-    .resultHeader {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 18px 0;
-      flex-wrap: wrap;
-    }
-
-    .resultHeader h2 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .resultHeader p {
-      margin: 4px 0 0;
-      color: var(--muted-2);
-      font-size: 14px;
-    }
-
-    .resultBadge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .resultImageWrap {
-      padding: 18px;
-    }
-
-    .resultImageShell {
-      position: relative;
-      min-height: 440px;
-      border-radius: 26px;
-      background:
-        radial-gradient(circle at top center, rgba(124,92,255,.18), transparent 30%),
-        linear-gradient(180deg, #111528 0%, #0a0d18 100%);
-      border: 1px solid rgba(255,255,255,.05);
+    .image-wrap {
+      width: 100%;
+      min-height: 240px;
+      background: linear-gradient(180deg, #181818, #0e0e0e);
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
-    .resultImageShell.mystic {
-      background:
-        radial-gradient(circle at top center, rgba(170,120,255,.35), transparent 34%),
-        linear-gradient(180deg, #1d1736 0%, #0d1020 100%);
-    }
-
-    .resultImageShell.dark {
-      background:
-        radial-gradient(circle at top center, rgba(255,80,80,.12), transparent 30%),
-        linear-gradient(180deg, #121212 0%, #05070e 100%);
-    }
-
-    .resultImageShell.editorial {
-      background:
-        radial-gradient(circle at top center, rgba(255,255,255,.12), transparent 34%),
-        linear-gradient(180deg, #232637 0%, #11131d 100%);
-    }
-
-    #resultImage {
+    .image-wrap img {
       width: 100%;
-      max-width: 760px;
-      display: none;
-      border-radius: 22px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.34);
-    }
-
-    .resultPlaceholder {
-      max-width: 360px;
-      text-align: center;
-      color: var(--muted-2);
-      padding: 24px;
-    }
-
-    .resultPlaceholderTitle {
-      font-size: 18px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .floatingActions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 0 18px 18px;
-    }
-
-    .floatingActions button {
-      padding: 11px 14px;
-    }
-
-    .infoGrid {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
-    }
-
-    .infoCard {
-      border: 1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(20,24,45,.94), rgba(13,17,31,.94));
-      border-radius: 26px;
-      box-shadow: var(--shadow);
-      padding: 18px;
-    }
-
-    .infoCard h3 {
-      margin: 0 0 10px;
-      font-size: 20px;
-    }
-
-    .cardIntro {
-      margin: 0 0 12px;
-      color: var(--muted-2);
-      font-size: 14px;
-    }
-
-    #interpretationBox {
-      display: none;
-    }
-
-    .interpretationText {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-      white-space: pre-wrap;
-      font-size: 15px;
-    }
-
-    #storySection {
-      display: none;
-    }
-
-    #storyPreview {
-      width: 100%;
-      max-width: 320px;
       display: block;
-      margin: 12px auto 0;
-      border-radius: 20px;
-      background: #090b14;
-      box-shadow: 0 18px 40px rgba(0,0,0,.32);
+      object-fit: cover;
+      max-height: 460px;
     }
 
-    .storyActions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 14px;
+    .image-placeholder {
+      color: #b9b0a2;
+      padding: 36px 20px;
+      text-align: center;
+      font-size: 14px;
     }
 
-    .historySection {
-      margin-top: 22px;
-      border: 1px solid var(--stroke);
-      background: var(--panel);
-      border-radius: 30px;
-      box-shadow: var(--shadow);
+    .result-body {
       padding: 20px;
     }
 
-    .historyTop {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .historyTop h2 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .historyTop p {
-      margin: 4px 0 0;
-      color: var(--muted-2);
-      font-size: 14px;
-    }
-
-    .historyGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    .historyCard {
-      background: linear-gradient(180deg, rgba(25,29,54,.98), rgba(15,19,35,.98));
-      border: 1px solid var(--stroke);
-      border-radius: 22px;
-      overflow: hidden;
-      padding: 12px;
-    }
-
-    .historyCard img {
-      width: 100%;
-      display: block;
-      border-radius: 16px;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      box-shadow: 0 12px 26px rgba(0,0,0,.2);
-    }
-
-    .historyMeta {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: center;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .historyStyleTag {
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      color: white;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .historyText {
-      margin: 12px 0 8px;
-      font-size: 15px;
-      line-height: 1.5;
-      color: white;
-    }
-
-    .historyInterpretation {
-      margin: 0 0 10px;
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--muted);
-    }
-
-    .small {
-      margin: 0;
+    .mode-badge {
+      display: inline-block;
       font-size: 12px;
-      color: var(--muted-2);
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: #111;
+      background: #f1dfb6;
+      padding: 7px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      font-weight: 700;
     }
 
-    .historyActions {
+    .result-title {
+      font-size: 24px;
+      margin: 0 0 10px;
+    }
+
+    .dream-preview {
+      color: #cfc7bb;
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .interpretation {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 16px;
+      color: #f4f1ea;
+    }
+
+    .result-actions {
       display: flex;
+      gap: 10px;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
+      margin-top: 18px;
     }
 
-    .historyActions button {
-      padding: 9px 10px;
-      font-size: 13px;
-      border-radius: 12px;
+    .history-title {
+      margin: 0 0 12px;
+      font-size: 18px;
     }
 
-    .emptyState {
-      text-align: center;
-      padding: 28px 18px;
-      color: var(--muted);
-      border: 1px dashed rgba(255,255,255,.14);
-      border-radius: 18px;
-      background: rgba(255,255,255,.03);
+    .history-list {
+      display: grid;
+      gap: 10px;
     }
 
-    .subtle {
-      color: var(--muted-2);
-      font-size: 13px;
+    .history-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
     }
 
-    @media (max-width: 980px) {
-      .mainGrid {
+    .history-item small {
+      display: block;
+      color: #bfb7ab;
+      margin-top: 6px;
+    }
+
+    .status {
+      font-size: 14px;
+      color: #d3cabd;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+
+    @media (max-width: 640px) {
+      .buttons {
         grid-template-columns: 1fr;
       }
-
-      .controlsPanel {
-        position: static;
-      }
-
-      .infoGrid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 620px) {
-      h1 {
+      .logo {
         font-size: 34px;
-      }
-
-      .buttonRow,
-      .styleButtons {
-        grid-template-columns: 1fr;
-      }
-
-      .floatingActions,
-      .storyActions,
-      .historyActions {
-        flex-direction: column;
-      }
-
-      .floatingActions button,
-      .storyActions button,
-      .historyActions button,
-      .historyTop button {
-        width: 100%;
-      }
-
-      .resultImageShell {
-        min-height: 300px;
       }
     }
   </style>
 </head>
-
 <body>
   <div class="app">
-    <section class="hero">
-      <div class="heroGlow"></div>
-      <div class="brandPill">
-        <span class="brandDot"></span>
-        Diario visual de sueños con IA
+    <div class="hero">
+      <div class="logo">ONYRA</div>
+      <div class="subtitle">
+        Descubrí posibles sentidos detrás de tus sueños con una lectura visual, emocional o psicoanalítica.
       </div>
-      <h1>ONYRA</h1>
-      <p class="heroText">
-        Escribí tu sueño, transformalo en imagen, obtené una interpretación y guardalo en tu historial.
-      </p>
-    </section>
+    </div>
 
-    <section class="mainGrid">
-      <aside class="panel controlsPanel">
-        <h2 class="sectionLabel">Contá tu sueño</h2>
-        <p class="sectionSubtext">
-          Cuanto más detalle pongas, mejor va a salir la imagen y más rica puede ser la interpretación.
-        </p>
+    <div class="panel">
+      <textarea id="dreamInput" placeholder="Escribí lo que soñaste..."></textarea>
 
-        <textarea id="dreamInput" placeholder="Ejemplo: soñé que caminaba por una ciudad vacía, todo estaba oscuro y al fondo había una luz muy intensa..."></textarea>
+      <div class="controls">
+        <select id="modeSelect">
+          <option value="intuitiva">Modo Intuitiva</option>
+          <option value="emocional">Modo Emocional</option>
+          <option value="psicoanalitica">Modo Psicoanalítica</option>
+        </select>
 
-        <div class="stylePicker">
-          <p class="stylePickerTitle">Elegí el estilo visual</p>
-          <div class="styleButtons">
-            <button id="styleMystic" class="styleChip style-mystic active" onclick="setVisualStyle('mystic')">Místico</button>
-            <button id="styleDark" class="styleChip style-dark" onclick="setVisualStyle('dark')">Oscuro</button>
-            <button id="styleEditorial" class="styleChip style-editorial" onclick="setVisualStyle('editorial')">Editorial</button>
-          </div>
+        <div class="buttons">
+          <button class="primary" id="interpretBtn" onclick="submitDream()">Interpretar sueño</button>
+          <button class="secondary" id="imageBtn" onclick="generateImage()">Generar imagen</button>
         </div>
-
-        <div class="buttonStack">
-          <button class="primary" onclick="submitDream()">Generar imagen</button>
-          <button class="primary" onclick="interpretDream()">Interpretar sueño</button>
-
-          <div class="buttonRow">
-            <button class="secondary" onclick="shareDream()">Compartir</button>
-            <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
-          </div>
-
-          <div class="buttonRow">
-            <button class="quaternary" onclick="saveToGallery()">Guardar en historial</button>
-            <button class="primary" onclick="buildStoryCard()">Crear story</button>
-          </div>
-        </div>
-
-        <div class="statusCard">
-          <div id="statusDot" class="statusDot"></div>
-          <p id="status">Listo para interpretar tu próximo sueño</p>
-        </div>
-      </aside>
-
-      <div class="rightColumn">
-        <section class="resultCard">
-          <div class="resultHeader">
-            <div>
-              <h2>Resultado</h2>
-              <p>La visual de tu sueño aparece acá</p>
-            </div>
-            <div class="resultBadge" id="currentStyleBadge">Estilo: Místico</div>
-          </div>
-
-          <div class="resultImageWrap">
-            <div id="resultImageShell" class="resultImageShell mystic">
-              <img id="resultImage" alt="Imagen del sueño" />
-              <div id="resultPlaceholder" class="resultPlaceholder">
-                <div class="resultPlaceholderTitle">Todavía no generaste una imagen</div>
-                <div>Cuando escribas tu sueño y toques generar, esta pantalla se va a convertir en la pieza central de la experiencia.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="floatingActions">
-            <button class="secondary" onclick="shareDream()">Compartir resultado</button>
-            <button class="tertiary" onclick="saveDreamImage()">Descargar imagen</button>
-            <button class="primary" onclick="buildStoryCard()">Crear story shareable</button>
-          </div>
-        </section>
-
-        <section class="infoGrid">
-          <div id="interpretationBox" class="infoCard">
-            <h3>Interpretación</h3>
-            <p class="cardIntro">Una lectura breve del contenido emocional y simbólico del sueño.</p>
-            <p id="interpretationText" class="interpretationText"></p>
-          </div>
-
-          <div id="storySection" class="infoCard">
-            <h3>Story lista para compartir</h3>
-            <p class="cardIntro">Formato vertical con branding, texto del sueño y llamada a la acción.</p>
-            <canvas id="storyCanvas" width="1080" height="1920" style="display:none;"></canvas>
-            <img id="storyPreview" alt="Preview story ONYRA" />
-            <div class="storyActions">
-              <button class="secondary" onclick="downloadStory()">Descargar story</button>
-              <button class="tertiary" onclick="shareStory()">Compartir story</button>
-            </div>
-          </div>
-        </section>
       </div>
-    </section>
 
-    <section class="historySection">
-      <div class="historyTop">
-        <div>
-          <h2>Mi historial</h2>
-          <p>Tus sueños guardados en este dispositivo</p>
-        </div>
-        <button class="danger" onclick="clearGallery()">Borrar historial</button>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="panel result-card" id="resultCard" style="display:none;">
+      <div class="image-wrap" id="imageWrap">
+        <div class="image-placeholder">Todavía no generaste una imagen para este sueño.</div>
       </div>
-      <div id="gallery"></div>
-    </section>
+      <div class="result-body">
+        <div class="mode-badge" id="modeBadge">Modo</div>
+        <h2 class="result-title">Tu sueño</h2>
+        <div class="dream-preview" id="dreamPreview"></div>
+        <div class="interpretation" id="interpretationText"></div>
+
+        <div class="result-actions">
+          <button class="primary" onclick="shareDream()">Compartir</button>
+          <button class="secondary" onclick="saveCurrentToHistory()">Guardar en historial</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="history-title">Historial</h3>
+      <div class="history-list" id="historyList"></div>
+    </div>
   </div>
 
   <script>
-    const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
-    const APP_LINK = "https://tu-dominio.com";
-    const STORAGE_KEY = "onyra_gallery_v3";
+    const WORKER_URL = "https://TU-WORKER.workers.dev";
 
     let currentDream = {
-      text: "",
-      imageUrl: "",
+      dream: "",
+      mode: "",
       interpretation: "",
-      storyDataUrl: "",
-      style: "mystic"
+      image: ""
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
-      renderGallery();
-      applyCurrentStyleUI();
-    });
-
-    function setVisualStyle(style) {
-      currentDream.style = style;
-      applyCurrentStyleUI();
-      setStatus(`Estilo seleccionado: ${getStyleLabel(style)}`);
+    function setStatus(text) {
+      document.getElementById("status").textContent = text || "";
     }
-    function getStyleContent(style) {
-  if (style === "dark") {
-    return {
-      placeholder: "Ejemplo: soñé que algo me perseguía, no podía escapar, todo era oscuro y pesado...",
-      resultTitle: "Resultado",
-      resultSubtitle: "Una visión más intensa de tu sueño",
-      idleStatus: "Listo para explorar el lado más oscuro de tus sueños"
-    };
-  }
 
-  if (style === "editorial") {
-    return {
-      placeholder: "Ejemplo: soñé que caminaba por una ciudad elegante, todo era silencioso y perfectamente ordenado...",
-      resultTitle: "Resultado",
-      resultSubtitle: "Una lectura visual y estética de tu sueño",
-      idleStatus: "Listo para interpretar tu próximo registro onírico"
-    };
-  }
-
-  return {
-    placeholder: "Ejemplo: soñé que flotaba entre luces violetas, todo era suave y sin peso...",
-    resultTitle: "Resultado",
-    resultSubtitle: "La representación simbólica de tu sueño",
-    idleStatus: "Listo para interpretar tu próximo sueño"
-  };
-}
-    function applyCurrentStyleUI() {
-  document.getElementById("styleMystic").classList.toggle("active", currentDream.style === "mystic");
-  document.getElementById("styleDark").classList.toggle("active", currentDream.style === "dark");
-  document.getElementById("styleEditorial").classList.toggle("active", currentDream.style === "editorial");
-
-  const shell = document.getElementById("resultImageShell");
-  shell.classList.remove("mystic", "dark", "editorial");
-  shell.classList.add(currentDream.style);
-
-  document.getElementById("currentStyleBadge").innerText =
-    `Estilo: ${getStyleLabel(currentDream.style)}`;
-
-  // 🔥 NUEVO: contenido dinámico
-  const content = getStyleContent(currentDream.style);
-
-  document.getElementById("dreamInput").placeholder = content.placeholder;
-
-  const header = document.querySelector(".resultHeader p");
-  if (header) header.innerText = content.resultSubtitle;
-
-  setStatus(content.idleStatus, false, true);
-}
-
-    function getStyleLabel(style) {
-      if (style === "dark") return "Oscuro";
-      if (style === "editorial") return "Editorial";
-      return "Místico";
+    function prettyMode(mode) {
+      if (mode === "emocional") return "Emocional";
+      if (mode === "psicoanalitica" || mode === "psicoanalítica") return "Psicoanalítica";
+      return "Intuitiva";
     }
 
     async function submitDream() {
       const dream = document.getElementById("dreamInput").value.trim();
-      if (!dream) return alert("Escribí algo");
+      const mode = document.getElementById("modeSelect").value;
+      const interpretBtn = document.getElementById("interpretBtn");
 
-      setStatus("Generando imagen...", true);
-      hideInterpretation();
-      hideStory();
+      if (!dream) {
+        setStatus("Primero escribí un sueño.");
+        return;
+      }
+
+      interpretBtn.disabled = true;
+      setStatus("Interpretando sueño...");
 
       try {
-        const res = await fetch(WORKER_URL, {
+        const res = await fetch(`${WORKER_URL}/interpret`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-  dream,
-  style: currentDream.style
-})
+          body: JSON.stringify({ dream, mode })
+        });
 
         const data = await res.json();
 
-        if (!res.ok || !data.ok || !data.imageUrl) {
-          console.error(data);
-          throw new Error(data?.error || "No se pudo generar");
-        }
-
-        showImage(data.imageUrl);
-
-        currentDream = {
-          text: dream,
-          imageUrl: data.imageUrl,
-          interpretation: data.interpretation || "",
-          storyDataUrl: "",
-          style: currentDream.style
-        };
-
-        applyCurrentStyleUI();
-        setStatus("Imagen lista");
-      } catch (err) {
-        console.error(err);
-        setStatus("Error generando imagen");
-      }
-    }
-
-    async function interpretDream() {
-      const dream = document.getElementById("dreamInput").value.trim();
-      if (!dream) return alert("Escribí algo");
-
-      setStatus("Interpretando...", true);
-      hideStory();
-
-      try {
-        const res = await fetch(WORKER_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    dream,
-    style: currentDream.style
-  })
-});
-
-        const data = await res.json();
-
-        if (!res.ok || !data.ok || !data.imageUrl) {
-          console.error(data);
+        if (!res.ok || !data.ok) {
           throw new Error(data?.error || "No se pudo interpretar");
         }
 
-        showImage(data.imageUrl);
-
-        const interpretation = data.interpretation || "";
-        document.getElementById("interpretationText").innerText =
-          interpretation || "No hubo interpretación disponible.";
-        document.getElementById("interpretationBox").style.display = "block";
-
         currentDream = {
-          text: dream,
-          imageUrl: data.imageUrl,
-          interpretation,
-          storyDataUrl: "",
-          style: currentDream.style
+          dream,
+          mode: data.mode,
+          interpretation: data.interpretation,
+          image: currentDream.image || ""
         };
 
-        applyCurrentStyleUI();
-        setStatus("Interpretación lista");
+        renderResult();
+        setStatus("Interpretación lista.");
       } catch (err) {
         console.error(err);
-        setStatus("Error interpretando");
+        setStatus("Error al interpretar el sueño.");
+      } finally {
+        interpretBtn.disabled = false;
       }
     }
 
-    function showImage(url) {
-      const img = document.getElementById("resultImage");
-      const placeholder = document.getElementById("resultPlaceholder");
-      img.src = url;
-      img.style.display = "block";
-      if (placeholder) placeholder.style.display = "none";
-    }
+    async function generateImage() {
+      const dream = document.getElementById("dreamInput").value.trim();
+      const imageBtn = document.getElementById("imageBtn");
 
-    function hideInterpretation() {
-      document.getElementById("interpretationBox").style.display = "none";
-      document.getElementById("interpretationText").innerText = "";
-    }
-
-    function hideStory() {
-      document.getElementById("storySection").style.display = "none";
-      document.getElementById("storyPreview").removeAttribute("src");
-      currentDream.storyDataUrl = "";
-    }
-
-    function setStatus(text, loading = false, preserve = false) {
-  if (!preserve) {
-    document.getElementById("status").innerText = text;
-  }
-
-  const dot = document.getElementById("statusDot");
-  dot.classList.toggle("loading", loading);
-}
-
-    function saveDreamImage() {
-      if (!currentDream.imageUrl) return alert("Generá primero");
-
-      const a = document.createElement("a");
-      a.href = currentDream.imageUrl;
-      a.download = "onyra-sueno.png";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    function saveToGallery() {
-      if (!currentDream.imageUrl) return alert("Generá primero");
-
-      const gallery = getGallery();
-
-      gallery.unshift({
-        id: Date.now(),
-        text: currentDream.text,
-        imageUrl: currentDream.imageUrl,
-        interpretation: currentDream.interpretation || "",
-        storyDataUrl: currentDream.storyDataUrl || "",
-        style: currentDream.style || "mystic",
-        date: new Date().toLocaleString("es-AR")
-      });
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(gallery));
-      renderGallery();
-      setStatus("Sueño guardado en historial");
-    }
-
-    function getGallery() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      } catch (e) {
-        console.error(e);
-        return [];
-      }
-    }
-
-    function renderGallery() {
-      const container = document.getElementById("gallery");
-      const data = getGallery();
-
-      if (!data.length) {
-        container.innerHTML = `
-          <div class="emptyState">
-            <p style="margin:0 0 8px;"><b>Todavía no guardaste sueños en tu historial</b></p>
-            <p class="subtle" style="margin:0;">Generá uno, interpretalo y guardalo para verlo después.</p>
-          </div>
-        `;
+      if (!dream) {
+        setStatus("Primero escribí un sueño.");
         return;
       }
 
-      container.innerHTML = `
-        <div class="historyGrid">
-          ${data.map(item => `
-            <div class="historyCard">
-              <img src="${item.imageUrl}" alt="Sueño guardado" />
-              <div class="historyMeta">
-                <span class="historyStyleTag">${escapeHtml(getStyleLabel(item.style || "mystic"))}</span>
-                <p class="small">${escapeHtml(item.date)}</p>
-              </div>
-              <p class="historyText"><b>${escapeHtml(item.text)}</b></p>
-              ${item.interpretation ? `<p class="historyInterpretation">${escapeHtml(item.interpretation)}</p>` : ""}
-              <div class="historyActions">
-                <button class="secondary" onclick="reuseDream(${item.id})">Reusar</button>
-                <button class="tertiary" onclick="downloadSavedImage(${item.id})">Descargar</button>
-                <button class="primary" onclick="rebuildStoryFromGallery(${item.id})">Story</button>
-                <button class="danger" onclick="deleteItem(${item.id})">Eliminar</button>
-              </div>
-            </div>
-          `).join("")}
+      imageBtn.disabled = true;
+      setStatus("Generando imagen...");
+
+      try {
+        const res = await fetch(`${WORKER_URL}/generate-image`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dream })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data?.error || "No se pudo generar la imagen");
+        }
+
+        currentDream.dream = dream;
+        currentDream.image = data.imageUrl;
+
+        renderImage();
+        setStatus("Imagen generada.");
+      } catch (err) {
+        console.error(err);
+        setStatus("Error al generar la imagen.");
+      } finally {
+        imageBtn.disabled = false;
+      }
+    }
+
+    function renderResult() {
+      document.getElementById("resultCard").style.display = "block";
+      document.getElementById("modeBadge").textContent = prettyMode(currentDream.mode);
+      document.getElementById("dreamPreview").textContent = currentDream.dream;
+      document.getElementById("interpretationText").textContent = currentDream.interpretation;
+      renderImage();
+    }
+
+    function renderImage() {
+      const imageWrap = document.getElementById("imageWrap");
+
+      if (currentDream.image) {
+        imageWrap.innerHTML = `<img src="${currentDream.image}" alt="Imagen del sueño">`;
+      } else {
+        imageWrap.innerHTML = `<div class="image-placeholder">Todavía no generaste una imagen para este sueño.</div>`;
+      }
+    }
+
+    function saveCurrentToHistory() {
+      if (!currentDream.dream || !currentDream.interpretation) {
+        setStatus("Todavía no hay un sueño interpretado para guardar.");
+        return;
+      }
+
+      const history = JSON.parse(localStorage.getItem("onyra_history") || "[]");
+
+      history.unshift({
+        ...currentDream,
+        createdAt: new Date().toISOString()
+      });
+
+      localStorage.setItem("onyra_history", JSON.stringify(history.slice(0, 20)));
+      renderHistory();
+      setStatus("Sueño guardado en historial.");
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem("onyra_history") || "[]");
+      const list = document.getElementById("historyList");
+
+      if (!history.length) {
+        list.innerHTML = `<div class="history-item">Todavía no guardaste sueños.</div>`;
+        return;
+      }
+
+      list.innerHTML = history.map((item, index) => `
+        <div class="history-item" onclick="loadHistoryItem(${index})">
+          <strong>${escapeHtml(item.dream.slice(0, 70))}${item.dream.length > 70 ? "..." : ""}</strong>
+          <small>${prettyMode(item.mode)} · ${new Date(item.createdAt).toLocaleString()}</small>
         </div>
-      `;
+      `).join("");
     }
 
-    function deleteItem(id) {
-      const filtered = getGallery().filter(x => x.id !== id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-      renderGallery();
-    }
-
-    function clearGallery() {
-      if (!confirm("¿Querés borrar todo tu historial?")) return;
-      localStorage.removeItem(STORAGE_KEY);
-      renderGallery();
-      setStatus("Historial borrado");
-    }
-
-    function reuseDream(id) {
-      const item = getGallery().find(x => x.id === id);
+    function loadHistoryItem(index) {
+      const history = JSON.parse(localStorage.getItem("onyra_history") || "[]");
+      const item = history[index];
       if (!item) return;
 
-      document.getElementById("dreamInput").value = item.text;
-      showImage(item.imageUrl);
-
-      if (item.interpretation) {
-        document.getElementById("interpretationText").innerText = item.interpretation;
-        document.getElementById("interpretationBox").style.display = "block";
-      } else {
-        hideInterpretation();
-      }
-
-      currentDream = {
-        text: item.text,
-        imageUrl: item.imageUrl,
-        interpretation: item.interpretation || "",
-        storyDataUrl: item.storyDataUrl || "",
-        style: item.style || "mystic"
-      };
-
-      applyCurrentStyleUI();
-
-      if (item.storyDataUrl) {
-        document.getElementById("storyPreview").src = item.storyDataUrl;
-        document.getElementById("storySection").style.display = "block";
-      } else {
-        hideStory();
-      }
-
+      currentDream = item;
+      document.getElementById("dreamInput").value = item.dream;
+      document.getElementById("modeSelect").value = normalizeModeValue(item.mode);
+      renderResult();
+      setStatus("Sueño cargado desde historial.");
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setStatus("Sueño recuperado del historial");
     }
 
-    function downloadSavedImage(id) {
-      const item = getGallery().find(x => x.id === id);
-      if (!item) return;
-
-      const a = document.createElement("a");
-      a.href = item.imageUrl;
-      a.download = `onyra-sueno-${id}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    function normalizeModeValue(mode) {
+      if (mode === "psicoanalítica") return "psicoanalitica";
+      return mode || "intuitiva";
     }
 
     async function shareDream() {
-      if (!currentDream.imageUrl) return alert("Generá primero");
+      if (!currentDream.dream || !currentDream.interpretation) {
+        setStatus("Todavía no hay contenido para compartir.");
+        return;
+      }
 
-      const text = `Soñé esto: "${currentDream.text}"\n\nDescubrí el tuyo en ONYRA:\n${APP_LINK}`;
+      const text = `✨ ONYRA\n\nSueño:\n${currentDream.dream}\n\nInterpretación (${prettyMode(currentDream.mode)}):\n${currentDream.interpretation}`;
 
       try {
-        const blob = await (await fetch(currentDream.imageUrl)).blob();
-        const file = new File([blob], "sueno.png", { type: "image/png" });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: "Mi sueño en ONYRA",
-            text,
-            files: [file]
-          });
-          return;
-        }
-
         if (navigator.share) {
           await navigator.share({
             title: "Mi sueño en ONYRA",
-            text,
-            url: APP_LINK
+            text
           });
-          return;
+          setStatus("Compartido.");
+        } else {
+          await navigator.clipboard.writeText(text);
+          setStatus("No se pudo abrir compartir, pero copié el texto al portapapeles.");
         }
-
-        await navigator.clipboard.writeText(text);
-        alert("Copié el texto para compartir");
-      } catch (e) {
-        console.error(e);
-        alert("No se pudo compartir");
+      } catch (err) {
+        console.error(err);
+        setStatus("No se pudo compartir.");
       }
-    }
-
-    async function buildStoryCard() {
-      if (!currentDream.imageUrl) {
-        alert("Generá primero una imagen");
-        return;
-      }
-
-      setStatus(`Armando story ${getStyleLabel(currentDream.style).toLowerCase()}...`, true);
-
-      try {
-        const canvas = document.getElementById("storyCanvas");
-        const ctx = canvas.getContext("2d");
-        const preview = document.getElementById("storyPreview");
-        const section = document.getElementById("storySection");
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const theme = getStoryTheme(currentDream.style);
-
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, theme.bgTop);
-        gradient.addColorStop(1, theme.bgBottom);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        const dreamImg = await loadImage(currentDream.imageUrl);
-
-        const imageX = 90;
-        const imageY = 190;
-        const imageW = 900;
-        const imageH = 900;
-
-        roundRectPath(ctx, imageX, imageY, imageW, imageH, 44);
-        ctx.save();
-        ctx.clip();
-        ctx.drawImage(dreamImg, imageX, imageY, imageW, imageH);
-        ctx.restore();
-
-        const overlay = ctx.createLinearGradient(0, imageY, 0, imageY + imageH);
-        overlay.addColorStop(0, theme.imageOverlayTop);
-        overlay.addColorStop(1, theme.imageOverlayBottom);
-        ctx.fillStyle = overlay;
-        roundRectPath(ctx, imageX, imageY, imageW, imageH, 44);
-        ctx.fill();
-
-        ctx.fillStyle = theme.brandColor;
-        ctx.font = theme.brandFont;
-        ctx.textAlign = "center";
-        ctx.fillText("ONYRA", canvas.width / 2, 95);
-
-        ctx.fillStyle = theme.subtitleColor;
-        ctx.font = "30px Arial";
-        ctx.fillText(theme.subtitle, canvas.width / 2, 140);
-
-        const boxX = 70;
-        const boxY = 1160;
-        const boxW = 940;
-        const boxH = 520;
-
-        ctx.fillStyle = theme.boxFill;
-        roundRectPath(ctx, boxX, boxY, boxW, boxH, 36);
-        ctx.fill();
-
-        ctx.fillStyle = theme.labelColor;
-        ctx.font = "bold 30px Arial";
-        ctx.textAlign = "left";
-        ctx.fillText(theme.labelText, 120, 1235);
-
-        ctx.fillStyle = theme.mainText;
-        ctx.font = theme.mainFont;
-        wrapText(ctx, currentDream.text, 120, 1305, 840, theme.mainLineHeight, 5);
-
-        if (currentDream.interpretation) {
-          ctx.fillStyle = theme.secondaryText;
-          ctx.font = theme.secondaryFont;
-          wrapText(ctx, currentDream.interpretation, 120, 1510, 840, 40, 4);
-        }
-
-        ctx.fillStyle = theme.ctaBg;
-        roundRectPath(ctx, 250, 1730, 580, 95, 48);
-        ctx.fill();
-
-        ctx.fillStyle = theme.ctaText;
-        ctx.font = "bold 34px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(theme.ctaLabel, canvas.width / 2, 1790);
-
-        ctx.fillStyle = theme.footerColor;
-        ctx.font = "24px Arial";
-        ctx.fillText(APP_LINK.replace(/^https?:\/\//, ""), canvas.width / 2, 1868);
-
-        const dataUrl = canvas.toDataURL("image/png");
-        preview.src = dataUrl;
-        section.style.display = "block";
-        currentDream.storyDataUrl = dataUrl;
-
-        setStatus(`Story ${getStyleLabel(currentDream.style).toLowerCase()} lista`);
-      } catch (e) {
-        console.error(e);
-        setStatus("Error creando story");
-      }
-    }
-
-    function getStoryTheme(style) {
-      if (style === "dark") {
-        return {
-          bgTop: "#0d0d10",
-          bgBottom: "#040509",
-          imageOverlayTop: "rgba(0,0,0,0.10)",
-          imageOverlayBottom: "rgba(0,0,0,0.55)",
-          brandColor: "#ffffff",
-          brandFont: "bold 68px Arial",
-          subtitleColor: "rgba(255,255,255,0.6)",
-          subtitle: "Sueños intensos. Lecturas profundas.",
-          boxFill: "rgba(255,255,255,0.06)",
-          labelColor: "#ff8d8d",
-          labelText: "Visión nocturna",
-          mainText: "#ffffff",
-          mainFont: "bold 46px Arial",
-          mainLineHeight: 58,
-          secondaryText: "rgba(255,255,255,0.76)",
-          secondaryFont: "28px Arial",
-          ctaBg: "#b93c3c",
-          ctaText: "#ffffff",
-          ctaLabel: "Explorá tu sueño en ONYRA",
-          footerColor: "rgba(255,255,255,0.66)"
-        };
-      }
-
-      if (style === "editorial") {
-        return {
-          bgTop: "#1e2230",
-          bgBottom: "#0d1018",
-          imageOverlayTop: "rgba(255,255,255,0.02)",
-          imageOverlayBottom: "rgba(0,0,0,0.22)",
-          brandColor: "#f7f7f7",
-          brandFont: "bold 64px Arial",
-          subtitleColor: "rgba(255,255,255,0.72)",
-          subtitle: "Una lectura visual y emocional",
-          boxFill: "rgba(255,255,255,0.09)",
-          labelColor: "#d8d8e6",
-          labelText: "Registro del sueño",
-          mainText: "#ffffff",
-          mainFont: "bold 44px Arial",
-          mainLineHeight: 56,
-          secondaryText: "rgba(255,255,255,0.78)",
-          secondaryFont: "27px Arial",
-          ctaBg: "#ececf3",
-          ctaText: "#111",
-          ctaLabel: "Descubrilo en ONYRA",
-          footerColor: "rgba(255,255,255,0.72)"
-        };
-      }
-
-      return {
-        bgTop: "#1a1533",
-        bgBottom: "#090a14",
-        imageOverlayTop: "rgba(0,0,0,0.04)",
-        imageOverlayBottom: "rgba(40,20,80,0.30)",
-        brandColor: "#ffffff",
-        brandFont: "bold 64px Arial",
-        subtitleColor: "rgba(255,255,255,0.75)",
-        subtitle: "Descubrí qué dicen tus sueños",
-        boxFill: "rgba(255,255,255,0.08)",
-        labelColor: "#c9b7ff",
-        labelText: "Soñé que...",
-        mainText: "#ffffff",
-        mainFont: "bold 46px Arial",
-        mainLineHeight: 58,
-        secondaryText: "rgba(255,255,255,0.78)",
-        secondaryFont: "28px Arial",
-        ctaBg: "#7c5cff",
-        ctaText: "#ffffff",
-        ctaLabel: "Interpretá tu sueño en ONYRA",
-        footerColor: "rgba(255,255,255,0.72)"
-      };
-    }
-
-    function downloadStory() {
-      if (!currentDream.storyDataUrl) {
-        alert("Primero creá la story");
-        return;
-      }
-
-      const a = document.createElement("a");
-      a.href = currentDream.storyDataUrl;
-      a.download = `onyra-story-${currentDream.style}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    async function shareStory() {
-      if (!currentDream.storyDataUrl) {
-        alert("Primero creá la story");
-        return;
-      }
-
-      try {
-        const blob = await (await fetch(currentDream.storyDataUrl)).blob();
-        const file = new File([blob], "onyra-story.png", { type: "image/png" });
-        const text = `Interpreté mi sueño con ONYRA\n${APP_LINK}`;
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: "Mi story de ONYRA",
-            text,
-            files: [file]
-          });
-          return;
-        }
-
-        if (navigator.share) {
-          await navigator.share({
-            title: "Mi story de ONYRA",
-            text,
-            url: APP_LINK
-          });
-          return;
-        }
-
-        alert("Tu dispositivo no soporta compartir archivos directamente");
-      } catch (e) {
-        console.error(e);
-        alert("No se pudo compartir la story");
-      }
-    }
-
-    function rebuildStoryFromGallery(id) {
-      const item = getGallery().find(x => x.id === id);
-      if (!item) return;
-
-      currentDream = {
-        text: item.text,
-        imageUrl: item.imageUrl,
-        interpretation: item.interpretation || "",
-        storyDataUrl: "",
-        style: item.style || "mystic"
-      };
-
-      document.getElementById("dreamInput").value = item.text;
-      showImage(item.imageUrl);
-
-      if (item.interpretation) {
-        document.getElementById("interpretationText").innerText = item.interpretation;
-        document.getElementById("interpretationBox").style.display = "block";
-      } else {
-        hideInterpretation();
-      }
-
-      applyCurrentStyleUI();
-      buildStoryCard();
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    function loadImage(src) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = src;
-      });
-    }
-
-    function roundRectPath(ctx, x, y, width, height, radius) {
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-      ctx.lineTo(x + radius, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
-    }
-
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 999) {
-      const words = String(text || "").split(" ");
-      let line = "";
-      let lines = [];
-
-      for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + " ";
-        const testWidth = ctx.measureText(testLine).width;
-
-        if (testWidth > maxWidth && n > 0) {
-          lines.push(line.trim());
-          line = words[n] + " ";
-          if (lines.length >= maxLines) break;
-        } else {
-          line = testLine;
-        }
-      }
-
-      if (lines.length < maxLines && line.trim()) lines.push(line.trim());
-      if (lines.length > maxLines) lines = lines.slice(0, maxLines);
-
-      lines.forEach((l, i) => {
-        let output = l;
-        if (i === maxLines - 1 && words.join(" ").length > lines.join(" ").length) {
-          if (!output.endsWith("...")) output += "...";
-        }
-        ctx.fillText(output, x, y + i * lineHeight);
-      });
-    }
+    renderHistory();
   </script>
 </body>
 </html>
