@@ -6,19 +6,20 @@
   <title>ONYRA</title>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at top, #222 0%, #111 35%, #090909 100%);
-      color: #f4f1ea;
+        radial-gradient(circle at top, #26212d 0%, #15121a 35%, #09090c 100%);
+      color: #f4efe7;
       min-height: 100vh;
     }
 
     .app {
       max-width: 760px;
       margin: 0 auto;
-      padding: 24px 18px 60px;
+      padding: 28px 18px 60px;
     }
 
     .hero {
@@ -27,35 +28,35 @@
     }
 
     .logo {
-      font-size: 40px;
-      font-weight: 700;
-      letter-spacing: 4px;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 5px;
       margin-bottom: 8px;
     }
 
     .subtitle {
-      color: #cfc7bb;
+      color: #c9c0b5;
       font-size: 15px;
       line-height: 1.5;
-      max-width: 520px;
+      max-width: 560px;
       margin: 0 auto;
     }
 
     .panel {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 22px;
+      border-radius: 24px;
       padding: 18px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 35px rgba(0,0,0,.28);
       margin-bottom: 18px;
     }
 
     textarea {
       width: 100%;
-      min-height: 150px;
+      min-height: 160px;
       resize: vertical;
-      border-radius: 16px;
+      border-radius: 18px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.04);
       color: #fff;
@@ -64,9 +65,12 @@
       outline: none;
     }
 
+    textarea::placeholder {
+      color: #b8aea0;
+    }
+
     .controls {
       display: grid;
-      grid-template-columns: 1fr;
       gap: 12px;
       margin-top: 14px;
     }
@@ -79,6 +83,11 @@
       border-radius: 14px;
       padding: 14px;
       font-size: 15px;
+      outline: none;
+    }
+
+    option {
+      color: #111;
     }
 
     .buttons {
@@ -100,9 +109,9 @@
     button:disabled { opacity: 0.6; cursor: wait; }
 
     .primary {
-      background: #f1dfb6;
+      background: linear-gradient(135deg, #f2dfb2, #d7b878);
       color: #111;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .secondary {
@@ -118,8 +127,8 @@
 
     .image-wrap {
       width: 100%;
-      min-height: 240px;
-      background: linear-gradient(180deg, #181818, #0e0e0e);
+      min-height: 260px;
+      background: linear-gradient(180deg, #17141d, #0f0d13);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -130,18 +139,18 @@
       width: 100%;
       display: block;
       object-fit: cover;
-      max-height: 460px;
+      max-height: 500px;
     }
 
     .image-placeholder {
-      color: #b9b0a2;
+      color: #bfb4a5;
       padding: 36px 20px;
       text-align: center;
       font-size: 14px;
     }
 
     .result-body {
-      padding: 20px;
+      padding: 22px;
     }
 
     .mode-badge {
@@ -153,28 +162,43 @@
       background: #f1dfb6;
       padding: 7px 10px;
       border-radius: 999px;
-      margin-bottom: 12px;
-      font-weight: 700;
+      margin-bottom: 14px;
+      font-weight: 800;
     }
 
-    .result-title {
-      font-size: 24px;
-      margin: 0 0 10px;
+    .dream-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #b9b0a5;
+      margin-bottom: 8px;
     }
 
     .dream-preview {
-      color: #cfc7bb;
-      font-size: 14px;
-      margin-bottom: 18px;
-      line-height: 1.5;
+      color: #f0ebe2;
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 22px;
       white-space: pre-wrap;
+    }
+
+    .section-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #b9b0a5;
+      margin-bottom: 10px;
     }
 
     .interpretation {
       white-space: pre-wrap;
-      line-height: 1.7;
+      line-height: 1.8;
       font-size: 16px;
-      color: #f4f1ea;
+      color: #f4efe7;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 18px;
     }
 
     .result-actions {
@@ -184,8 +208,23 @@
       margin-top: 18px;
     }
 
+    .status {
+      font-size: 14px;
+      color: #d3cabd;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
     .history-title {
-      margin: 0 0 12px;
+      margin: 0;
       font-size: 18px;
     }
 
@@ -197,30 +236,74 @@
     .history-item {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 14px;
       cursor: pointer;
+      transition: background .15s ease, transform .15s ease;
     }
 
-    .history-item small {
-      display: block;
-      color: #bfb7ab;
-      margin-top: 6px;
+    .history-item:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-1px);
     }
 
-    .status {
-      font-size: 14px;
-      color: #d3cabd;
-      margin-top: 10px;
-      min-height: 18px;
+    .history-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 6px;
+    }
+
+    .history-dream {
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.4;
+    }
+
+    .history-mode {
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(241,223,182,0.15);
+      color: #f1dfb6;
+      white-space: nowrap;
+      border: 1px solid rgba(241,223,182,0.2);
+    }
+
+    .history-date {
+      color: #bdb4a8;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .mini {
+      font-size: 13px;
+      color: #c8bfb3;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .clear-btn {
+      background: transparent;
+      color: #d8c8a0;
+      border: 1px solid rgba(216,200,160,0.2);
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-size: 13px;
     }
 
     @media (max-width: 640px) {
       .buttons {
         grid-template-columns: 1fr;
       }
+
       .logo {
-        font-size: 34px;
+        font-size: 35px;
+      }
+
+      .history-top {
+        flex-direction: column;
       }
     }
   </style>
@@ -257,10 +340,14 @@
       <div class="image-wrap" id="imageWrap">
         <div class="image-placeholder">Todavía no generaste una imagen para este sueño.</div>
       </div>
+
       <div class="result-body">
         <div class="mode-badge" id="modeBadge">Modo</div>
-        <h2 class="result-title">Tu sueño</h2>
+
+        <div class="dream-label">Tu sueño</div>
         <div class="dream-preview" id="dreamPreview"></div>
+
+        <div class="section-title">Interpretación</div>
         <div class="interpretation" id="interpretationText"></div>
 
         <div class="result-actions">
@@ -271,7 +358,10 @@
     </div>
 
     <div class="panel">
-      <h3 class="history-title">Historial</h3>
+      <div class="history-header">
+        <h3 class="history-title">Historial</h3>
+        <button class="clear-btn" onclick="clearHistory()">Borrar historial</button>
+      </div>
       <div class="history-list" id="historyList"></div>
     </div>
   </div>
@@ -294,6 +384,11 @@
       if (mode === "emocional") return "Emocional";
       if (mode === "psicoanalitica" || mode === "psicoanalítica") return "Psicoanalítica";
       return "Intuitiva";
+    }
+
+    function normalizeModeValue(mode) {
+      if (mode === "psicoanalítica") return "psicoanalitica";
+      return mode || "intuitiva";
     }
 
     async function submitDream() {
@@ -383,6 +478,7 @@
       document.getElementById("dreamPreview").textContent = currentDream.dream;
       document.getElementById("interpretationText").textContent = currentDream.interpretation;
       renderImage();
+      window.scrollTo({ top: document.getElementById("resultCard").offsetTop - 20, behavior: "smooth" });
     }
 
     function renderImage() {
@@ -424,8 +520,12 @@
 
       list.innerHTML = history.map((item, index) => `
         <div class="history-item" onclick="loadHistoryItem(${index})">
-          <strong>${escapeHtml(item.dream.slice(0, 70))}${item.dream.length > 70 ? "..." : ""}</strong>
-          <small>${prettyMode(item.mode)} · ${new Date(item.createdAt).toLocaleString()}</small>
+          <div class="history-top">
+            <div class="history-dream">${escapeHtml(truncate(item.dream, 90))}</div>
+            <div class="history-mode">${prettyMode(item.mode)}</div>
+          </div>
+          <div class="history-date">${formatDate(item.createdAt)}</div>
+          <div class="mini">${escapeHtml(truncate(item.interpretation, 120))}</div>
         </div>
       `).join("");
     }
@@ -440,12 +540,12 @@
       document.getElementById("modeSelect").value = normalizeModeValue(item.mode);
       renderResult();
       setStatus("Sueño cargado desde historial.");
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function normalizeModeValue(mode) {
-      if (mode === "psicoanalítica") return "psicoanalitica";
-      return mode || "intuitiva";
+    function clearHistory() {
+      localStorage.removeItem("onyra_history");
+      renderHistory();
+      setStatus("Historial borrado.");
     }
 
     async function shareDream() {
@@ -454,7 +554,15 @@
         return;
       }
 
-      const text = `✨ ONYRA\n\nSueño:\n${currentDream.dream}\n\nInterpretación (${prettyMode(currentDream.mode)}):\n${currentDream.interpretation}`;
+      const text = `✨ ONYRA
+
+Sueño:
+${currentDream.dream}
+
+Interpretación (${prettyMode(currentDream.mode)}):
+${currentDream.interpretation}
+
+Descubrí tus sueños en ONYRA`;
 
       try {
         if (navigator.share) {
@@ -465,12 +573,22 @@
           setStatus("Compartido.");
         } else {
           await navigator.clipboard.writeText(text);
-          setStatus("No se pudo abrir compartir, pero copié el texto al portapapeles.");
+          setStatus("No se pudo abrir compartir, pero copié el texto.");
         }
       } catch (err) {
         console.error(err);
         setStatus("No se pudo compartir.");
       }
+    }
+
+    function truncate(text, max) {
+      if (!text) return "";
+      return text.length > max ? text.slice(0, max) + "..." : text;
+    }
+
+    function formatDate(isoDate) {
+      const d = new Date(isoDate);
+      return d.toLocaleString();
     }
 
     function escapeHtml(str) {
