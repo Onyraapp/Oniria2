@@ -934,11 +934,14 @@
       currentDream.storyDataUrl = "";
     }
 
-    function setStatus(text, loading = false) {
-      document.getElementById("status").innerText = text;
-      const dot = document.getElementById("statusDot");
-      dot.classList.toggle("loading", loading);
-    }
+    function setStatus(text, loading = false, preserve = false) {
+  if (!preserve) {
+    document.getElementById("status").innerText = text;
+  }
+
+  const dot = document.getElementById("statusDot");
+  dot.classList.toggle("loading", loading);
+}
 
     function saveDreamImage() {
       if (!currentDream.imageUrl) return alert("Generá primero");
