@@ -3,16 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ONYRA DEBUG</title>
+<title>ONYRA</title>
 
 <style>
 body{
 background:#0a0a0f;
 color:white;
 font-family:Arial;
+margin:0;
 padding:20px;
 max-width:600px;
 margin:auto;
+}
+
+h1{
+text-align:center;
+letter-spacing:4px;
+color:#d9b26f;
 }
 
 textarea{
@@ -42,77 +49,168 @@ margin-top:15px;
 border-radius:10px;
 }
 
-pre{
+.actions{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:6px;
+margin-top:10px;
+}
+
+.history-item{
+display:flex;
+gap:10px;
 background:#111;
 padding:10px;
 border-radius:10px;
-overflow:auto;
-font-size:12px;
+margin-top:10px;
+cursor:pointer;
+}
+
+.thumb{
+width:60px;
+height:60px;
+border-radius:10px;
+object-fit:cover;
 }
 </style>
 </head>
 
 <body>
 
-<h1>ONYRA DEBUG</h1>
+<h1>ONYRA</h1>
 
-<textarea id="dream" placeholder="Soñé que volaba..."></textarea>
+<textarea id="dream" placeholder="Contá tu sueño..."></textarea>
 
 <button onclick="go()">INTERPRETAR</button>
 
 <div id="result"></div>
 
+<div class="actions">
+<button onclick="save()">Guardar</button>
+<button onclick="share()">Compartir</button>
+<button onclick="story()">Story</button>
+</div>
+
+<h3>Historial</h3>
+<div id="history"></div>
+
+<canvas id="c" width="1080" height="1920" style="display:none"></canvas>
+
 <script>
 
-const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+const WORKER_URL="https://onyra-final-ok.almacenmujica.workers.dev";
 
+let current={};
+
+// 🔥 INTERPRETAR
 async function go(){
 
-const dream = document.getElementById("dream").value;
+const dream=document.getElementById("dream").value;
+const result=document.getElementById("result");
 
-document.getElementById("result").innerHTML = "Cargando...";
+result.innerHTML=`
+<div style="padding:20px;text-align:center;color:#d9b26f;font-weight:bold;">
+Interpretando el sueño...
+</div>
+`;
 
 try{
 
-const res = await fetch(WORKER_URL,{
+const res=await fetch(WORKER_URL,{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:{"Content-Type":"application/json"},
 body:JSON.stringify({dream})
 });
 
-const data = await res.json();
+const data=await res.json();
 
-// 🔥 MOSTRAR RESPUESTA COMPLETA
 if(!data.ok){
-document.getElementById("result").innerHTML = `
-<h3>ERROR</h3>
-<pre>${JSON.stringify(data, null, 2)}</pre>
-`;
+result.innerHTML=`<pre>${JSON.stringify(data,null,2)}</pre>`;
 return;
 }
 
-// ✅ RESULTADO OK
-document.getElementById("result").innerHTML = `
-<h3>Respuesta</h3>
-<pre>${JSON.stringify(data, null, 2)}</pre>
+current=data;
 
-${data.imageUrl ? `<img src="${data.imageUrl}">` : ""}
-
+result.innerHTML=`
+${data.imageUrl?`<img src="${data.imageUrl}">`:""}
 <p>${data.interpretation}</p>
 `;
 
 }catch(err){
-
-document.getElementById("result").innerHTML = `
-<h3>ERROR FETCH</h3>
-<pre>${err}</pre>
-`;
-
+result.innerHTML=`<pre>${err}</pre>`;
 }
 
 }
+
+// 💾 GUARDAR
+function save(){
+let h=JSON.parse(localStorage.getItem("h")||"[]");
+h.unshift(current);
+localStorage.setItem("h",JSON.stringify(h));
+render();
+}
+
+// 🧠 HISTORIAL
+function render(){
+let h=JSON.parse(localStorage.getItem("h")||"[]");
+
+document.getElementById("history").innerHTML=
+h.map(x=>`
+<div class="history-item" onclick="load('${x.dream}')">
+<img class="thumb" src="${x.imageUrl||''}">
+<div>${x.dream?.slice(0,60)||""}</div>
+</div>
+`).join("");
+}
+
+function load(d){
+document.getElementById("dream").value=d;
+}
+
+// 📤 SHARE
+async function share(){
+if(!current.interpretation)return;
+
+if(navigator.share){
+navigator.share({
+text:current.interpretation
+});
+}
+}
+
+// 📱 STORY
+function story(){
+
+const canvas=document.getElementById("c");
+const ctx=canvas.getContext("2d");
+
+ctx.fillStyle="#000";
+ctx.fillRect(0,0,1080,1920);
+
+const img=new Image();
+img.src=current.imageUrl;
+
+img.onload=()=>{
+ctx.drawImage(img,0,0,1080,800);
+
+ctx.fillStyle="white";
+ctx.font="bold 60px Arial";
+ctx.fillText("ONYRA",80,900);
+
+ctx.font="40px Arial";
+ctx.fillText(current.interpretation.slice(0,120),80,1000);
+
+const url=canvas.toDataURL();
+
+const a=document.createElement("a");
+a.href=url;
+a.download="story.png";
+a.click();
+};
+
+}
+
+render();
 
 </script>
 
