@@ -7,62 +7,79 @@
   <style>
     * { box-sizing: border-box; }
 
+    :root{
+      --bg1:#09090c;
+      --bg2:#13111a;
+      --bg3:#221c2d;
+      --panel:rgba(255,255,255,0.06);
+      --panel-2:rgba(255,255,255,0.04);
+      --border:rgba(255,255,255,0.08);
+      --text:#f5efe7;
+      --muted:#c7bdae;
+      --gold1:#f3e2b7;
+      --gold2:#d5b06c;
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top, #26212d 0%, #15121a 35%, #09090c 100%);
-      color: #f4efe7;
+      color: var(--text);
       min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #2a2136 0%, #18141f 30%, #09090c 100%);
     }
 
     .app {
-      max-width: 760px;
+      max-width: 820px;
       margin: 0 auto;
-      padding: 28px 18px 60px;
+      padding: 28px 18px 70px;
     }
 
     .hero {
       text-align: center;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
 
     .logo {
-      font-size: 42px;
-      font-weight: 800;
-      letter-spacing: 5px;
-      margin-bottom: 8px;
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      margin-bottom: 10px;
     }
 
     .subtitle {
-      color: #c9c0b5;
+      color: var(--muted);
       font-size: 15px;
-      line-height: 1.5;
-      max-width: 560px;
+      line-height: 1.6;
+      max-width: 600px;
       margin: 0 auto;
     }
 
     .panel {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 26px;
       padding: 18px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 12px 35px rgba(0,0,0,.28);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
       margin-bottom: 18px;
     }
 
     textarea {
       width: 100%;
-      min-height: 160px;
+      min-height: 170px;
       resize: vertical;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.10);
       background: rgba(255,255,255,0.04);
       color: #fff;
-      padding: 16px;
+      padding: 18px;
       font-size: 16px;
       outline: none;
+      line-height: 1.5;
     }
 
     textarea::placeholder {
@@ -86,32 +103,30 @@
       outline: none;
     }
 
-    option {
-      color: #111;
-    }
+    option { color: #111; }
 
     .buttons {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.25fr 1fr;
       gap: 10px;
     }
 
     button {
       border: none;
-      border-radius: 14px;
-      padding: 14px 16px;
+      border-radius: 15px;
+      padding: 15px 16px;
       font-size: 15px;
       cursor: pointer;
-      transition: transform .15s ease, opacity .15s ease;
+      transition: transform .15s ease, opacity .15s ease, background .15s ease;
     }
 
     button:hover { transform: translateY(-1px); }
     button:disabled { opacity: 0.6; cursor: wait; }
 
     .primary {
-      background: linear-gradient(135deg, #f2dfb2, #d7b878);
+      background: linear-gradient(135deg, var(--gold1), var(--gold2));
       color: #111;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .secondary {
@@ -120,15 +135,33 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
 
+    .ghost {
+      background: transparent;
+      color: #d8c8a0;
+      border: 1px solid rgba(216,200,160,0.2);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .status {
+      font-size: 14px;
+      color: #ddd1bf;
+      margin-top: 12px;
+      min-height: 18px;
+    }
+
     .result-card {
       overflow: hidden;
       padding: 0;
+      display: none;
     }
 
     .image-wrap {
+      position: relative;
       width: 100%;
-      min-height: 260px;
-      background: linear-gradient(180deg, #17141d, #0f0d13);
+      min-height: 300px;
+      background: linear-gradient(180deg, #17141d, #0d0b12);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -139,12 +172,41 @@
       width: 100%;
       display: block;
       object-fit: cover;
-      max-height: 500px;
+      max-height: 560px;
+    }
+
+    .image-overlay {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 26px 22px 18px;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.72) 100%);
+      pointer-events: none;
+    }
+
+    .overlay-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #111;
+      background: var(--gold1);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .overlay-title {
+      font-size: 27px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 0;
+      text-shadow: 0 4px 16px rgba(0,0,0,.5);
     }
 
     .image-placeholder {
       color: #bfb4a5;
-      padding: 36px 20px;
+      padding: 40px 20px;
       text-align: center;
       font-size: 14px;
     }
@@ -153,66 +215,103 @@
       padding: 22px;
     }
 
-    .mode-badge {
-      display: inline-block;
-      font-size: 12px;
-      letter-spacing: .8px;
-      text-transform: uppercase;
-      color: #111;
-      background: #f1dfb6;
-      padding: 7px 10px;
-      border-radius: 999px;
-      margin-bottom: 14px;
-      font-weight: 800;
+    .story-card {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 16px;
     }
 
-    .dream-label {
+    .eyebrow {
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #b9b0a5;
+      color: #bdb2a3;
       margin-bottom: 8px;
     }
 
     .dream-preview {
-      color: #f0ebe2;
-      font-size: 17px;
-      line-height: 1.6;
-      margin-bottom: 22px;
+      font-size: 18px;
+      line-height: 1.65;
+      color: #f6f0e7;
       white-space: pre-wrap;
     }
 
-    .section-title {
-      font-size: 13px;
+    .interpret-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .interpret-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .interpret-title h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .mode-chip {
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #b9b0a5;
-      margin-bottom: 10px;
+      letter-spacing: .9px;
+      color: #111;
+      background: var(--gold1);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+      white-space: nowrap;
     }
 
     .interpretation {
       white-space: pre-wrap;
-      line-height: 1.8;
+      line-height: 1.85;
       font-size: 16px;
       color: #f4efe7;
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .insight-card {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 18px;
-      padding: 18px;
+      padding: 16px;
+    }
+
+    .insight-card h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #eadab5;
+    }
+
+    .insight-card p {
+      margin: 0;
+      color: #ddd2c2;
+      line-height: 1.6;
+      font-size: 14px;
+      white-space: pre-wrap;
     }
 
     .result-actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    .status {
-      font-size: 14px;
-      color: #d3cabd;
-      margin-top: 10px;
-      min-height: 18px;
+      margin-top: 2px;
     }
 
     .history-header {
@@ -234,7 +333,7 @@
     }
 
     .history-item {
-      background: rgba(255,255,255,0.04);
+      background: var(--panel-2);
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 16px;
       padding: 14px;
@@ -256,9 +355,9 @@
     }
 
     .history-dream {
-      font-weight: 700;
+      font-weight: 800;
       color: #fff;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .history-mode {
@@ -281,29 +380,40 @@
       font-size: 13px;
       color: #c8bfb3;
       margin-top: 8px;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
-    .clear-btn {
-      background: transparent;
-      color: #d8c8a0;
-      border: 1px solid rgba(216,200,160,0.2);
-      padding: 9px 12px;
-      border-radius: 12px;
-      font-size: 13px;
+    .footer-note {
+      text-align: center;
+      color: #998f82;
+      font-size: 12px;
+      margin-top: 18px;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 680px) {
       .buttons {
         grid-template-columns: 1fr;
       }
 
+      .insight-grid {
+        grid-template-columns: 1fr;
+      }
+
       .logo {
-        font-size: 35px;
+        font-size: 36px;
+      }
+
+      .overlay-title {
+        font-size: 22px;
       }
 
       .history-top {
         flex-direction: column;
+      }
+
+      .interpret-title {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -336,23 +446,40 @@
       <div class="status" id="status"></div>
     </div>
 
-    <div class="panel result-card" id="resultCard" style="display:none;">
+    <div class="panel result-card" id="resultCard">
       <div class="image-wrap" id="imageWrap">
         <div class="image-placeholder">Todavía no generaste una imagen para este sueño.</div>
       </div>
 
       <div class="result-body">
-        <div class="mode-badge" id="modeBadge">Modo</div>
+        <div class="story-card">
+          <div class="eyebrow">Tu sueño</div>
+          <div class="dream-preview" id="dreamPreview"></div>
+        </div>
 
-        <div class="dream-label">Tu sueño</div>
-        <div class="dream-preview" id="dreamPreview"></div>
+        <div class="interpret-box">
+          <div class="interpret-title">
+            <h3>Interpretación</h3>
+            <div class="mode-chip" id="modeBadge">Intuitiva</div>
+          </div>
+          <div class="interpretation" id="interpretationText"></div>
+        </div>
 
-        <div class="section-title">Interpretación</div>
-        <div class="interpretation" id="interpretationText"></div>
+        <div class="insight-grid">
+          <div class="insight-card">
+            <h4>Temas que aparecen</h4>
+            <p id="themesText">—</p>
+          </div>
+          <div class="insight-card">
+            <h4>Frase central</h4>
+            <p id="centralText">—</p>
+          </div>
+        </div>
 
         <div class="result-actions">
           <button class="primary" onclick="shareDream()">Compartir</button>
           <button class="secondary" onclick="saveCurrentToHistory()">Guardar en historial</button>
+          <button class="ghost" onclick="copyResult()">Copiar texto</button>
         </div>
       </div>
     </div>
@@ -360,14 +487,20 @@
     <div class="panel">
       <div class="history-header">
         <h3 class="history-title">Historial</h3>
-        <button class="clear-btn" onclick="clearHistory()">Borrar historial</button>
+        <button class="ghost" onclick="clearHistory()">Borrar historial</button>
       </div>
       <div class="history-list" id="historyList"></div>
+    </div>
+
+    <div class="footer-note">
+      ONYRA · Explorá tus sueños desde distintos modos de lectura
     </div>
   </div>
 
   <script>
-    const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+    const WORKER_URL = "https://TU-WORKER.workers.dev";
+    const APP_LINK = window.location.href;
+
     let currentDream = {
       dream: "",
       mode: "",
@@ -388,6 +521,114 @@
     function normalizeModeValue(mode) {
       if (mode === "psicoanalítica") return "psicoanalitica";
       return mode || "intuitiva";
+    }
+
+    function truncate(text, max) {
+      if (!text) return "";
+      return text.length > max ? text.slice(0, max) + "..." : text;
+    }
+
+    function formatDate(isoDate) {
+      const d = new Date(isoDate);
+      return d.toLocaleString();
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function cleanTextForDisplay(text) {
+      return String(text || "").trim();
+    }
+
+    function extractThemes(text) {
+      const source = (text || "").replace(/\n/g, " ");
+      const sentences = source
+        .split(/(?<=[\.\!\?])\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const keywords = [
+        "miedo", "deseo", "cambio", "control", "pérdida", "ansiedad", "vínculos",
+        "conflicto", "búsqueda", "inseguridad", "transformación", "recuerdo",
+        "escape", "presión", "culpa", "necesidad", "protección", "exposición",
+        "duda", "crecimiento", "tensión", "incertidumbre", "deseos", "memoria"
+      ];
+
+      const found = [];
+      const lower = source.toLowerCase();
+
+      for (const k of keywords) {
+        if (lower.includes(k) && !found.includes(k)) found.push(k);
+      }
+
+      if (found.length) {
+        return found.slice(0, 4).join(" · ");
+      }
+
+      if (sentences.length) {
+        return truncate(sentences[0], 90);
+      }
+
+      return "Sensaciones internas, símbolos y movimiento emocional.";
+    }
+
+    function extractCentralPhrase(text) {
+      const source = (text || "").replace(/\n+/g, " ").trim();
+      const sentences = source
+        .split(/(?<=[\.\!\?])\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      if (!sentences.length) return "Este sueño puede estar mostrando algo tuyo en una forma simbólica.";
+
+      let best = sentences.find(s =>
+        /tal vez|puede|podría|quizá|quizas|no habla solo|detrás|escond/i.test(s)
+      );
+
+      if (!best) best = sentences[0];
+
+      return truncate(best, 140);
+    }
+
+    function renderImage() {
+      const imageWrap = document.getElementById("imageWrap");
+      const modeLabel = prettyMode(currentDream.mode || "intuitiva");
+
+      if (currentDream.image) {
+        imageWrap.innerHTML = `
+          <img src="${currentDream.image}" alt="Imagen del sueño">
+          <div class="image-overlay">
+            <div class="overlay-badge">${modeLabel}</div>
+            <h2 class="overlay-title">Una posible escena de tu mundo onírico</h2>
+          </div>
+        `;
+      } else {
+        imageWrap.innerHTML = `
+          <div class="image-placeholder">
+            Todavía no generaste una imagen para este sueño.
+          </div>
+        `;
+      }
+    }
+
+    function renderResult() {
+      document.getElementById("resultCard").style.display = "block";
+      document.getElementById("modeBadge").textContent = prettyMode(currentDream.mode);
+      document.getElementById("dreamPreview").textContent = cleanTextForDisplay(currentDream.dream);
+      document.getElementById("interpretationText").textContent = cleanTextForDisplay(currentDream.interpretation);
+      document.getElementById("themesText").textContent = extractThemes(currentDream.interpretation);
+      document.getElementById("centralText").textContent = extractCentralPhrase(currentDream.interpretation);
+      renderImage();
+
+      setTimeout(() => {
+        document.getElementById("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 80);
     }
 
     async function submitDream() {
@@ -418,8 +659,8 @@
 
         currentDream = {
           dream,
-          mode: data.mode,
-          interpretation: data.interpretation,
+          mode: data.mode || mode,
+          interpretation: data.interpretation || "",
           image: currentDream.image || ""
         };
 
@@ -462,31 +703,15 @@
         currentDream.image = data.imageUrl;
 
         renderImage();
+        if (!currentDream.interpretation) {
+          document.getElementById("resultCard").style.display = "block";
+        }
         setStatus("Imagen generada.");
       } catch (err) {
         console.error(err);
         setStatus("Error al generar la imagen.");
       } finally {
         imageBtn.disabled = false;
-      }
-    }
-
-    function renderResult() {
-      document.getElementById("resultCard").style.display = "block";
-      document.getElementById("modeBadge").textContent = prettyMode(currentDream.mode);
-      document.getElementById("dreamPreview").textContent = currentDream.dream;
-      document.getElementById("interpretationText").textContent = currentDream.interpretation;
-      renderImage();
-      window.scrollTo({ top: document.getElementById("resultCard").offsetTop - 20, behavior: "smooth" });
-    }
-
-    function renderImage() {
-      const imageWrap = document.getElementById("imageWrap");
-
-      if (currentDream.image) {
-        imageWrap.innerHTML = `<img src="${currentDream.image}" alt="Imagen del sueño">`;
-      } else {
-        imageWrap.innerHTML = `<div class="image-placeholder">Todavía no generaste una imagen para este sueño.</div>`;
       }
     }
 
@@ -520,11 +745,11 @@
       list.innerHTML = history.map((item, index) => `
         <div class="history-item" onclick="loadHistoryItem(${index})">
           <div class="history-top">
-            <div class="history-dream">${escapeHtml(truncate(item.dream, 90))}</div>
+            <div class="history-dream">${escapeHtml(truncate(item.dream, 95))}</div>
             <div class="history-mode">${prettyMode(item.mode)}</div>
           </div>
           <div class="history-date">${formatDate(item.createdAt)}</div>
-          <div class="mini">${escapeHtml(truncate(item.interpretation, 120))}</div>
+          <div class="mini">${escapeHtml(truncate(item.interpretation, 130))}</div>
         </div>
       `).join("");
     }
@@ -547,13 +772,8 @@
       setStatus("Historial borrado.");
     }
 
-    async function shareDream() {
-      if (!currentDream.dream || !currentDream.interpretation) {
-        setStatus("Todavía no hay contenido para compartir.");
-        return;
-      }
-
-      const text = `✨ ONYRA
+    function buildShareText() {
+      return `✨ ONYRA
 
 Sueño:
 ${currentDream.dream}
@@ -561,10 +781,37 @@ ${currentDream.dream}
 Interpretación (${prettyMode(currentDream.mode)}):
 ${currentDream.interpretation}
 
-Descubrí tus sueños en ONYRA`;
+Descubrí tus sueños en ONYRA
+${APP_LINK}`;
+    }
+
+    async function shareDream() {
+      if (!currentDream.dream || !currentDream.interpretation) {
+        setStatus("Todavía no hay contenido para compartir.");
+        return;
+      }
+
+      const text = buildShareText();
 
       try {
         if (navigator.share) {
+          if (currentDream.image && navigator.canShare) {
+            try {
+              const file = await dataUrlToFile(currentDream.image, "onyra-sueno.png");
+              if (navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                  title: "Mi sueño en ONYRA",
+                  text,
+                  files: [file]
+                });
+                setStatus("Compartido.");
+                return;
+              }
+            } catch (e) {
+              console.log("No se pudo compartir con imagen:", e);
+            }
+          }
+
           await navigator.share({
             title: "Mi sueño en ONYRA",
             text
@@ -580,23 +827,25 @@ Descubrí tus sueños en ONYRA`;
       }
     }
 
-    function truncate(text, max) {
-      if (!text) return "";
-      return text.length > max ? text.slice(0, max) + "..." : text;
+    async function copyResult() {
+      if (!currentDream.dream || !currentDream.interpretation) {
+        setStatus("Todavía no hay contenido para copiar.");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(buildShareText());
+        setStatus("Texto copiado.");
+      } catch (err) {
+        console.error(err);
+        setStatus("No se pudo copiar el texto.");
+      }
     }
 
-    function formatDate(isoDate) {
-      const d = new Date(isoDate);
-      return d.toLocaleString();
-    }
-
-    function escapeHtml(str) {
-      return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    async function dataUrlToFile(dataUrl, filename) {
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      return new File([blob], filename, { type: blob.type || "image/png" });
     }
 
     renderHistory();
