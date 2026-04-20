@@ -771,7 +771,32 @@
       applyCurrentStyleUI();
       setStatus(`Estilo seleccionado: ${getStyleLabel(style)}`);
     }
+    function getStyleContent(style) {
+  if (style === "dark") {
+    return {
+      placeholder: "Ejemplo: soñé que algo me perseguía, no podía escapar, todo era oscuro y pesado...",
+      resultTitle: "Resultado",
+      resultSubtitle: "Una visión más intensa de tu sueño",
+      idleStatus: "Listo para explorar el lado más oscuro de tus sueños"
+    };
+  }
 
+  if (style === "editorial") {
+    return {
+      placeholder: "Ejemplo: soñé que caminaba por una ciudad elegante, todo era silencioso y perfectamente ordenado...",
+      resultTitle: "Resultado",
+      resultSubtitle: "Una lectura visual y estética de tu sueño",
+      idleStatus: "Listo para interpretar tu próximo registro onírico"
+    };
+  }
+
+  return {
+    placeholder: "Ejemplo: soñé que flotaba entre luces violetas, todo era suave y sin peso...",
+    resultTitle: "Resultado",
+    resultSubtitle: "La representación simbólica de tu sueño",
+    idleStatus: "Listo para interpretar tu próximo sueño"
+  };
+}
     function applyCurrentStyleUI() {
       document.getElementById("styleMystic").classList.toggle("active", currentDream.style === "mystic");
       document.getElementById("styleDark").classList.toggle("active", currentDream.style === "dark");
