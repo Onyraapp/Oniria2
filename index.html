@@ -6,172 +6,444 @@
   <title>ONYRA</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f1020;
-      color: white;
+    :root {
+      --bg: #0b0d18;
+      --bg-2: #12162a;
+      --panel: rgba(24, 28, 52, 0.82);
+      --panel-strong: #171b33;
+      --stroke: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.72);
+      --muted-2: rgba(255,255,255,0.55);
+      --primary: #7c5cff;
+      --primary-2: #9b86ff;
+      --green: #27c27a;
+      --yellow: #ffb020;
+      --red: #df4e4e;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
       margin: 0;
-      padding: 24px;
-      text-align: center;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top center, rgba(124,92,255,.22), transparent 30%),
+        radial-gradient(circle at 20% 20%, rgba(39,194,122,.08), transparent 20%),
+        linear-gradient(180deg, #0a0c17 0%, #0f1326 100%);
+      color: var(--text);
+      min-height: 100%;
+    }
+
+    body {
+      padding: 20px;
     }
 
     .app {
-      max-width: 900px;
+      max-width: 980px;
       margin: 0 auto;
     }
 
-    h1, h2, h3 {
-      margin-bottom: 10px;
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(23,27,51,.92) 0%, rgba(15,18,37,.88) 100%);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 34px 26px 24px;
+      margin-bottom: 20px;
     }
 
-    p {
-      opacity: 0.95;
+    .heroGlow {
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(124,92,255,.35), transparent 68%);
+      pointer-events: none;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .brandDot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 0 18px rgba(124,92,255,.6);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 40px;
+      line-height: 1;
+      letter-spacing: 0.5px;
+    }
+
+    .heroText {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+      max-width: 640px;
+    }
+
+    .panel {
+      border: 1px solid var(--stroke);
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .composer {
+      display: grid;
+      grid-template-columns: 1.3fr .9fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .leftCol,
+    .rightCol {
+      min-width: 0;
+    }
+
+    .sectionTitle {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .sectionText {
+      margin: 0 0 14px;
+      color: var(--muted-2);
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     textarea {
       width: 100%;
-      min-height: 130px;
-      border-radius: 14px;
-      border: 1px solid #444;
-      padding: 14px;
-      font-size: 16px;
-      margin-top: 16px;
-      background: #191b33;
-      color: white;
-      box-sizing: border-box;
+      min-height: 180px;
       resize: vertical;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(9, 12, 24, .72);
+      color: white;
+      padding: 16px;
+      font-size: 16px;
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    textarea::placeholder {
+      color: rgba(255,255,255,.38);
+    }
+
+    .buttonGrid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
     }
 
     button {
-      margin-top: 10px;
-      padding: 11px 14px;
-      border-radius: 10px;
       border: none;
       cursor: pointer;
-      margin: 5px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform .12s ease, opacity .12s ease, filter .12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+    }
+
+    .secondary {
+      background: rgba(255,255,255,.92);
+      color: #101218;
+    }
+
+    .tertiary {
+      background: var(--green);
+      color: white;
+    }
+
+    .quaternary {
+      background: var(--yellow);
+      color: #111;
+    }
+
+    .danger {
+      background: var(--red);
+      color: white;
+    }
+
+    .miniCard {
+      border-radius: 18px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .statusCard {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+    }
+
+    .statusDot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.22);
+      flex: 0 0 auto;
+    }
+
+    .statusDot.loading {
+      background: var(--primary);
+      box-shadow: 0 0 0 rgba(124,92,255,.6);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(124,92,255,.55); }
+      70% { box-shadow: 0 0 0 12px rgba(124,92,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(124,92,255,0); }
+    }
+
+    #status {
+      margin: 0;
+      color: var(--muted);
       font-size: 14px;
     }
 
-    .primary { background:#7c5cff; color:white; }
-    .secondary { background:white; color:black; }
-    .tertiary { background:#27c27a; color:white; }
-    .quaternary { background:#ffb020; color:black; }
-    .danger { background:#e14b4b; color:white; }
-
-    #status {
-      min-height: 22px;
-      margin-top: 10px;
+    .previewCard {
+      text-align: center;
     }
 
     #resultImage {
       width: 100%;
-      max-width: 420px;
-      margin-top: 20px;
-      border-radius: 16px;
+      max-width: 360px;
+      border-radius: 20px;
       display: none;
-      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      margin: 0 auto;
+      box-shadow: 0 18px 40px rgba(0,0,0,.32);
     }
 
-    #interpretationBox, #storySection {
+    .imageHint {
+      margin-top: 12px;
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+
+    #interpretationBox,
+    #storySection {
       margin-top: 18px;
       display: none;
-      background:#1b1e3a;
-      padding:15px;
-      border-radius:12px;
-      text-align: left;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--stroke);
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    #interpretationBox h3,
+    #storySection h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
     }
 
     #interpretationText {
       margin: 0;
-      line-height: 1.5;
+      color: var(--muted);
+      line-height: 1.6;
+      white-space: pre-wrap;
     }
 
-    .gallery {
-      margin-top: 40px;
-      text-align: left;
+    .note {
+      font-size: 13px;
+      color: var(--muted-2);
+      margin: 0 0 10px;
     }
 
-    .galleryGrid {
+    #storyPreview {
+      width: 100%;
+      max-width: 330px;
+      display: block;
+      margin: 12px auto 0;
+      border-radius: 20px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.32);
+      background: #090b14;
+    }
+
+    .storyActions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .historySection {
+      margin-top: 22px;
+    }
+
+    .historyTop {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .historyTop h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .historyTop p {
+      margin: 4px 0 0;
+      color: var(--muted-2);
+      font-size: 14px;
+    }
+
+    .historyGrid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 16px;
     }
 
     .card {
-      background:#1b1e3a;
-      border-radius:12px;
-      overflow:hidden;
-      padding:10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.22);
+      background: linear-gradient(180deg, rgba(25,29,54,.96), rgba(16,19,35,.96));
+      border: 1px solid var(--stroke);
+      border-radius: 20px;
+      overflow: hidden;
+      padding: 12px;
+      box-shadow: var(--shadow);
     }
 
     .card img {
-      width:100%;
-      border-radius:10px;
-      display:block;
+      width: 100%;
+      display: block;
+      border-radius: 14px;
       aspect-ratio: 1 / 1;
       object-fit: cover;
     }
 
-    .card p {
-      margin: 10px 0 8px;
+    .cardTitle {
+      margin: 12px 0 8px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: white;
+    }
+
+    .cardInterpretation {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     .small {
-      font-size:13px;
-      opacity:0.7;
+      font-size: 12px;
+      color: var(--muted-2);
+      margin: 0;
     }
 
     .cardActions {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .cardActions button {
-      margin: 0;
+      padding: 9px 10px;
       font-size: 13px;
-      padding: 8px 10px;
+      border-radius: 12px;
     }
 
-    .previewWrap {
-      margin-top: 10px;
-    }
-
-    #storyPreview {
-      width: 100%;
-      max-width: 360px;
+    .emptyState {
+      text-align: center;
+      padding: 26px 18px;
+      color: var(--muted);
+      border: 1px dashed rgba(255,255,255,.14);
       border-radius: 18px;
-      display: block;
-      margin: 14px auto 0;
-      box-shadow: 0 12px 30px rgba(0,0,0,.35);
-      background: #0c0d19;
+      background: rgba(255,255,255,.03);
     }
 
-    .topButtons {
-      margin-top: 8px;
-    }
-
-    .note {
+    .subtle {
+      color: var(--muted-2);
       font-size: 13px;
-      opacity: .75;
-      margin-top: 8px;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 860px) {
+      .composer {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+    }
+
+    @media (max-width: 560px) {
       body {
-        padding: 16px;
+        padding: 14px;
       }
 
-      button {
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
+      .hero {
+        padding: 24px 18px 18px;
       }
 
+      h1 {
+        font-size: 30px;
+      }
+
+      .buttonGrid {
+        grid-template-columns: 1fr;
+      }
+
+      .storyActions {
+        flex-direction: column;
+      }
+
+      .storyActions button,
+      .historyTop button,
       .cardActions button {
-        width: auto;
+        width: 100%;
       }
     }
   </style>
@@ -179,23 +451,49 @@
 
 <body>
   <div class="app">
-    <h1>ONYRA</h1>
-    <p>Descubrí qué dicen tus sueños</p>
+    <section class="hero">
+      <div class="heroGlow"></div>
+      <div class="brand">
+        <span class="brandDot"></span>
+        Diario visual de sueños con IA
+      </div>
+      <h1>ONYRA</h1>
+      <p class="heroText">
+        Escribí lo que soñaste, generá una imagen, obtené una interpretación y guardalo en tu historial.
+      </p>
+    </section>
 
-    <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea>
+    <section class="panel composer">
+      <div class="leftCol">
+        <h2 class="sectionTitle">Contá tu sueño</h2>
+        <p class="sectionText">
+          Cuanto más específico seas, mejor va a salir la imagen y la interpretación.
+        </p>
 
-    <div class="topButtons">
-      <button class="primary" onclick="submitDream()">Generar imagen</button>
-      <button class="primary" onclick="interpretDream()">Interpretar sueño</button>
-      <button class="secondary" onclick="shareDream()">Compartir</button>
-      <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
-      <button class="quaternary" onclick="saveToGallery()">Guardar en historial</button>
-      <button class="primary" onclick="buildStoryCard()">Crear story</button>
-    </div>
+        <textarea id="dreamInput" placeholder="Ejemplo: soñé que caminaba por una ciudad vacía, todo estaba oscuro y al fondo había una luz muy intensa..."></textarea>
 
-    <p id="status"></p>
+        <div class="buttonGrid">
+          <button class="primary" onclick="submitDream()">Generar imagen</button>
+          <button class="primary" onclick="interpretDream()">Interpretar sueño</button>
+          <button class="secondary" onclick="shareDream()">Compartir</button>
+          <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
+          <button class="quaternary" onclick="saveToGallery()">Guardar en historial</button>
+          <button class="primary" onclick="buildStoryCard()">Crear story</button>
+        </div>
+      </div>
 
-    <img id="resultImage" alt="Imagen del sueño" />
+      <div class="rightCol">
+        <div class="miniCard statusCard">
+          <div id="statusDot" class="statusDot"></div>
+          <p id="status">Listo para interpretar tu próximo sueño</p>
+        </div>
+
+        <div class="miniCard previewCard">
+          <img id="resultImage" alt="Imagen del sueño" />
+          <p class="imageHint">Acá vas a ver la visual de tu sueño.</p>
+        </div>
+      </div>
+    </section>
 
     <div id="interpretationBox">
       <h3>Interpretación</h3>
@@ -207,19 +505,22 @@
       <p class="note">Formato vertical con branding + texto del sueño</p>
       <canvas id="storyCanvas" width="1080" height="1920" style="display:none;"></canvas>
       <img id="storyPreview" alt="Preview story ONYRA" />
-      <div style="margin-top:12px;">
+      <div class="storyActions">
         <button class="secondary" onclick="downloadStory()">Descargar story</button>
         <button class="tertiary" onclick="shareStory()">Compartir story</button>
       </div>
     </div>
 
-    <div class="gallery">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-       <h2 style="margin:0;">Mi historial</h2>
+    <section class="historySection">
+      <div class="historyTop">
+        <div>
+          <h2>Mi historial</h2>
+          <p>Tus sueños guardados en este dispositivo</p>
+        </div>
         <button class="danger" onclick="clearGallery()">Borrar historial</button>
       </div>
-      <div id="gallery" style="margin-top:16px;"></div>
-    </div>
+      <div id="gallery"></div>
+    </section>
   </div>
 
   <script>
@@ -240,7 +541,7 @@
       const dream = document.getElementById("dreamInput").value.trim();
       if (!dream) return alert("Escribí algo");
 
-      setStatus("Generando imagen...");
+      setStatus("Generando imagen...", true);
       hideInterpretation();
       hideStory();
 
@@ -278,7 +579,7 @@
       const dream = document.getElementById("dreamInput").value.trim();
       if (!dream) return alert("Escribí algo");
 
-      setStatus("Interpretando...");
+      setStatus("Interpretando...", true);
       hideStory();
 
       try {
@@ -298,7 +599,8 @@
         showImage(data.imageUrl);
 
         const interpretation = data.interpretation || "";
-        document.getElementById("interpretationText").innerText = interpretation || "No hubo interpretación disponible.";
+        document.getElementById("interpretationText").innerText =
+          interpretation || "No hubo interpretación disponible.";
         document.getElementById("interpretationBox").style.display = "block";
 
         currentDream = {
@@ -332,8 +634,10 @@
       currentDream.storyDataUrl = "";
     }
 
-    function setStatus(text) {
+    function setStatus(text, loading = false) {
       document.getElementById("status").innerText = text;
+      const dot = document.getElementById("statusDot");
+      dot.classList.toggle("loading", loading);
     }
 
     function saveDreamImage() {
@@ -363,7 +667,7 @@
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(gallery));
       renderGallery();
-      setStatus("Sueño guardado en galería");
+      setStatus("Sueño guardado en historial");
     }
 
     function getGallery() {
@@ -380,17 +684,22 @@
       const data = getGallery();
 
       if (!data.length) {
-        container.innerHTML = "<p class='small'>Todavía no guardaste sueños en tu historial</p>";
+        container.innerHTML = `
+          <div class="emptyState">
+            <p style="margin:0 0 8px;"><b>Todavía no guardaste sueños en tu historial</b></p>
+            <p class="subtle" style="margin:0;">Generá uno, interpretalo y guardalo para verlo después.</p>
+          </div>
+        `;
         return;
       }
 
       container.innerHTML = `
-        <div class="galleryGrid">
+        <div class="historyGrid">
           ${data.map(item => `
             <div class="card">
               <img src="${item.imageUrl}" alt="Sueño guardado" />
-              <p><b>${escapeHtml(item.text)}</b></p>
-              ${item.interpretation ? `<p>${escapeHtml(item.interpretation)}</p>` : ""}
+              <p class="cardTitle"><b>${escapeHtml(item.text)}</b></p>
+              ${item.interpretation ? `<p class="cardInterpretation">${escapeHtml(item.interpretation)}</p>` : ""}
               <p class="small">${escapeHtml(item.date)}</p>
               <div class="cardActions">
                 <button class="secondary" onclick="reuseDream(${item.id})">Reusar</button>
@@ -411,9 +720,10 @@
     }
 
     function clearGallery() {
-      if (!confirm("¿Querés borrar toda la galería?")) return;
+      if (!confirm("¿Querés borrar todo tu historial?")) return;
       localStorage.removeItem(STORAGE_KEY);
       renderGallery();
+      setStatus("Historial borrado");
     }
 
     function reuseDream(id) {
@@ -445,6 +755,7 @@
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
+      setStatus("Sueño recuperado del historial");
     }
 
     function downloadSavedImage(id) {
@@ -496,7 +807,7 @@
         return;
       }
 
-      setStatus("Armando story...");
+      setStatus("Armando story...", true);
 
       try {
         const canvas = document.getElementById("storyCanvas");
@@ -504,7 +815,6 @@
         const preview = document.getElementById("storyPreview");
         const section = document.getElementById("storySection");
 
-        // Fondo base
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -513,30 +823,26 @@
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Cargar imagen principal
         const dreamImg = await loadImage(currentDream.imageUrl);
 
-        // Imagen principal tipo poster
         const imageX = 90;
         const imageY = 190;
         const imageW = 900;
         const imageH = 900;
 
-        roundRect(ctx, imageX, imageY, imageW, imageH, 44);
+        roundRectPath(ctx, imageX, imageY, imageW, imageH, 44);
         ctx.save();
         ctx.clip();
         ctx.drawImage(dreamImg, imageX, imageY, imageW, imageH);
         ctx.restore();
 
-        // Overlay suave sobre la imagen
         const overlay = ctx.createLinearGradient(0, imageY, 0, imageY + imageH);
         overlay.addColorStop(0, "rgba(0,0,0,0.05)");
         overlay.addColorStop(1, "rgba(0,0,0,0.35)");
         ctx.fillStyle = overlay;
-        roundRect(ctx, imageX, imageY, imageW, imageH, 44);
+        roundRectPath(ctx, imageX, imageY, imageW, imageH, 44);
         ctx.fill();
 
-        // Marca
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 64px Arial";
         ctx.textAlign = "center";
@@ -546,45 +852,32 @@
         ctx.font = "30px Arial";
         ctx.fillText("Descubrí qué dicen tus sueños", canvas.width / 2, 140);
 
-        // Caja texto
         const boxX = 70;
         const boxY = 1160;
         const boxW = 940;
         const boxH = 520;
 
         ctx.fillStyle = "rgba(255,255,255,0.08)";
-        roundRect(ctx, boxX, boxY, boxW, boxH, 36);
+        roundRectPath(ctx, boxX, boxY, boxW, boxH, 36);
         ctx.fill();
 
-        // Título bloque
         ctx.fillStyle = "#b9b4ff";
         ctx.font = "bold 30px Arial";
         ctx.textAlign = "left";
         ctx.fillText("Soñé que...", 120, 1235);
 
-        // Texto sueño
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 46px Arial";
         wrapText(ctx, currentDream.text, 120, 1305, 840, 58, 5);
 
-        // Interpretación corta si existe
         if (currentDream.interpretation) {
           ctx.fillStyle = "rgba(255,255,255,0.78)";
           ctx.font = "28px Arial";
-          wrapText(
-            ctx,
-            currentDream.interpretation,
-            120,
-            1510,
-            840,
-            40,
-            4
-          );
+          wrapText(ctx, currentDream.interpretation, 120, 1510, 840, 40, 4);
         }
 
-        // CTA abajo
         ctx.fillStyle = "#7c5cff";
-        roundRect(ctx, 250, 1730, 580, 95, 48);
+        roundRectPath(ctx, 250, 1730, 580, 95, 48);
         ctx.fill();
 
         ctx.fillStyle = "#ffffff";
@@ -592,7 +885,6 @@
         ctx.textAlign = "center";
         ctx.fillText("Interpretá tu sueño en ONYRA", canvas.width / 2, 1790);
 
-        // URL chica
         ctx.fillStyle = "rgba(255,255,255,0.72)";
         ctx.font = "24px Arial";
         ctx.fillText(APP_LINK.replace(/^https?:\/\//, ""), canvas.width / 2, 1868);
@@ -632,7 +924,6 @@
       try {
         const blob = await (await fetch(currentDream.storyDataUrl)).blob();
         const file = new File([blob], "onyra-story.png", { type: "image/png" });
-
         const text = `Interpreté mi sueño con ONYRA\n${APP_LINK}`;
 
         if (navigator.canShare && navigator.canShare({ files:[file] })) {
@@ -703,7 +994,7 @@
       });
     }
 
-    function roundRect(ctx, x, y, width, height, radius) {
+    function roundRectPath(ctx, x, y, width, height, radius) {
       ctx.beginPath();
       ctx.moveTo(x + radius, y);
       ctx.lineTo(x + width - radius, y);
@@ -721,10 +1012,10 @@
       const words = String(text || "").split(" ");
       let line = "";
       let lines = [];
+
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + " ";
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
+        const testWidth = ctx.measureText(testLine).width;
         if (testWidth > maxWidth && n > 0) {
           lines.push(line.trim());
           line = words[n] + " ";
@@ -733,8 +1024,8 @@
           line = testLine;
         }
       }
-      if (lines.length < maxLines && line.trim()) lines.push(line.trim());
 
+      if (lines.length < maxLines && line.trim()) lines.push(line.trim());
       if (lines.length > maxLines) lines = lines.slice(0, maxLines);
 
       lines.forEach((l, i) => {
