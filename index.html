@@ -7,21 +7,23 @@
 
   <style>
     :root {
-      --bg: #0b0d18;
-      --bg-2: #12162a;
-      --panel: rgba(24, 28, 52, 0.82);
-      --panel-strong: #171b33;
+      --bg: #090b15;
+      --bg-2: #0f1324;
+      --panel: rgba(18, 23, 43, 0.88);
+      --panel-2: rgba(24, 29, 54, 0.88);
       --stroke: rgba(255,255,255,0.08);
       --text: #ffffff;
-      --muted: rgba(255,255,255,0.72);
-      --muted-2: rgba(255,255,255,0.55);
+      --muted: rgba(255,255,255,0.74);
+      --muted-2: rgba(255,255,255,0.52);
       --primary: #7c5cff;
-      --primary-2: #9b86ff;
-      --green: #27c27a;
+      --primary-2: #9f8cff;
+      --green: #26c277;
       --yellow: #ffb020;
-      --red: #df4e4e;
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --radius: 22px;
+      --red: #de4f4f;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
     }
 
     * {
@@ -31,46 +33,47 @@
     html, body {
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top center, rgba(124,92,255,.22), transparent 30%),
-        radial-gradient(circle at 20% 20%, rgba(39,194,122,.08), transparent 20%),
-        linear-gradient(180deg, #0a0c17 0%, #0f1326 100%);
-      color: var(--text);
       min-height: 100%;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(124,92,255,.22), transparent 28%),
+        radial-gradient(circle at 15% 20%, rgba(38,194,119,.09), transparent 18%),
+        linear-gradient(180deg, #080a14 0%, #0c1121 48%, #0b1020 100%);
     }
 
     body {
-      padding: 20px;
+      padding: 16px;
     }
 
     .app {
-      max-width: 980px;
+      max-width: 1120px;
       margin: 0 auto;
     }
 
     .hero {
       position: relative;
       overflow: hidden;
+      padding: 30px 24px;
+      border-radius: 32px;
       border: 1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(23,27,51,.92) 0%, rgba(15,18,37,.88) 100%);
-      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(22,26,48,.95) 0%, rgba(14,18,34,.95) 100%);
       box-shadow: var(--shadow);
-      padding: 34px 26px 24px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .heroGlow {
       position: absolute;
-      inset: auto -80px -120px auto;
-      width: 240px;
-      height: 240px;
+      right: -70px;
+      bottom: -120px;
+      width: 260px;
+      height: 260px;
       border-radius: 999px;
-      background: radial-gradient(circle, rgba(124,92,255,.35), transparent 68%);
+      background: radial-gradient(circle, rgba(124,92,255,.34), transparent 68%);
       pointer-events: none;
     }
 
-    .brand {
+    .brandPill {
       display: inline-flex;
       align-items: center;
       gap: 10px;
@@ -80,59 +83,59 @@
       border: 1px solid rgba(255,255,255,.08);
       color: var(--muted);
       font-size: 13px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .brandDot {
       width: 10px;
       height: 10px;
-      border-radius: 999px;
+      border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--primary-2));
       box-shadow: 0 0 18px rgba(124,92,255,.6);
     }
 
     h1 {
       margin: 0 0 10px;
-      font-size: 40px;
+      font-size: 42px;
       line-height: 1;
-      letter-spacing: 0.5px;
+      letter-spacing: .3px;
     }
 
     .heroText {
       margin: 0;
+      max-width: 720px;
       color: var(--muted);
       font-size: 16px;
-      line-height: 1.5;
-      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    .mainGrid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 18px;
+      align-items: start;
     }
 
     .panel {
       border: 1px solid var(--stroke);
       background: var(--panel);
       backdrop-filter: blur(10px);
-      border-radius: var(--radius);
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
+    }
+
+    .controlsPanel {
       padding: 18px;
+      position: sticky;
+      top: 14px;
     }
 
-    .composer {
-      display: grid;
-      grid-template-columns: 1.3fr .9fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .leftCol,
-    .rightCol {
-      min-width: 0;
-    }
-
-    .sectionTitle {
-      margin: 0 0 10px;
+    .sectionLabel {
+      margin: 0 0 8px;
       font-size: 18px;
     }
 
-    .sectionText {
+    .sectionSubtext {
       margin: 0 0 14px;
       color: var(--muted-2);
       font-size: 14px;
@@ -141,37 +144,90 @@
 
     textarea {
       width: 100%;
-      min-height: 180px;
+      min-height: 200px;
       resize: vertical;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.08);
-      background: rgba(9, 12, 24, .72);
+      background: rgba(7,10,20,.7);
       color: white;
       padding: 16px;
       font-size: 16px;
       outline: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
     }
 
     textarea::placeholder {
       color: rgba(255,255,255,.38);
     }
 
-    .buttonGrid {
+    .stylePicker {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+    }
+
+    .stylePickerTitle {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .styleButtons {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .styleChip {
+      padding: 11px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .styleChip.active {
+      outline: 2px solid rgba(255,255,255,.16);
+      transform: translateY(-1px);
+    }
+
+    .style-mystic {
+      background: linear-gradient(135deg, rgba(124,92,255,.45), rgba(60,20,120,.45));
+    }
+
+    .style-dark {
+      background: linear-gradient(135deg, rgba(25,25,35,.95), rgba(70,20,20,.45));
+    }
+
+    .style-editorial {
+      background: linear-gradient(135deg, rgba(220,220,230,.24), rgba(120,120,160,.18));
+    }
+
+    .buttonStack {
+      display: grid;
       gap: 10px;
       margin-top: 14px;
+    }
+
+    .buttonRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
     button {
       border: none;
       cursor: pointer;
-      border-radius: 14px;
-      padding: 12px 14px;
+      border-radius: 15px;
+      padding: 13px 14px;
       font-size: 14px;
-      font-weight: 600;
-      transition: transform .12s ease, opacity .12s ease, filter .12s ease;
+      font-weight: 700;
+      transition: transform .12s ease, filter .12s ease, opacity .12s ease;
     }
 
     button:hover {
@@ -190,7 +246,7 @@
 
     .secondary {
       background: rgba(255,255,255,.92);
-      color: #101218;
+      color: #0f1220;
     }
 
     .tertiary {
@@ -208,26 +264,22 @@
       color: white;
     }
 
-    .miniCard {
-      border-radius: 18px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
-      padding: 14px;
-      margin-bottom: 14px;
-    }
-
     .statusCard {
       display: flex;
       align-items: center;
       gap: 10px;
-      min-height: 52px;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
     }
 
     .statusDot {
       width: 12px;
       height: 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.24);
       flex: 0 0 auto;
     }
 
@@ -247,64 +299,170 @@
       margin: 0;
       color: var(--muted);
       font-size: 14px;
+      line-height: 1.4;
     }
 
-    .previewCard {
-      text-align: center;
+    .rightColumn {
+      display: grid;
+      gap: 18px;
+    }
+
+    .resultCard {
+      overflow: hidden;
+      border-radius: 30px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(22,26,49,.96), rgba(12,16,30,.96));
+      box-shadow: var(--shadow);
+    }
+
+    .resultHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 18px 0;
+      flex-wrap: wrap;
+    }
+
+    .resultHeader h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .resultHeader p {
+      margin: 4px 0 0;
+      color: var(--muted-2);
+      font-size: 14px;
+    }
+
+    .resultBadge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .resultImageWrap {
+      padding: 18px;
+    }
+
+    .resultImageShell {
+      position: relative;
+      min-height: 440px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at top center, rgba(124,92,255,.18), transparent 30%),
+        linear-gradient(180deg, #111528 0%, #0a0d18 100%);
+      border: 1px solid rgba(255,255,255,.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .resultImageShell.mystic {
+      background:
+        radial-gradient(circle at top center, rgba(170,120,255,.35), transparent 34%),
+        linear-gradient(180deg, #1d1736 0%, #0d1020 100%);
+    }
+
+    .resultImageShell.dark {
+      background:
+        radial-gradient(circle at top center, rgba(255,80,80,.12), transparent 30%),
+        linear-gradient(180deg, #121212 0%, #05070e 100%);
+    }
+
+    .resultImageShell.editorial {
+      background:
+        radial-gradient(circle at top center, rgba(255,255,255,.12), transparent 34%),
+        linear-gradient(180deg, #232637 0%, #11131d 100%);
     }
 
     #resultImage {
       width: 100%;
+      max-width: 760px;
+      display: none;
+      border-radius: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.34);
+    }
+
+    .resultPlaceholder {
       max-width: 360px;
-      border-radius: 20px;
-      display: none;
-      margin: 0 auto;
-      box-shadow: 0 18px 40px rgba(0,0,0,.32);
-    }
-
-    .imageHint {
-      margin-top: 12px;
+      text-align: center;
       color: var(--muted-2);
-      font-size: 13px;
+      padding: 24px;
     }
 
-    #interpretationBox,
-    #storySection {
-      margin-top: 18px;
-      display: none;
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--stroke);
-      padding: 16px;
-      border-radius: 18px;
-    }
-
-    #interpretationBox h3,
-    #storySection h3 {
-      margin: 0 0 10px;
+    .resultPlaceholderTitle {
       font-size: 18px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 700;
     }
 
-    #interpretationText {
+    .floatingActions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 18px 18px;
+    }
+
+    .floatingActions button {
+      padding: 11px 14px;
+    }
+
+    .infoGrid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+
+    .infoCard {
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(20,24,45,.94), rgba(13,17,31,.94));
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .infoCard h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .cardIntro {
+      margin: 0 0 12px;
+      color: var(--muted-2);
+      font-size: 14px;
+    }
+
+    #interpretationBox {
+      display: none;
+    }
+
+    .interpretationText {
       margin: 0;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.7;
       white-space: pre-wrap;
+      font-size: 15px;
     }
 
-    .note {
-      font-size: 13px;
-      color: var(--muted-2);
-      margin: 0 0 10px;
+    #storySection {
+      display: none;
     }
 
     #storyPreview {
       width: 100%;
-      max-width: 330px;
+      max-width: 320px;
       display: block;
       margin: 12px auto 0;
       border-radius: 20px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.32);
       background: #090b14;
+      box-shadow: 0 18px 40px rgba(0,0,0,.32);
     }
 
     .storyActions {
@@ -317,6 +475,11 @@
 
     .historySection {
       margin-top: 22px;
+      border: 1px solid var(--stroke);
+      background: var(--panel);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 20px;
     }
 
     .historyTop {
@@ -345,51 +508,70 @@
       gap: 16px;
     }
 
-    .card {
-      background: linear-gradient(180deg, rgba(25,29,54,.96), rgba(16,19,35,.96));
+    .historyCard {
+      background: linear-gradient(180deg, rgba(25,29,54,.98), rgba(15,19,35,.98));
       border: 1px solid var(--stroke);
-      border-radius: 20px;
+      border-radius: 22px;
       overflow: hidden;
       padding: 12px;
-      box-shadow: var(--shadow);
     }
 
-    .card img {
+    .historyCard img {
       width: 100%;
       display: block;
-      border-radius: 14px;
+      border-radius: 16px;
       aspect-ratio: 1 / 1;
       object-fit: cover;
+      box-shadow: 0 12px 26px rgba(0,0,0,.2);
     }
 
-    .cardTitle {
+    .historyMeta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .historyStyleTag {
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .historyText {
       margin: 12px 0 8px;
       font-size: 15px;
       line-height: 1.5;
       color: white;
     }
 
-    .cardInterpretation {
+    .historyInterpretation {
       margin: 0 0 10px;
-      color: var(--muted);
       font-size: 14px;
-      line-height: 1.5;
+      line-height: 1.55;
+      color: var(--muted);
     }
 
     .small {
+      margin: 0;
       font-size: 12px;
       color: var(--muted-2);
-      margin: 0;
     }
 
-    .cardActions {
+    .historyActions {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 12px;
     }
 
-    .cardActions button {
+    .historyActions button {
       padding: 9px 10px;
       font-size: 13px;
       border-radius: 12px;
@@ -397,7 +579,7 @@
 
     .emptyState {
       text-align: center;
-      padding: 26px 18px;
+      padding: 28px 18px;
       color: var(--muted);
       border: 1px dashed rgba(255,255,255,.14);
       border-radius: 18px;
@@ -409,41 +591,45 @@
       font-size: 13px;
     }
 
-    @media (max-width: 860px) {
-      .composer {
+    @media (max-width: 980px) {
+      .mainGrid {
         grid-template-columns: 1fr;
       }
 
-      h1 {
-        font-size: 34px;
+      .controlsPanel {
+        position: static;
+      }
+
+      .infoGrid {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 560px) {
-      body {
-        padding: 14px;
-      }
-
-      .hero {
-        padding: 24px 18px 18px;
-      }
-
+    @media (max-width: 620px) {
       h1 {
-        font-size: 30px;
+        font-size: 34px;
       }
 
-      .buttonGrid {
+      .buttonRow,
+      .styleButtons {
         grid-template-columns: 1fr;
       }
 
-      .storyActions {
+      .floatingActions,
+      .storyActions,
+      .historyActions {
         flex-direction: column;
       }
 
+      .floatingActions button,
       .storyActions button,
-      .historyTop button,
-      .cardActions button {
+      .historyActions button,
+      .historyTop button {
         width: 100%;
+      }
+
+      .resultImageShell {
+        min-height: 300px;
       }
     }
   </style>
@@ -453,63 +639,102 @@
   <div class="app">
     <section class="hero">
       <div class="heroGlow"></div>
-      <div class="brand">
+      <div class="brandPill">
         <span class="brandDot"></span>
         Diario visual de sueños con IA
       </div>
       <h1>ONYRA</h1>
       <p class="heroText">
-        Escribí lo que soñaste, generá una imagen, obtené una interpretación y guardalo en tu historial.
+        Escribí tu sueño, transformalo en imagen, obtené una interpretación y guardalo en tu historial.
       </p>
     </section>
 
-    <section class="panel composer">
-      <div class="leftCol">
-        <h2 class="sectionTitle">Contá tu sueño</h2>
-        <p class="sectionText">
-          Cuanto más específico seas, mejor va a salir la imagen y la interpretación.
+    <section class="mainGrid">
+      <aside class="panel controlsPanel">
+        <h2 class="sectionLabel">Contá tu sueño</h2>
+        <p class="sectionSubtext">
+          Cuanto más detalle pongas, mejor va a salir la imagen y más rica puede ser la interpretación.
         </p>
 
         <textarea id="dreamInput" placeholder="Ejemplo: soñé que caminaba por una ciudad vacía, todo estaba oscuro y al fondo había una luz muy intensa..."></textarea>
 
-        <div class="buttonGrid">
+        <div class="stylePicker">
+          <p class="stylePickerTitle">Elegí el estilo visual</p>
+          <div class="styleButtons">
+            <button id="styleMystic" class="styleChip style-mystic active" onclick="setVisualStyle('mystic')">Místico</button>
+            <button id="styleDark" class="styleChip style-dark" onclick="setVisualStyle('dark')">Oscuro</button>
+            <button id="styleEditorial" class="styleChip style-editorial" onclick="setVisualStyle('editorial')">Editorial</button>
+          </div>
+        </div>
+
+        <div class="buttonStack">
           <button class="primary" onclick="submitDream()">Generar imagen</button>
           <button class="primary" onclick="interpretDream()">Interpretar sueño</button>
-          <button class="secondary" onclick="shareDream()">Compartir</button>
-          <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
-          <button class="quaternary" onclick="saveToGallery()">Guardar en historial</button>
-          <button class="primary" onclick="buildStoryCard()">Crear story</button>
-        </div>
-      </div>
 
-      <div class="rightCol">
-        <div class="miniCard statusCard">
+          <div class="buttonRow">
+            <button class="secondary" onclick="shareDream()">Compartir</button>
+            <button class="tertiary" onclick="saveDreamImage()">Guardar imagen</button>
+          </div>
+
+          <div class="buttonRow">
+            <button class="quaternary" onclick="saveToGallery()">Guardar en historial</button>
+            <button class="primary" onclick="buildStoryCard()">Crear story</button>
+          </div>
+        </div>
+
+        <div class="statusCard">
           <div id="statusDot" class="statusDot"></div>
           <p id="status">Listo para interpretar tu próximo sueño</p>
         </div>
+      </aside>
 
-        <div class="miniCard previewCard">
-          <img id="resultImage" alt="Imagen del sueño" />
-          <p class="imageHint">Acá vas a ver la visual de tu sueño.</p>
-        </div>
+      <div class="rightColumn">
+        <section class="resultCard">
+          <div class="resultHeader">
+            <div>
+              <h2>Resultado</h2>
+              <p>La visual de tu sueño aparece acá</p>
+            </div>
+            <div class="resultBadge" id="currentStyleBadge">Estilo: Místico</div>
+          </div>
+
+          <div class="resultImageWrap">
+            <div id="resultImageShell" class="resultImageShell mystic">
+              <img id="resultImage" alt="Imagen del sueño" />
+              <div id="resultPlaceholder" class="resultPlaceholder">
+                <div class="resultPlaceholderTitle">Todavía no generaste una imagen</div>
+                <div>Cuando escribas tu sueño y toques generar, esta pantalla se va a convertir en la pieza central de la experiencia.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="floatingActions">
+            <button class="secondary" onclick="shareDream()">Compartir resultado</button>
+            <button class="tertiary" onclick="saveDreamImage()">Descargar imagen</button>
+            <button class="primary" onclick="buildStoryCard()">Crear story shareable</button>
+          </div>
+        </section>
+
+        <section class="infoGrid">
+          <div id="interpretationBox" class="infoCard">
+            <h3>Interpretación</h3>
+            <p class="cardIntro">Una lectura breve del contenido emocional y simbólico del sueño.</p>
+            <p id="interpretationText" class="interpretationText"></p>
+          </div>
+
+          <div id="storySection" class="infoCard">
+            <h3>Story lista para compartir</h3>
+            <p class="cardIntro">Formato vertical con branding, texto del sueño y llamada a la acción.</p>
+            <canvas id="storyCanvas" width="1080" height="1920" style="display:none;"></canvas>
+            <img id="storyPreview" alt="Preview story ONYRA" />
+            <div class="storyActions">
+              <button class="secondary" onclick="downloadStory()">Descargar story</button>
+              <button class="tertiary" onclick="shareStory()">Compartir story</button>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
-
-    <div id="interpretationBox">
-      <h3>Interpretación</h3>
-      <p id="interpretationText"></p>
-    </div>
-
-    <div id="storySection">
-      <h3>Story lista para compartir</h3>
-      <p class="note">Formato vertical con branding + texto del sueño</p>
-      <canvas id="storyCanvas" width="1080" height="1920" style="display:none;"></canvas>
-      <img id="storyPreview" alt="Preview story ONYRA" />
-      <div class="storyActions">
-        <button class="secondary" onclick="downloadStory()">Descargar story</button>
-        <button class="tertiary" onclick="shareStory()">Compartir story</button>
-      </div>
-    </div>
 
     <section class="historySection">
       <div class="historyTop">
@@ -526,16 +751,44 @@
   <script>
     const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
     const APP_LINK = "https://tu-dominio.com";
-    const STORAGE_KEY = "onyra_gallery_v2";
+    const STORAGE_KEY = "onyra_gallery_v3";
 
     let currentDream = {
       text: "",
       imageUrl: "",
       interpretation: "",
-      storyDataUrl: ""
+      storyDataUrl: "",
+      style: "mystic"
     };
 
-    document.addEventListener("DOMContentLoaded", renderGallery);
+    document.addEventListener("DOMContentLoaded", () => {
+      renderGallery();
+      applyCurrentStyleUI();
+    });
+
+    function setVisualStyle(style) {
+      currentDream.style = style;
+      applyCurrentStyleUI();
+      setStatus(`Estilo seleccionado: ${getStyleLabel(style)}`);
+    }
+
+    function applyCurrentStyleUI() {
+      document.getElementById("styleMystic").classList.toggle("active", currentDream.style === "mystic");
+      document.getElementById("styleDark").classList.toggle("active", currentDream.style === "dark");
+      document.getElementById("styleEditorial").classList.toggle("active", currentDream.style === "editorial");
+
+      const shell = document.getElementById("resultImageShell");
+      shell.classList.remove("mystic", "dark", "editorial");
+      shell.classList.add(currentDream.style);
+
+      document.getElementById("currentStyleBadge").innerText = `Estilo: ${getStyleLabel(currentDream.style)}`;
+    }
+
+    function getStyleLabel(style) {
+      if (style === "dark") return "Oscuro";
+      if (style === "editorial") return "Editorial";
+      return "Místico";
+    }
 
     async function submitDream() {
       const dream = document.getElementById("dreamInput").value.trim();
@@ -547,8 +800,8 @@
 
       try {
         const res = await fetch(WORKER_URL, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dream })
         });
 
@@ -565,9 +818,11 @@
           text: dream,
           imageUrl: data.imageUrl,
           interpretation: data.interpretation || "",
-          storyDataUrl: ""
+          storyDataUrl: "",
+          style: currentDream.style
         };
 
+        applyCurrentStyleUI();
         setStatus("Imagen lista");
       } catch (err) {
         console.error(err);
@@ -584,8 +839,8 @@
 
       try {
         const res = await fetch(WORKER_URL, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dream })
         });
 
@@ -607,9 +862,11 @@
           text: dream,
           imageUrl: data.imageUrl,
           interpretation,
-          storyDataUrl: ""
+          storyDataUrl: "",
+          style: currentDream.style
         };
 
+        applyCurrentStyleUI();
         setStatus("Interpretación lista");
       } catch (err) {
         console.error(err);
@@ -619,8 +876,10 @@
 
     function showImage(url) {
       const img = document.getElementById("resultImage");
+      const placeholder = document.getElementById("resultPlaceholder");
       img.src = url;
       img.style.display = "block";
+      if (placeholder) placeholder.style.display = "none";
     }
 
     function hideInterpretation() {
@@ -662,6 +921,7 @@
         imageUrl: currentDream.imageUrl,
         interpretation: currentDream.interpretation || "",
         storyDataUrl: currentDream.storyDataUrl || "",
+        style: currentDream.style || "mystic",
         date: new Date().toLocaleString("es-AR")
       });
 
@@ -696,12 +956,15 @@
       container.innerHTML = `
         <div class="historyGrid">
           ${data.map(item => `
-            <div class="card">
+            <div class="historyCard">
               <img src="${item.imageUrl}" alt="Sueño guardado" />
-              <p class="cardTitle"><b>${escapeHtml(item.text)}</b></p>
-              ${item.interpretation ? `<p class="cardInterpretation">${escapeHtml(item.interpretation)}</p>` : ""}
-              <p class="small">${escapeHtml(item.date)}</p>
-              <div class="cardActions">
+              <div class="historyMeta">
+                <span class="historyStyleTag">${escapeHtml(getStyleLabel(item.style || "mystic"))}</span>
+                <p class="small">${escapeHtml(item.date)}</p>
+              </div>
+              <p class="historyText"><b>${escapeHtml(item.text)}</b></p>
+              ${item.interpretation ? `<p class="historyInterpretation">${escapeHtml(item.interpretation)}</p>` : ""}
+              <div class="historyActions">
                 <button class="secondary" onclick="reuseDream(${item.id})">Reusar</button>
                 <button class="tertiary" onclick="downloadSavedImage(${item.id})">Descargar</button>
                 <button class="primary" onclick="rebuildStoryFromGallery(${item.id})">Story</button>
@@ -744,8 +1007,11 @@
         text: item.text,
         imageUrl: item.imageUrl,
         interpretation: item.interpretation || "",
-        storyDataUrl: item.storyDataUrl || ""
+        storyDataUrl: item.storyDataUrl || "",
+        style: item.style || "mystic"
       };
+
+      applyCurrentStyleUI();
 
       if (item.storyDataUrl) {
         document.getElementById("storyPreview").src = item.storyDataUrl;
@@ -777,25 +1043,29 @@
 
       try {
         const blob = await (await fetch(currentDream.imageUrl)).blob();
-        const file = new File([blob], "sueno.png", { type:"image/png" });
+        const file = new File([blob], "sueno.png", { type: "image/png" });
 
-        if (navigator.canShare && navigator.canShare({ files:[file] })) {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             title: "Mi sueño en ONYRA",
             text,
-            files:[file]
+            files: [file]
           });
           return;
         }
 
         if (navigator.share) {
-          await navigator.share({ title: "Mi sueño en ONYRA", text, url: APP_LINK });
+          await navigator.share({
+            title: "Mi sueño en ONYRA",
+            text,
+            url: APP_LINK
+          });
           return;
         }
 
         await navigator.clipboard.writeText(text);
         alert("Copié el texto para compartir");
-      } catch(e) {
+      } catch (e) {
         console.error(e);
         alert("No se pudo compartir");
       }
@@ -807,7 +1077,7 @@
         return;
       }
 
-      setStatus("Armando story...", true);
+      setStatus(`Armando story ${getStyleLabel(currentDream.style).toLowerCase()}...`, true);
 
       try {
         const canvas = document.getElementById("storyCanvas");
@@ -817,9 +1087,11 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        const theme = getStoryTheme(currentDream.style);
+
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, "#14162a");
-        gradient.addColorStop(1, "#090a14");
+        gradient.addColorStop(0, theme.bgTop);
+        gradient.addColorStop(1, theme.bgBottom);
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -837,55 +1109,55 @@
         ctx.restore();
 
         const overlay = ctx.createLinearGradient(0, imageY, 0, imageY + imageH);
-        overlay.addColorStop(0, "rgba(0,0,0,0.05)");
-        overlay.addColorStop(1, "rgba(0,0,0,0.35)");
+        overlay.addColorStop(0, theme.imageOverlayTop);
+        overlay.addColorStop(1, theme.imageOverlayBottom);
         ctx.fillStyle = overlay;
         roundRectPath(ctx, imageX, imageY, imageW, imageH, 44);
         ctx.fill();
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 64px Arial";
+        ctx.fillStyle = theme.brandColor;
+        ctx.font = theme.brandFont;
         ctx.textAlign = "center";
         ctx.fillText("ONYRA", canvas.width / 2, 95);
 
-        ctx.fillStyle = "rgba(255,255,255,0.75)";
+        ctx.fillStyle = theme.subtitleColor;
         ctx.font = "30px Arial";
-        ctx.fillText("Descubrí qué dicen tus sueños", canvas.width / 2, 140);
+        ctx.fillText(theme.subtitle, canvas.width / 2, 140);
 
         const boxX = 70;
         const boxY = 1160;
         const boxW = 940;
         const boxH = 520;
 
-        ctx.fillStyle = "rgba(255,255,255,0.08)";
+        ctx.fillStyle = theme.boxFill;
         roundRectPath(ctx, boxX, boxY, boxW, boxH, 36);
         ctx.fill();
 
-        ctx.fillStyle = "#b9b4ff";
+        ctx.fillStyle = theme.labelColor;
         ctx.font = "bold 30px Arial";
         ctx.textAlign = "left";
-        ctx.fillText("Soñé que...", 120, 1235);
+        ctx.fillText(theme.labelText, 120, 1235);
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 46px Arial";
-        wrapText(ctx, currentDream.text, 120, 1305, 840, 58, 5);
+        ctx.fillStyle = theme.mainText;
+        ctx.font = theme.mainFont;
+        wrapText(ctx, currentDream.text, 120, 1305, 840, theme.mainLineHeight, 5);
 
         if (currentDream.interpretation) {
-          ctx.fillStyle = "rgba(255,255,255,0.78)";
-          ctx.font = "28px Arial";
+          ctx.fillStyle = theme.secondaryText;
+          ctx.font = theme.secondaryFont;
           wrapText(ctx, currentDream.interpretation, 120, 1510, 840, 40, 4);
         }
 
-        ctx.fillStyle = "#7c5cff";
+        ctx.fillStyle = theme.ctaBg;
         roundRectPath(ctx, 250, 1730, 580, 95, 48);
         ctx.fill();
 
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = theme.ctaText;
         ctx.font = "bold 34px Arial";
         ctx.textAlign = "center";
-        ctx.fillText("Interpretá tu sueño en ONYRA", canvas.width / 2, 1790);
+        ctx.fillText(theme.ctaLabel, canvas.width / 2, 1790);
 
-        ctx.fillStyle = "rgba(255,255,255,0.72)";
+        ctx.fillStyle = theme.footerColor;
         ctx.font = "24px Arial";
         ctx.fillText(APP_LINK.replace(/^https?:\/\//, ""), canvas.width / 2, 1868);
 
@@ -894,11 +1166,86 @@
         section.style.display = "block";
         currentDream.storyDataUrl = dataUrl;
 
-        setStatus("Story lista");
+        setStatus(`Story ${getStyleLabel(currentDream.style).toLowerCase()} lista`);
       } catch (e) {
         console.error(e);
         setStatus("Error creando story");
       }
+    }
+
+    function getStoryTheme(style) {
+      if (style === "dark") {
+        return {
+          bgTop: "#0d0d10",
+          bgBottom: "#040509",
+          imageOverlayTop: "rgba(0,0,0,0.10)",
+          imageOverlayBottom: "rgba(0,0,0,0.55)",
+          brandColor: "#ffffff",
+          brandFont: "bold 68px Arial",
+          subtitleColor: "rgba(255,255,255,0.6)",
+          subtitle: "Sueños intensos. Lecturas profundas.",
+          boxFill: "rgba(255,255,255,0.06)",
+          labelColor: "#ff8d8d",
+          labelText: "Visión nocturna",
+          mainText: "#ffffff",
+          mainFont: "bold 46px Arial",
+          mainLineHeight: 58,
+          secondaryText: "rgba(255,255,255,0.76)",
+          secondaryFont: "28px Arial",
+          ctaBg: "#b93c3c",
+          ctaText: "#ffffff",
+          ctaLabel: "Explorá tu sueño en ONYRA",
+          footerColor: "rgba(255,255,255,0.66)"
+        };
+      }
+
+      if (style === "editorial") {
+        return {
+          bgTop: "#1e2230",
+          bgBottom: "#0d1018",
+          imageOverlayTop: "rgba(255,255,255,0.02)",
+          imageOverlayBottom: "rgba(0,0,0,0.22)",
+          brandColor: "#f7f7f7",
+          brandFont: "bold 64px Arial",
+          subtitleColor: "rgba(255,255,255,0.72)",
+          subtitle: "Una lectura visual y emocional",
+          boxFill: "rgba(255,255,255,0.09)",
+          labelColor: "#d8d8e6",
+          labelText: "Registro del sueño",
+          mainText: "#ffffff",
+          mainFont: "bold 44px Arial",
+          mainLineHeight: 56,
+          secondaryText: "rgba(255,255,255,0.78)",
+          secondaryFont: "27px Arial",
+          ctaBg: "#ececf3",
+          ctaText: "#111",
+          ctaLabel: "Descubrilo en ONYRA",
+          footerColor: "rgba(255,255,255,0.72)"
+        };
+      }
+
+      return {
+        bgTop: "#1a1533",
+        bgBottom: "#090a14",
+        imageOverlayTop: "rgba(0,0,0,0.04)",
+        imageOverlayBottom: "rgba(40,20,80,0.30)",
+        brandColor: "#ffffff",
+        brandFont: "bold 64px Arial",
+        subtitleColor: "rgba(255,255,255,0.75)",
+        subtitle: "Descubrí qué dicen tus sueños",
+        boxFill: "rgba(255,255,255,0.08)",
+        labelColor: "#c9b7ff",
+        labelText: "Soñé que...",
+        mainText: "#ffffff",
+        mainFont: "bold 46px Arial",
+        mainLineHeight: 58,
+        secondaryText: "rgba(255,255,255,0.78)",
+        secondaryFont: "28px Arial",
+        ctaBg: "#7c5cff",
+        ctaText: "#ffffff",
+        ctaLabel: "Interpretá tu sueño en ONYRA",
+        footerColor: "rgba(255,255,255,0.72)"
+      };
     }
 
     function downloadStory() {
@@ -909,7 +1256,7 @@
 
       const a = document.createElement("a");
       a.href = currentDream.storyDataUrl;
-      a.download = "onyra-story.png";
+      a.download = `onyra-story-${currentDream.style}.png`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -926,11 +1273,11 @@
         const file = new File([blob], "onyra-story.png", { type: "image/png" });
         const text = `Interpreté mi sueño con ONYRA\n${APP_LINK}`;
 
-        if (navigator.canShare && navigator.canShare({ files:[file] })) {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             title: "Mi story de ONYRA",
             text,
-            files:[file]
+            files: [file]
           });
           return;
         }
@@ -959,7 +1306,8 @@
         text: item.text,
         imageUrl: item.imageUrl,
         interpretation: item.interpretation || "",
-        storyDataUrl: ""
+        storyDataUrl: "",
+        style: item.style || "mystic"
       };
 
       document.getElementById("dreamInput").value = item.text;
@@ -972,6 +1320,7 @@
         hideInterpretation();
       }
 
+      applyCurrentStyleUI();
       buildStoryCard();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -1016,6 +1365,7 @@
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + " ";
         const testWidth = ctx.measureText(testLine).width;
+
         if (testWidth > maxWidth && n > 0) {
           lines.push(line.trim());
           line = words[n] + " ";
