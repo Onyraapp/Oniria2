@@ -162,44 +162,96 @@ document.getElementById("shareBtn").disabled = false;
   }
 }
 function downloadStory() {
+  if (!currentDream.image || !currentDream.interpretation) {
+    alert("Primero generá un sueño");
+    return;
+  }
+
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
   const img = new Image();
+  img.crossOrigin = "anonymous";
   img.src = currentDream.image;
 
   img.onload = () => {
     canvas.width = 1080;
     canvas.height = 1920;
 
-    // fondo negro
-    ctx.fillStyle = "#000";
+    // Fondo
+    const bg = ctx.createLinearGradient(0, 0, 0, 1920);
+    bg.addColorStop(0, "#0a0a12");
+    bg.addColorStop(1, "#1a1a2b");
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // imagen sueño
-    ctx.drawImage(img, 0, 200, 1080, 900);
-
-    // titulo
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 60px Arial";
+    // Título
     ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 72px Arial";
     ctx.fillText("ONYRA", 540, 120);
 
-    // interpretación
-    ctx.font = "40px Arial";
+    // Subtítulo
+    ctx.fillStyle = "rgba(255,255,255,0.72)";
+    ctx.font = "36px Arial";
+    ctx.fillText("Descubrí qué dicen tus sueños", 540, 180);
 
-    const text = currentDream.interpretation;
-    wrapText(ctx, text, 540, 1250, 900, 50);
+    // Card principal
+    roundRect(ctx, 70, 240, 940, 1450, 34, "rgba(255,255,255,0.06)");
 
-    // link
-    ctx.font = "28px Arial";
-    ctx.fillStyle = "#aaa";
-    ctx.fillText("onyra.app", 540, 1800);
+    // Imagen con recorte
+    drawRoundedImage(ctx, img, 120, 300, 840, 760, 28);
+
+    // Etiqueta
+    ctx.fillStyle = "#cfc7ff";
+    ctx.font = "bold 34px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText("Interpretación", 130, 1120);
+
+    // Texto interpretación
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "38px Arial";
+    wrapTextBox(
+      ctx,
+      currentDream.interpretation,
+      130,
+      1190,
+      820,
+      52,
+      8
+    );
+
+    // Sueño original corto
+    const dreamPreview = currentDream.dream.length > 90
+      ? currentDream.dream.slice(0, 87) + "..."
+      : currentDream.dream;
+
+    ctx.fillStyle = "rgba(255,255,255,0.65)";
+    ctx.font = "30px Arial";
+    wrapTextBox(
+      ctx,
+      `Sueño: ${dreamPreview}`,
+      130,
+      1540,
+      820,
+      42,
+      3
+    );
+
+    // Footer
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.font = "30px Arial";
+    ctx.fillText("Creado con ONYRA", 540, 1770);
 
     const link = document.createElement("a");
-    link.download = "onyra-sueno.png";
-    link.href = canvas.toDataURL();
+    link.download = "onyra-story.png";
+    link.href = canvas.toDataURL("image/png");
     link.click();
+  };
+
+  img.onerror = () => {
+    alert("No se pudo cargar la imagen para descargar la story");
   };
 }
 
