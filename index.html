@@ -1,66 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>ONYRA</title>
+  <meta charset="UTF-8">
+  <title>ONYRA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0f14;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 90%;
+      height: 100px;
+      border-radius: 10px;
+      padding: 10px;
+      border: none;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      background: #6c5ce7;
+      color: white;
+      cursor: pointer;
+    }
+
+    .card {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 15px;
+      background: #1c1c24;
+    }
+
+    img {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .interpretacion {
+      margin-top: 15px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
-<body style="background:#111;color:#fff;font-family:Arial;padding:20px">
 
-<h1>ONYRA</h1>
+<body>
 
-<textarea id="dream" placeholder="Escribí tu sueño..." style="width:100%;height:120px;"></textarea>
+  <h1>ONYRA</h1>
+  <p>Descubrí qué dicen tus sueños</p>
 
-<br><br>
+  <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea><br>
 
-<select id="mode">
-  <option value="intuitiva">Intuitiva</option>
-  <option value="emocional">Emocional</option>
-  <option value="psicoanalitica">Psicoanalítica</option>
-</select>
+  <button onclick="submitDream()">Interpretar</button>
 
-<br><br>
+  <div id="loading" style="display:none;">Generando interpretación...</div>
 
-<button onclick="interpret()">Interpretar</button>
-<button onclick="image()">Imagen</button>
+  <div id="result" class="card" style="display:none;">
+    <img id="dreamImage" />
+    <div id="interpretation" class="interpretacion"></div>
 
-<h3>Resultado:</h3>
-<pre id="result"></pre>
-
-<img id="img" style="max-width:100%;margin-top:10px"/>
+    <button onclick="shareDream()">Compartir</button>
+  </div>
 
 <script>
-
 const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
 
-async function interpret() {
-  const dream = document.getElementById("dream").value;
-  const mode = document.getElementById("mode").value;
+let currentDream = {
+  dream: "",
+  interpretation: "",
+  image: ""
+};
 
-  const res = await fetch(WORKER_URL + "/interpret", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({dream, mode})
-  });
+async function submitDream() {
+  const dream = document.getElementById("dreamInput").value;
 
-  const data = await res.json();
+  if (!dream) return alert("Escribí un sueño");
 
-  document.getElementById("result").textContent = data.interpretation;
+  document.getElementById("loading").style.display = "block";
+  document.getElementById("result").style.display = "none";
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dream })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) throw new Error("Error Worker");
+
+    currentDream.dream = dream;
+    currentDream.interpretation = data.interpretation;
+    currentDream.image = data.imageUrl;
+
+    // pintar imagen
+    const img = document.getElementById("dreamImage");
+    img.src = data.imageUrl;
+
+    // pintar texto
+    document.getElementById("interpretation").innerText = data.interpretation;
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("result").style.display = "block";
+
+  } catch (err) {
+    console.error(err);
+    alert("Error generando sueño");
+    document.getElementById("loading").style.display = "none";
+  }
 }
 
-async function image() {
-  const dream = document.getElementById("dream").value;
+function shareDream() {
+  const text = `Soñé: ${currentDream.dream}
 
-  const res = await fetch(WORKER_URL + "/generate-image", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({dream})
-  });
+Interpretación:
+${currentDream.interpretation}
 
-  const data = await res.json();
+Viví tu sueño en ONYRA:
+${window.location.href}`;
 
-  document.getElementById("img").src = data.imageUrl;
+  if (navigator.share) {
+    navigator.share({
+      title: "Mi sueño en ONYRA",
+      text: text,
+      url: window.location.href
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert("Copiado para compartir");
+  }
 }
-
 </script>
 
 </body>
