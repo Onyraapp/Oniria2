@@ -8,7 +8,7 @@
 <style>
 body {
   margin:0;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: Arial, sans-serif;
   background: linear-gradient(180deg,#0f0f1a,#1c1c2e);
   color:white;
 }
@@ -114,6 +114,7 @@ button {
 <canvas id="storyCanvas" width="1080" height="1920" style="display:none;"></canvas>
 
 <script>
+
 const WORKER_URL = "https://onyra-worker.almacenmujica.workers.dev";
 
 let currentDream = {};
@@ -136,8 +137,6 @@ async function submitDream() {
 
     const data = await res.json();
 
-    if (!data.text) throw new Error("No llegó interpretación");
-
     currentDream = {
       dream,
       interpretation: data.text,
@@ -148,16 +147,9 @@ async function submitDream() {
     document.getElementById("actions").style.display = "flex";
 
   } catch (err) {
-    document.getElementById("result").innerHTML = "Error: " + err.message;
-    console.error(err);
+    document.getElementById("result").innerHTML = "Error";
   }
 }
-function getFirstSentence(text) {
-  const cleaned = text.trim();
-  const match = cleaned.match(/.*?[.!?](\s|$)/);
-  return match ? match[0].trim() : cleaned;
-}
-
 
 function renderResult() {
   document.getElementById("result").innerHTML = `
@@ -169,19 +161,7 @@ function renderResult() {
     </div>
   `;
 }
-function roundRect(ctx, x, y, width, height, radius) {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-}
+
 function saveDream() {
   history.unshift(currentDream);
   localStorage.setItem("onyraHistory", JSON.stringify(history));
@@ -204,11 +184,8 @@ function toggleHistory() {
   `).join("");
 }
 
-async function shareDream() {
-  if (!currentDream.image || !currentDream.interpretation) {
-    alert("Primero interpretá un sueño");
-    return;
-  }
+// 🔥 STORY PREMIUM
+function shareDream() {
 
   const canvas = document.getElementById("storyCanvas");
   const ctx = canvas.getContext("2d");
@@ -217,13 +194,8 @@ async function shareDream() {
   img.src = currentDream.image;
 
   img.onload = function () {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const ratio = Math.max(
-      canvas.width / img.width,
-      canvas.height / img.height
-    );
-
+    const ratio = Math.max(canvas.width / img.width, canvas.height / img.height);
     const newWidth = img.width * ratio;
     const newHeight = img.height * ratio;
 
@@ -232,102 +204,92 @@ async function shareDream() {
 
     ctx.drawImage(img, x, y, newWidth, newHeight);
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, "rgba(8,8,18,0.15)");
-    gradient.addColorStop(0.5, "rgba(8,8,18,0.38)");
-    gradient.addColorStop(1, "rgba(8,8,18,0.88)");
+    const gradient = ctx.createLinearGradient(0,0,0,canvas.height);
+    gradient.addColorStop(0,"rgba(0,0,0,0.2)");
+    gradient.addColorStop(1,"rgba(0,0,0,0.9)");
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    ctx.fillStyle = "rgba(255,255,255,0.92)";
-    ctx.font = "bold 64px Arial";
-    ctx.fillText("ONYRA", 70, 125);
+    ctx.fillStyle="white";
+    ctx.font="bold 60px Arial";
+    ctx.fillText("ONYRA",60,120);
 
-    ctx.fillStyle = "rgba(255,255,255,0.62)";
-    ctx.font = "28px Arial";
-    ctx.fillText("descubrí lo que tu mente no te dice", 70, 170);
+    const first = getFirstSentence(currentDream.interpretation);
+    const rest = currentDream.interpretation.replace(first,"");
 
-    const firstSentence = getFirstSentence(currentDream.interpretation);
-    const remainingText = currentDream.interpretation
-      .replace(firstSentence, "")
-      .trim();
-
-    // caja premium
-    roundRect(ctx, 45, 880, 990, 860, 34);
-    ctx.fillStyle = "rgba(10,10,20,0.42)";
+    // CAJA PREMIUM
+    roundRect(ctx,50,900,980,800,30);
+    ctx.fillStyle="rgba(0,0,0,0.5)";
     ctx.fill();
 
-    // borde sutil
-    roundRect(ctx, 45, 880, 990, 860, 34);
-    ctx.strokeStyle = "rgba(255,255,255,0.16)";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle="rgba(255,255,255,0.2)";
     ctx.stroke();
 
-    // glow superior suave
-    const glow = ctx.createLinearGradient(0, 880, 0, 1060);
-    glow.addColorStop(0, "rgba(255,255,255,0.10)");
-    glow.addColorStop(1, "rgba(255,255,255,0)");
-    roundRect(ctx, 45, 880, 990, 180, 34);
-    ctx.fillStyle = glow;
-    ctx.fill();
+    ctx.fillStyle="white";
+    ctx.font="bold 48px Arial";
+    drawText(ctx, first,80,1000,900,60,4);
 
-    // etiqueta
-    ctx.fillStyle = "rgba(255,255,255,0.66)";
-    ctx.font = "24px Arial";
-    ctx.fillText("Interpretación", 80, 940);
+    ctx.font="32px Arial";
+    drawText(ctx, rest,80,1250,900,45,8);
 
-    // hook
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 56px Arial";
-    drawWrappedText(ctx, firstSentence, 80, 1020, 920, 66, 4);
-
-    // resto
-    ctx.fillStyle = "rgba(255,255,255,0.84)";
-    ctx.font = "36px Arial";
-    drawWrappedText(ctx, remainingText, 80, 1320, 920, 50, 7);
-
-    // footer
-    ctx.fillStyle = "rgba(255,255,255,0.54)";
-    ctx.font = "24px Arial";
-    ctx.fillText("onyra.app", 70, 1845);
-
-    const url = canvas.toDataURL("image/png");
+    const url = canvas.toDataURL();
 
     const link = document.createElement("a");
     link.download = "onyra_story.png";
     link.href = url;
     link.click();
   };
-
-  img.onerror = function () {
-    alert("No se pudo generar la story");
-  };
 }
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(" ");
-  let line = "";
 
-  for (let i=0;i<words.length;i++){
-    const testLine = line + words[i] + " ";
-    const width = ctx.measureText(testLine).width;
+function drawText(ctx,text,x,y,maxWidth,lineHeight,maxLines){
+  const words=text.split(" ");
+  let line="";
+  let lines=[];
 
-    if (width > maxWidth && i>0){
-      ctx.fillText(line,x,y);
-      line = words[i] + " ";
-      y += lineHeight;
+  for(let i=0;i<words.length;i++){
+    const test=line+words[i]+" ";
+    const w=ctx.measureText(test).width;
+    if(w>maxWidth && i>0){
+      lines.push(line);
+      line=words[i]+" ";
     } else {
-      line = testLine;
+      line=test;
     }
   }
+  lines.push(line);
 
-  ctx.fillText(line,x,y);
+  lines=lines.slice(0,maxLines);
+
+  for(let i=0;i<lines.length;i++){
+    ctx.fillText(lines[i],x,y+i*lineHeight);
+  }
 }
 
-function clearAll() {
+function getFirstSentence(text){
+  const m=text.match(/.*?[.!?]/);
+  return m?m[0]:text;
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function clearAll(){
   document.getElementById("dreamInput").value="";
   document.getElementById("result").innerHTML="";
   document.getElementById("actions").style.display="none";
 }
+
 </script>
 
 </body>
