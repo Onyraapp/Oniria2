@@ -7,19 +7,22 @@
 
   <style>
     :root {
-      --bg-1: #080811;
-      --bg-2: #111124;
-      --panel: rgba(23, 23, 39, 0.76);
-      --panel-strong: rgba(30, 30, 48, 0.92);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-strong: rgba(255, 255, 255, 0.14);
-      --text: #f5f4ff;
-      --muted: rgba(255, 255, 255, 0.68);
-      --soft: rgba(255, 255, 255, 0.48);
-      --accent: #7c6cff;
-      --accent-2: #9588ff;
-      --danger: #ff6b6b;
-      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      --bg-1: #06060c;
+      --bg-2: #11111f;
+      --bg-3: #18182b;
+      --card: rgba(18, 18, 32, 0.82);
+      --card-2: rgba(24, 24, 42, 0.92);
+      --stroke: rgba(255,255,255,0.08);
+      --stroke-strong: rgba(255,255,255,0.16);
+      --text: #f5f3ff;
+      --muted: rgba(255,255,255,0.68);
+      --soft: rgba(255,255,255,0.45);
+      --accent: #8b7cff;
+      --accent-2: #6558ff;
+      --shadow: 0 24px 70px rgba(0,0,0,0.45);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
     }
 
     * {
@@ -32,27 +35,26 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top, rgba(124,108,255,0.18), transparent 28%),
-        radial-gradient(circle at 80% 20%, rgba(80,70,180,0.10), transparent 22%),
-        linear-gradient(180deg, var(--bg-1), var(--bg-2));
+        radial-gradient(circle at top center, rgba(139,124,255,0.22), transparent 26%),
+        radial-gradient(circle at 20% 18%, rgba(101,88,255,0.16), transparent 22%),
+        radial-gradient(circle at 80% 8%, rgba(255,255,255,0.06), transparent 18%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-2) 42%, var(--bg-3));
     }
 
-    .shell {
-      width: 100%;
+    .app {
       max-width: 480px;
       margin: 0 auto;
-      padding: 22px 18px 40px;
-      position: relative;
+      padding: 18px 16px 42px;
     }
 
     .topbar {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
-    .ghost-btn {
-      border: 1px solid var(--border);
+    .mini-btn {
+      border: 1px solid var(--stroke);
       background: rgba(255,255,255,0.04);
       color: var(--muted);
       border-radius: 999px;
@@ -64,117 +66,207 @@
       transition: 0.2s ease;
     }
 
-    .ghost-btn:hover {
+    .mini-btn:hover {
       color: white;
-      border-color: var(--border-strong);
+      border-color: var(--stroke-strong);
       background: rgba(255,255,255,0.07);
     }
 
     .hero {
-      padding: 10px 4px 16px;
+      position: relative;
+      padding: 26px 20px 22px;
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        rgba(15,15,28,0.72);
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -20% auto auto -10%;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,124,255,0.42), transparent 70%);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      top: -10px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.10), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.78);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1;
     }
 
     .brand {
-      font-size: 34px;
-      font-weight: 800;
-      letter-spacing: 0.22em;
-      text-align: center;
-      margin: 0;
+      position: relative;
+      margin: 16px 0 8px;
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: 0.26em;
+      line-height: 1;
+      z-index: 1;
     }
 
-    .subtitle {
-      margin: 10px auto 0;
-      text-align: center;
-      font-size: 14px;
-      line-height: 1.5;
+    .headline {
+      position: relative;
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.18;
+      font-weight: 800;
+      letter-spacing: -0.03em;
       max-width: 320px;
+      z-index: 1;
+    }
+
+    .subheadline {
+      position: relative;
+      margin: 12px 0 0;
+      max-width: 330px;
       color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      z-index: 1;
     }
 
     .composer {
-      margin-top: 20px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-xl);
       padding: 16px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
     }
 
-    .composer-label {
-      font-size: 12px;
+    .section-label {
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
       color: var(--soft);
       margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .prompt-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 22px;
+      padding: 12px;
     }
 
     textarea {
       width: 100%;
       min-height: 138px;
       resize: none;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 18px;
-      padding: 16px;
-      font-size: 15px;
-      line-height: 1.5;
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
+      border: none;
       outline: none;
-      transition: 0.2s ease;
+      background: transparent;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+      font-family: inherit;
     }
 
     textarea::placeholder {
       color: rgba(255,255,255,0.34);
     }
 
-    textarea:focus {
-      border-color: rgba(124,108,255,0.6);
-      box-shadow: 0 0 0 4px rgba(124,108,255,0.12);
-    }
-
     .primary-btn {
       width: 100%;
       margin-top: 14px;
+      padding: 17px 18px;
       border: none;
-      border-radius: 18px;
-      padding: 16px;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: white;
-      cursor: pointer;
+      border-radius: 20px;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow: 0 14px 30px rgba(124,108,255,0.34);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: 0 16px 36px rgba(101,88,255,0.34);
+      transition: 0.18s ease;
     }
 
     .primary-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 18px 34px rgba(124,108,255,0.42);
+      box-shadow: 0 18px 40px rgba(101,88,255,0.42);
     }
 
-    .primary-btn:active {
-      transform: translateY(0);
-      opacity: 0.96;
-    }
-
-    .result-wrap {
+    .status-card,
+    .error-card {
       margin-top: 18px;
-    }
-
-    .result-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      overflow: hidden;
+      padding: 18px;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
 
-    .image-frame {
+    .status-title,
+    .error-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .status-text,
+    .error-text {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .error-title {
+      color: #ffd2d2;
+    }
+
+    .result-card {
+      margin-top: 18px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .result-image-wrap {
       position: relative;
       overflow: hidden;
     }
@@ -185,77 +277,54 @@
       aspect-ratio: 4 / 5;
       object-fit: cover;
       background: #111;
+      transform: scale(1.01);
     }
 
-    .image-overlay {
+    .result-image-wrap::after {
+      content: "";
       position: absolute;
       inset: 0;
       background: linear-gradient(
         180deg,
-        rgba(0,0,0,0.04) 0%,
+        rgba(0,0,0,0.02) 0%,
         rgba(0,0,0,0.08) 36%,
-        rgba(0,0,0,0.22) 100%
+        rgba(0,0,0,0.26) 100%
       );
       pointer-events: none;
     }
 
     .result-body {
-      padding: 18px 18px 20px;
+      padding: 18px 18px 22px;
+      position: relative;
     }
 
-    .eyebrow {
+    .result-tag {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
       font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--soft);
-      margin-bottom: 10px;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.76);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 12px;
     }
 
     .dream-title {
       margin: 0 0 12px;
-      font-size: 20px;
-      line-height: 1.2;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      font-size: 24px;
+      line-height: 1.12;
+      font-weight: 900;
+      letter-spacing: -0.03em;
     }
 
     .result-text {
+      color: rgba(255,255,255,0.88);
       font-size: 15px;
-      line-height: 1.7;
-      color: rgba(255,255,255,0.86);
+      line-height: 1.75;
       white-space: pre-wrap;
-    }
-
-    .loading-card,
-    .error-card {
-      margin-top: 18px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-
-    .loading-text,
-    .error-title {
-      margin: 0;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .loading-sub,
-    .error-detail {
-      margin: 8px 0 0;
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--muted);
-      word-break: break-word;
-    }
-
-    .error-title {
-      color: #ffd1d1;
     }
 
     .actions {
@@ -266,13 +335,13 @@
     }
 
     .action-btn {
-      border: 1px solid var(--border);
+      border: 1px solid var(--stroke);
       background: rgba(255,255,255,0.05);
       color: white;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 14px 10px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -281,7 +350,7 @@
 
     .action-btn:hover {
       transform: translateY(-1px);
-      border-color: var(--border-strong);
+      border-color: var(--stroke-strong);
       background: rgba(255,255,255,0.08);
     }
 
@@ -292,9 +361,9 @@
     }
 
     .history-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 22px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 24px;
       overflow: hidden;
       box-shadow: var(--shadow);
     }
@@ -304,11 +373,17 @@
       display: block;
       aspect-ratio: 4 / 5;
       object-fit: cover;
-      background: #111;
     }
 
     .history-body {
       padding: 14px 14px 16px;
+    }
+
+    .history-title {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.3;
+      font-weight: 800;
     }
 
     .history-dream {
@@ -321,24 +396,28 @@
     .history-text {
       margin: 0;
       font-size: 14px;
-      line-height: 1.65;
-      color: rgba(255,255,255,0.88);
+      line-height: 1.68;
+      color: rgba(255,255,255,0.86);
     }
 
     .empty-state {
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 18px;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 22px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
+      border: 1px solid var(--stroke);
       color: var(--muted);
-      font-size: 14px;
       line-height: 1.6;
+      font-size: 14px;
     }
 
     @media (max-width: 420px) {
       .brand {
-        font-size: 30px;
+        font-size: 34px;
+      }
+
+      .headline {
+        font-size: 22px;
       }
 
       .actions {
@@ -348,23 +427,27 @@
   </style>
 </head>
 <body>
-  <div class="shell">
+  <div class="app">
     <div class="topbar">
-      <button class="ghost-btn" onclick="clearAll()">Limpiar</button>
+      <button class="mini-btn" onclick="clearAll()">Limpiar</button>
     </div>
 
-    <div class="hero">
+    <section class="hero">
+      <div class="hero-badge">Sueños · Imagen · Interpretación</div>
       <h1 class="brand">ONYRA</h1>
-      <p class="subtitle">Descubrí lo que tu mente no te dice mientras dormís.</p>
-    </div>
+      <p class="headline">Convertí lo que soñaste en una pieza emocional y visual.</p>
+      <p class="subheadline">Escribí tu sueño, dejá que ONYRA lo interprete y transformalo en algo que valga la pena compartir.</p>
+    </section>
 
-    <div class="composer">
-      <div class="composer-label">Tu sueño</div>
-      <textarea id="dreamInput" placeholder="Contá tu sueño..."></textarea>
-      <button class="primary-btn" onclick="submitDream()">Interpretar</button>
-    </div>
+    <section class="composer">
+      <div class="section-label">Escribí tu sueño</div>
+      <div class="prompt-box">
+        <textarea id="dreamInput" placeholder="Contá tu sueño con la mayor claridad posible..."></textarea>
+      </div>
+      <button class="primary-btn" onclick="submitDream()">Interpretar ahora</button>
+    </section>
 
-    <div id="result" class="result-wrap"></div>
+    <div id="result"></div>
 
     <div class="actions" id="actions" style="display:none;">
       <button class="action-btn" onclick="saveDream()">Guardar</button>
@@ -397,9 +480,9 @@
       }
 
       document.getElementById("result").innerHTML = `
-        <div class="loading-card">
-          <p class="loading-text">Interpretando sueño...</p>
-          <p class="loading-sub">ONYRA está buscando el sentido oculto y generando la imagen.</p>
+        <div class="status-card">
+          <p class="status-title">Interpretando sueño...</p>
+          <p class="status-text">ONYRA está leyendo el símbolo detrás de lo que soñaste y generando una imagen para vos.</p>
         </div>
       `;
       document.getElementById("actions").style.display = "none";
@@ -432,11 +515,11 @@
         renderResult();
         document.getElementById("actions").style.display = "grid";
       } catch (err) {
-        console.error("ERROR FINAL:", err);
+        console.error(err);
         document.getElementById("result").innerHTML = `
           <div class="error-card">
             <p class="error-title">Error al interpretar</p>
-            <p class="error-detail">${escapeHtml(err.message)}</p>
+            <p class="error-text">${escapeHtml(err.message)}</p>
           </div>
         `;
       }
@@ -445,23 +528,23 @@
     function renderResult() {
       document.getElementById("result").innerHTML = `
         <div class="result-card">
-          <div class="image-frame">
+          <div class="result-image-wrap">
             <img src="${currentDream.image}" alt="Sueño generado">
-            <div class="image-overlay"></div>
           </div>
           <div class="result-body">
-            <div class="eyebrow">Interpretación</div>
-            <h2 class="dream-title">${escapeHtml(getTitleFromDream(currentDream.dream))}</h2>
+            <div class="result-tag">Interpretación</div>
+            <h2 class="dream-title">${escapeHtml(makeResultTitle(currentDream.dream))}</h2>
             <div class="result-text">${escapeHtml(currentDream.interpretation)}</div>
           </div>
         </div>
       `;
     }
 
-    function getTitleFromDream(dream) {
-      const trimmed = dream.trim();
-      if (!trimmed) return "Tu sueño";
-      return trimmed.length > 52 ? trimmed.slice(0, 52).trim() + "..." : trimmed;
+    function makeResultTitle(dream) {
+      const clean = dream.trim();
+      if (!clean) return "Tu sueño";
+      const clipped = clean.length > 54 ? clean.slice(0, 54).trim() + "..." : clean;
+      return clipped.charAt(0).toUpperCase() + clipped.slice(1);
     }
 
     function saveDream() {
@@ -492,6 +575,7 @@
         <div class="history-card">
           <img src="${h.image}" alt="Sueño guardado">
           <div class="history-body">
+            <h3 class="history-title">${escapeHtml(makeResultTitle(h.dream))}</h3>
             <p class="history-dream"><strong>Sueño:</strong> ${escapeHtml(h.dream)}</p>
             <p class="history-text">${escapeHtml(h.interpretation)}</p>
           </div>
@@ -525,25 +609,25 @@
 
         const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
         bgGradient.addColorStop(0, "rgba(6,6,15,0.10)");
-        bgGradient.addColorStop(0.45, "rgba(6,6,15,0.26)");
-        bgGradient.addColorStop(0.72, "rgba(6,6,15,0.56)");
-        bgGradient.addColorStop(1, "rgba(6,6,15,0.90)");
+        bgGradient.addColorStop(0.42, "rgba(6,6,15,0.28)");
+        bgGradient.addColorStop(0.72, "rgba(6,6,15,0.58)");
+        bgGradient.addColorStop(1, "rgba(6,6,15,0.92)");
         ctx.fillStyle = bgGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "rgba(255,255,255,0.92)";
-        ctx.font = "bold 68px Arial";
-        ctx.fillText("ONYRA", 72, 128);
+        ctx.fillStyle = "rgba(255,255,255,0.94)";
+        ctx.font = "bold 70px Arial";
+        ctx.fillText("ONYRA", 74, 128);
 
-        ctx.fillStyle = "rgba(255,255,255,0.62)";
+        ctx.fillStyle = "rgba(255,255,255,0.64)";
         ctx.font = "28px Arial";
-        ctx.fillText("descubrí lo que tu mente no te dice", 72, 172);
+        ctx.fillText("descubrí lo que tu mente no te dice", 74, 172);
 
-        roundRect(ctx, 48, 860, 984, 880, 38);
-        ctx.fillStyle = "rgba(10,10,20,0.38)";
+        roundRect(ctx, 48, 860, 984, 890, 42);
+        ctx.fillStyle = "rgba(10,10,20,0.40)";
         ctx.fill();
 
-        roundRect(ctx, 48, 860, 984, 880, 38);
+        roundRect(ctx, 48, 860, 984, 890, 42);
         ctx.strokeStyle = "rgba(255,255,255,0.14)";
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -551,7 +635,7 @@
         const glow = ctx.createLinearGradient(0, 860, 0, 1080);
         glow.addColorStop(0, "rgba(255,255,255,0.10)");
         glow.addColorStop(1, "rgba(255,255,255,0)");
-        roundRect(ctx, 48, 860, 984, 200, 38);
+        roundRect(ctx, 48, 860, 984, 210, 42);
         ctx.fillStyle = glow;
         ctx.fill();
 
@@ -564,15 +648,15 @@
 
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 58px Arial";
-        drawWrappedText(ctx, firstSentence, 86, 1010, 910, 66, 4);
+        drawWrappedText(ctx, firstSentence, 86, 1012, 910, 66, 4);
 
         ctx.fillStyle = "rgba(255,255,255,0.84)";
         ctx.font = "36px Arial";
-        drawWrappedText(ctx, remainingText, 86, 1320, 910, 52, 7);
+        drawWrappedText(ctx, remainingText, 86, 1324, 910, 52, 7);
 
         ctx.fillStyle = "rgba(255,255,255,0.54)";
         ctx.font = "24px Arial";
-        ctx.fillText("onyra.app", 72, 1845);
+        ctx.fillText("onyra.app", 74, 1846);
 
         const dataUrl = canvas.toDataURL("image/png");
 
