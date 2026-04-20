@@ -152,7 +152,42 @@ async function submitDream() {
     console.error(err);
   }
 }
+function getFirstSentence(text) {
+  const cleaned = text.trim();
+  const match = cleaned.match(/.*?[.!?](\s|$)/);
+  return match ? match[0].trim() : cleaned;
+}
 
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+  const words = text.split(" ");
+  let line = "";
+  const lines = [];
+
+  for (let i = 0; i < words.length; i++) {
+    const testLine = line + words[i] + " ";
+    const testWidth = ctx.measureText(testLine).width;
+
+    if (testWidth > maxWidth && line !== "") {
+      lines.push(line.trim());
+      line = words[i] + " ";
+    } else {
+      line = testLine;
+    }
+  }
+
+  if (line.trim()) lines.push(line.trim());
+
+  const finalLines = lines.slice(0, maxLines);
+
+  if (lines.length > maxLines) {
+    finalLines[maxLines - 1] =
+      finalLines[maxLines - 1].replace(/[.,;:!?-]?\s*$/, "") + "...";
+  }
+
+  for (let i = 0; i < finalLines.length; i++) {
+    ctx.fillText(finalLines[i], x, y + i * lineHeight);
+  }
+}
 function renderResult() {
   document.getElementById("result").innerHTML = `
     <div class="result-card">
