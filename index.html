@@ -669,6 +669,27 @@ function escapeHtml(str) {
     imageUrl: item.imageUrl
   };
 
+  dreamInput.value = item.dream;
+  dreamImage.src = item.imageUrl;
+  interpretation.innerText = item.interpretation;
+
+  result.style.display = "block";
+
+  requestAnimationFrame(() => {
+    result.classList.add("show");
+    resultActions.classList.add("show");
+  });
+
+  saveBtn.disabled = false;
+  storyBtn.disabled = false;
+
+  historyBox.style.display = "none";
+
+  setTimeout(() => {
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
+}
+
   // cargar UI
   dreamInput.value = item.dream;
   dreamImage.src = item.imageUrl;
