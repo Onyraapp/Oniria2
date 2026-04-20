@@ -395,9 +395,7 @@
       try {
         const res = await fetch(WORKER_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             dream,
             mode: selectedMode
@@ -450,7 +448,6 @@
       }
 
       resultCard.style.display = "block";
-      renderHistory();
       resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
@@ -462,19 +459,21 @@
 
       const history = JSON.parse(localStorage.getItem("onyra_history") || "[]");
 
-      history.unshift({
+      const item = {
         id: Date.now(),
         date: new Date().toLocaleString(),
         dream: currentDream.dream,
         mode: currentDream.mode,
         interpretation: currentDream.interpretation,
         image: currentDream.image || ""
-      });
+      };
 
+      history.unshift(item);
       localStorage.setItem("onyra_history", JSON.stringify(history.slice(0, 20)));
+
       renderHistory();
-      setStatus("Sueño guardado en historial.");
       setError("");
+      setStatus("Sueño guardado en historial.");
     }
 
     function renderHistory() {
@@ -705,10 +704,7 @@ ${APP_LINK}`;
     }
 
     function cleanPlainText(text) {
-      return (text || "")
-        .replace(/\*\*/g, "")
-        .replace(/#+/g, "")
-        .trim();
+      return (text || "").replace(/\*\*/g, "").replace(/#+/g, "").trim();
     }
 
     function trimText(text, max) {
