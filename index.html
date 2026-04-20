@@ -5,18 +5,28 @@
 <title>ONYRA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- TIPOGRAFÍAS -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   background: linear-gradient(180deg, #0b0b12, #1a1a26);
   color: #fff;
   text-align: center;
   padding: 20px;
 }
 
-h1 { margin-bottom: 5px; }
-.subtitle { opacity: 0.75; margin-bottom: 20px; }
+h1 {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
 
 textarea {
   width: 90%;
@@ -39,7 +49,6 @@ button {
 }
 
 button:disabled { opacity: 0.4; }
-
 .secondary { background: #2d2d3a; }
 
 .card {
@@ -101,7 +110,7 @@ const LOGO_URL = "og-image.svg";
 let currentDream = { dream:"", interpretation:"", image:"" };
 
 async function submitDream(){
-  const dream=document.getElementById("dreamInput").value.trim();
+  const dream=dreamInput.value.trim();
   if(!dream) return alert("Escribí un sueño");
 
   loading.style.display="block";
@@ -174,13 +183,14 @@ function downloadStory(){
     canvas.width=1080;
     canvas.height=1920;
 
+    // fondo
     const bg=ctx.createLinearGradient(0,0,0,1920);
     bg.addColorStop(0,"#0a0a12");
     bg.addColorStop(1,"#1a1a2b");
     ctx.fillStyle=bg;
     ctx.fillRect(0,0,1080,1920);
 
-    // LOGO con glow
+    // logo
     if(logo.complete){
       ctx.shadowColor="rgba(108,92,231,0.6)";
       ctx.shadowBlur=30;
@@ -188,13 +198,35 @@ function downloadStory(){
       ctx.shadowBlur=0;
     }
 
-    // imagen
+    // imagen + overlay
     ctx.drawImage(img,140,260,800,700);
+
+    const gradient=ctx.createLinearGradient(0,260,0,960);
+    gradient.addColorStop(0,"rgba(0,0,0,0)");
+    gradient.addColorStop(1,"rgba(0,0,0,0.6)");
+    ctx.fillStyle=gradient;
+    ctx.fillRect(140,260,800,700);
+
+    // título
+    ctx.fillStyle="#fff";
+    ctx.font="bold 64px Playfair Display";
+    ctx.textAlign="center";
+    ctx.fillText("Tu sueño",540,1080);
+
+    // subtítulo
+    ctx.fillStyle="rgba(255,255,255,0.6)";
+    ctx.font="28px Inter";
+    ctx.fillText("interpretado por ONYRA",540,1130);
 
     // texto
     ctx.fillStyle="#fff";
-    ctx.font="36px Arial";
-    wrapText(ctx,currentDream.interpretation,540,1100,800,50);
+    ctx.font="36px Inter";
+    wrapText(ctx,currentDream.interpretation,540,1220,800,52);
+
+    // footer
+    ctx.fillStyle="rgba(255,255,255,0.4)";
+    ctx.font="26px Inter";
+    ctx.fillText("onyra.app",540,1820);
 
     canvas.toBlob(function(blob){
       const url=URL.createObjectURL(blob);
@@ -203,7 +235,9 @@ function downloadStory(){
       link.download="onyra.png";
       document.body.appendChild(link);
 
-      /iPhone|iPad/.test(navigator.userAgent) ? window.open(url) : link.click();
+      /iPhone|iPad/.test(navigator.userAgent)
+        ? window.open(url)
+        : link.click();
 
       document.body.removeChild(link);
     });
@@ -215,7 +249,6 @@ function downloadStory(){
 }
 
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
-  ctx.textAlign="center";
   const words=text.split(" ");
   let line="";
   for(let n=0;n<words.length;n++){
