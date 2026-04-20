@@ -1,363 +1,218 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>ONYRA</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>ONYRA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #0b0b12, #1a1a26);
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #0b0b12, #1a1a26);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
 
-h1 {
-  margin-bottom: 5px;
-}
+    h1 {
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+    }
 
-.subtitle {
-  opacity: 0.7;
-  margin-bottom: 20px;
-}
+    .subtitle {
+      opacity: 0.75;
+      margin-bottom: 20px;
+    }
 
-textarea {
-  width: 90%;
-  max-width: 500px;
-  height: 100px;
-  border-radius: 12px;
-  padding: 12px;
-  border: none;
-  margin-bottom: 15px;
-  font-size: 14px;
-}
+    textarea {
+      width: 90%;
+      max-width: 520px;
+      height: 110px;
+      border-radius: 12px;
+      padding: 12px;
+      border: none;
+      margin-bottom: 15px;
+      font-size: 14px;
+      resize: none;
+      box-sizing: border-box;
+    }
 
-button {
-  padding: 12px 22px;
-  margin: 6px;
-  border: none;
-  border-radius: 10px;
-  background: #6c5ce7;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-}
+    .buttons {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
 
-.secondary {
-  background: #2d2d3a;
-}
+    button {
+      padding: 12px 20px;
+      margin: 6px;
+      border: none;
+      border-radius: 10px;
+      background: #6c5ce7;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
 
-.card {
-  margin-top: 25px;
-  padding: 18px;
-  border-radius: 18px;
-  background: #181822;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
+    button:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
 
-img {
-  width: 100%;
-  max-width: 380px;
-  max-height: 500px;
-  object-fit: cover;
-  border-radius: 16px;
-  margin-top: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
 
-.interpretacion {
-  margin-top: 15px;
-  font-size: 15px;
-  line-height: 1.6;
-  text-align: left;
-}
+    .secondary {
+      background: #2d2d3a;
+    }
 
-.loading {
-  margin-top: 20px;
-  opacity: 0.7;
-}
+    .card {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #181822;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+    }
 
-</style>
+    img {
+      width: 100%;
+      max-width: 380px;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin-top: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .interpretacion {
+      margin-top: 16px;
+      font-size: 15px;
+      line-height: 1.65;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+
+    .loading {
+      margin-top: 20px;
+      opacity: 0.78;
+    }
+
+    .error {
+      margin-top: 14px;
+      color: #ffb3b3;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>ONYRA</h1>
-<div class="subtitle">Descubrí qué dicen tus sueños</div>
+  <h1>ONYRA</h1>
+  <div class="subtitle">Descubrí qué dicen tus sueños</div>
 
-<textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea><br>
+  <textarea id="dreamInput" placeholder="Escribí tu sueño..."></textarea>
 
-<button onclick="submitDream()">Interpretar sueño</button>
-<button class="secondary" onclick="clearAll()">Limpiar</button>
+  <div class="buttons">
+    <button onclick="submitDream()">Interpretar sueño</button>
+    <button class="secondary" onclick="clearAll()">Limpiar</button>
+    <button id="shareBtn" class="secondary" onclick="shareDream()" disabled>Compartir</button>
+    <button id="storyBtn" onclick="downloadStory()" disabled>Descargar story</button>
+  </div>
 
-<div id="loading" class="loading" style="display:none;">
-  Interpretando y generando imagen...
-</div>
+  <div id="loading" class="loading" style="display:none;">
+    Interpretando y generando imagen...
+  </div>
 
-<div id="result" class="card" style="display:none;">
-  <img id="dreamImage"/>
-  <div id="interpretation" class="interpretacion"></div>
-</div>
+  <div id="errorBox" class="error"></div>
 
-<div style="margin-top: 12px;">
-  <button id="shareBtn" class="secondary" onclick="shareDream()" disabled>Compartir</button><button onclick="downloadStory()">Descargar story</button>
-  <button onclick="downloadStory()">Descargar imagen</button>
-</div>
+  <div id="result" class="card" style="display:none;">
+    <img id="dreamImage" alt="Imagen del sueño" />
+    <div id="interpretation" class="interpretacion"></div>
+  </div>
 
-<script>
-const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
+  <script>
+    const WORKER_URL = "https://onyra-final-ok.almacenmujica.workers.dev";
 
-let currentDream = {
-  dream: "",
-  interpretation: "",
-  image: ""
-};
+    let currentDream = {
+      dream: "",
+      interpretation: "",
+      image: ""
+    };
 
-async function submitDream() {
-  const dream = document.getElementById("dreamInput").value.trim();
+    async function submitDream() {
+      const dream = document.getElementById("dreamInput").value.trim();
+      const loading = document.getElementById("loading");
+      const result = document.getElementById("result");
+      const errorBox = document.getElementById("errorBox");
 
-  if (!dream) {
-    alert("Escribí un sueño primero");
-    return;
-  }
+      if (!dream) {
+        alert("Escribí un sueño primero");
+        return;
+      }
 
-  document.getElementById("loading").style.display = "block";
-  document.getElementById("result").style.display = "none";
+      errorBox.style.display = "none";
+      errorBox.innerText = "";
+      loading.style.display = "block";
+      result.style.display = "none";
+      document.getElementById("shareBtn").disabled = true;
+      document.getElementById("storyBtn").disabled = true;
 
-  try {
-    const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dream })
-    });
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dream })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!data.ok) {
-      console.error(data);
-      alert("Error del worker");
-      document.getElementById("loading").style.display = "none";
-      return;
+        if (!data.ok) {
+          console.error(data);
+          loading.style.display = "none";
+          errorBox.style.display = "block";
+          errorBox.innerText = data.error || "Error del worker";
+          return;
+        }
+
+        currentDream.dream = dream;
+        currentDream.interpretation = data.interpretation || "";
+        currentDream.image = data.imageUrl || "";
+
+        document.getElementById("dreamImage").src = currentDream.image;
+        document.getElementById("interpretation").innerText = currentDream.interpretation;
+
+        loading.style.display = "none";
+        result.style.display = "block";
+        document.getElementById("shareBtn").disabled = false;
+        document.getElementById("storyBtn").disabled = false;
+
+      } catch (err) {
+        console.error(err);
+        loading.style.display = "none";
+        errorBox.style.display = "block";
+        errorBox.innerText = "Error de conexión";
+      }
     }
 
-    currentDream.dream = dream;
-    currentDream.interpretation = data.interpretation;
-    currentDream.image = data.imageUrl;
+    function shareDream() {
+      if (!currentDream.dream || !currentDream.interpretation) {
+        alert("Primero generá un sueño");
+        return;
+      }
 
-   document.getElementById("dreamImage").src = data.imageUrl;
-document.getElementById("interpretation").innerText = data.interpretation;
-
-document.getElementById("loading").style.display = "none";
-document.getElementById("result").style.display = "block";
-document.getElementById("shareBtn").disabled = false;
-  } catch (err) {
-    console.error(err);
-    alert("Error de conexión");
-    document.getElementById("loading").style.display = "none";
-  }
-}
-function downloadStory() {
-  if (!currentDream.image || !currentDream.interpretation) {
-    alert("Primero generá un sueño");
-    return;
-  }
-
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
-  const img = new Image();
-  img.crossOrigin = "anonymous";
-  img.src = currentDream.image;
-
-  img.onload = () => {
-    canvas.width = 1080;
-    canvas.height = 1920;
-
-    // Fondo
-    const bg = ctx.createLinearGradient(0, 0, 0, 1920);
-    bg.addColorStop(0, "#0a0a12");
-    bg.addColorStop(1, "#1a1a2b");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Título
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 72px Arial";
-    ctx.fillText("ONYRA", 540, 120);
-
-    // Subtítulo
-    ctx.fillStyle = "rgba(255,255,255,0.72)";
-    ctx.font = "36px Arial";
-    ctx.fillText("Descubrí qué dicen tus sueños", 540, 180);
-
-    // Card principal
-    roundRect(ctx, 70, 240, 940, 1450, 34, "rgba(255,255,255,0.06)");
-
-    // Imagen con recorte
-   drawRoundedImage(ctx, img, 120, 300, 840, 860, 28);
-
-    // Etiqueta
-    ctx.fillStyle = "#cfc7ff";
-    ctx.font = "bold 34px Arial";
-    ctx.textAlign = "left";
-    ctx.fillText("Interpretación", 130, 1120);
-
-    // Texto interpretación
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "34px Arial";
-    wrapTextBox(
-      ctx,
-      currentDream.interpretation,
-      130,
-      1190,
-      820,
-      52,
-      8
-    );
-
-    // Sueño original corto
-    const dreamPreview = currentDream.dream.length > 90
-      ? currentDream.dream.slice(0, 87) + "..."
-      : currentDream.dream;
-
-    ctx.fillStyle = "rgba(255,255,255,0.65)";
-    ctx.font = "30px Arial";
-    wrapTextBox(
-      ctx,
-      `Sueño: ${dreamPreview}`,
-      130,
-      1540,
-      820,
-      42,
-      3
-    );
-
-    // Footer
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(255,255,255,0.55)";
-    ctx.font = "30px Arial";
-    ctx.fillText("Creado con ONYRA", 540, 1770);
-
-    const link = document.createElement("a");
-    link.download = "onyra-story.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  };
-
-  img.onerror = () => {
-    alert("No se pudo cargar la imagen para descargar la story");
-  };
-}
-function roundRect(ctx, x, y, width, height, radius, fillColor) {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-
-  ctx.fillStyle = fillColor;
-  ctx.fill();
-}
-
-function drawRoundedImage(ctx, img, x, y, width, height, radius) {
-  ctx.save();
-
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-  ctx.clip();
-
-  const imgRatio = img.width / img.height;
-  const boxRatio = width / height;
-
-  let drawWidth, drawHeight, offsetX, offsetY;
-
-  if (imgRatio > boxRatio) {
-    drawHeight = height;
-    drawWidth = img.width * (height / img.height);
-    offsetX = x - (drawWidth - width) / 2;
-    offsetY = y;
-  } else {
-    drawWidth = width;
-    drawHeight = img.height * (width / img.width);
-    offsetX = x;
-    offsetY = y - (drawHeight - height) / 2;
-  }
-
-  ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-  ctx.restore();
-}
-
-function wrapTextBox(ctx, text, x, y, maxWidth, lineHeight, maxLines = 10) {
-  const words = text.split(" ");
-  let line = "";
-  let lines = [];
-
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + " ";
-    const testWidth = ctx.measureText(testLine).width;
-
-    if (testWidth > maxWidth && n > 0) {
-      lines.push(line.trim());
-      line = words[n] + " ";
-    } else {
-      line = testLine;
-    }
-  }
-
-  lines.push(line.trim());
-
-  if (lines.length > maxLines) {
-    lines = lines.slice(0, maxLines);
-    lines[maxLines - 1] = lines[maxLines - 1].replace(/\s+\S*$/, "") + "...";
-  }
-
-  for (let i = 0; i < lines.length; i++) {
-    ctx.fillText(lines[i], x, y + i * lineHeight);
-  }
-}
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(" ");
-  let line = "";
-
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + " ";
-    const metrics = ctx.measureText(testLine);
-    const testWidth = metrics.width;
-
-    if (testWidth > maxWidth && n > 0) {
-      ctx.fillText(line, x, y);
-      line = words[n] + " ";
-      y += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-
-  ctx.fillText(line, x, y);
-}
-function shareDream() {
-  const text = `Soñé: ${currentDream.dream}
+      const text = `Soñé: ${currentDream.dream}
 
 Interpretación:
 ${currentDream.interpretation}
@@ -365,24 +220,204 @@ ${currentDream.interpretation}
 Viví tu sueño en ONYRA:
 ${window.location.href}`;
 
-  if (navigator.share) {
-    navigator.share({
-      title: "Mi sueño en ONYRA",
-      text: text,
-      url: window.location.href
-    });
-  } else {
-    navigator.clipboard.writeText(text);
-    alert("Copiado para compartir");
-  }
-}
+      if (navigator.share) {
+        navigator.share({
+          title: "Mi sueño en ONYRA",
+          text: text,
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(text);
+        alert("Copiado para compartir");
+      }
+    }
 
-function clearAll() {
-  document.getElementById("dreamInput").value = "";
-  document.getElementById("result").style.display = "none";
-  document.getElementById("shareBtn").disabled = true;
-}
-</script>
+    function clearAll() {
+      document.getElementById("dreamInput").value = "";
+      document.getElementById("result").style.display = "none";
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("errorBox").style.display = "none";
+      document.getElementById("errorBox").innerText = "";
+      document.getElementById("dreamImage").src = "";
+      document.getElementById("interpretation").innerText = "";
+      document.getElementById("shareBtn").disabled = true;
+      document.getElementById("storyBtn").disabled = true;
+
+      currentDream = {
+        dream: "",
+        interpretation: "",
+        image: ""
+      };
+    }
+
+    function downloadStory() {
+      if (!currentDream.image || !currentDream.interpretation) {
+        alert("Primero generá un sueño");
+        return;
+      }
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = currentDream.image;
+
+      img.onload = () => {
+        canvas.width = 1080;
+        canvas.height = 1920;
+
+        const bg = ctx.createLinearGradient(0, 0, 0, 1920);
+        bg.addColorStop(0, "#0a0a12");
+        bg.addColorStop(1, "#1a1a2b");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 72px Arial";
+        ctx.fillText("ONYRA", 540, 120);
+
+        ctx.fillStyle = "rgba(255,255,255,0.72)";
+        ctx.font = "36px Arial";
+        ctx.fillText("Descubrí qué dicen tus sueños", 540, 180);
+
+        roundRect(ctx, 70, 240, 940, 1450, 34, "rgba(255,255,255,0.06)");
+
+        drawRoundedImage(ctx, img, 120, 300, 840, 760, 28);
+
+        ctx.fillStyle = "#cfc7ff";
+        ctx.font = "bold 34px Arial";
+        ctx.textAlign = "left";
+        ctx.fillText("Interpretación", 130, 1120);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "38px Arial";
+        wrapTextBox(
+          ctx,
+          currentDream.interpretation,
+          130,
+          1190,
+          820,
+          52,
+          8
+        );
+
+        const dreamPreview = currentDream.dream.length > 90
+          ? currentDream.dream.slice(0, 87) + "..."
+          : currentDream.dream;
+
+        ctx.fillStyle = "rgba(255,255,255,0.65)";
+        ctx.font = "30px Arial";
+        wrapTextBox(
+          ctx,
+          `Sueño: ${dreamPreview}`,
+          130,
+          1540,
+          820,
+          42,
+          3
+        );
+
+        ctx.textAlign = "center";
+        ctx.fillStyle = "rgba(255,255,255,0.55)";
+        ctx.font = "30px Arial";
+        ctx.fillText("Creado con ONYRA", 540, 1770);
+
+        const link = document.createElement("a");
+        link.download = "onyra-story.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      };
+
+      img.onerror = () => {
+        alert("No se pudo cargar la imagen para descargar la story");
+      };
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, fillColor) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+    }
+
+    function drawRoundedImage(ctx, img, x, y, width, height, radius) {
+      ctx.save();
+
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      ctx.clip();
+
+      const imgRatio = img.width / img.height;
+      const boxRatio = width / height;
+
+      let drawWidth, drawHeight, offsetX, offsetY;
+
+      if (imgRatio > boxRatio) {
+        drawHeight = height;
+        drawWidth = img.width * (height / img.height);
+        offsetX = x - (drawWidth - width) / 2;
+        offsetY = y;
+      } else {
+        drawWidth = width;
+        drawHeight = img.height * (width / img.width);
+        offsetX = x;
+        offsetY = y - (drawHeight - height) / 2;
+      }
+
+      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+      ctx.restore();
+    }
+
+    function wrapTextBox(ctx, text, x, y, maxWidth, lineHeight, maxLines = 10) {
+      const words = text.split(" ");
+      let line = "";
+      let lines = [];
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + " ";
+        const testWidth = ctx.measureText(testLine).width;
+
+        if (testWidth > maxWidth && n > 0) {
+          lines.push(line.trim());
+          line = words[n] + " ";
+        } else {
+          line = testLine;
+        }
+      }
+
+      lines.push(line.trim());
+
+      if (lines.length > maxLines) {
+        lines = lines.slice(0, maxLines);
+        lines[maxLines - 1] = lines[maxLines - 1].replace(/\s+\S*$/, "") + "...";
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], x, y + i * lineHeight);
+      }
+    }
+  </script>
 
 </body>
 </html>
