@@ -802,8 +802,10 @@
         const res = await fetch(WORKER_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ dream })
-        });
+        body: JSON.stringify({
+  dream,
+  style: currentDream.style
+})
 
         const data = await res.json();
 
