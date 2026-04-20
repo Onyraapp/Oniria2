@@ -446,12 +446,11 @@
         resultText.textContent = currentDream.interpretation;
 
         if (currentDream.image) {
-          img.src = currentDream.image;
-          img.style.display = "block";
-        } else {
-          img.src = "";
-          img.style.display = "none";
-        }
+  img.src = currentDream.image;
+  img.style.display = "block";
+} else {
+  img.style.display = "none";
+}
 
         resultWrap.style.display = "block";
         actions.style.display = "grid";
