@@ -798,16 +798,27 @@
   };
 }
     function applyCurrentStyleUI() {
-      document.getElementById("styleMystic").classList.toggle("active", currentDream.style === "mystic");
-      document.getElementById("styleDark").classList.toggle("active", currentDream.style === "dark");
-      document.getElementById("styleEditorial").classList.toggle("active", currentDream.style === "editorial");
+  document.getElementById("styleMystic").classList.toggle("active", currentDream.style === "mystic");
+  document.getElementById("styleDark").classList.toggle("active", currentDream.style === "dark");
+  document.getElementById("styleEditorial").classList.toggle("active", currentDream.style === "editorial");
 
-      const shell = document.getElementById("resultImageShell");
-      shell.classList.remove("mystic", "dark", "editorial");
-      shell.classList.add(currentDream.style);
+  const shell = document.getElementById("resultImageShell");
+  shell.classList.remove("mystic", "dark", "editorial");
+  shell.classList.add(currentDream.style);
 
-      document.getElementById("currentStyleBadge").innerText = `Estilo: ${getStyleLabel(currentDream.style)}`;
-    }
+  document.getElementById("currentStyleBadge").innerText =
+    `Estilo: ${getStyleLabel(currentDream.style)}`;
+
+  // 🔥 NUEVO: contenido dinámico
+  const content = getStyleContent(currentDream.style);
+
+  document.getElementById("dreamInput").placeholder = content.placeholder;
+
+  const header = document.querySelector(".resultHeader p");
+  if (header) header.innerText = content.resultSubtitle;
+
+  setStatus(content.idleStatus);
+}
 
     function getStyleLabel(style) {
       if (style === "dark") return "Oscuro";
